@@ -1,0 +1,218 @@
+.ifndef instruction_enums_spinc
+instruction_enums_spinc = 3
+
+.enum instr_group
+	; Non-branching instructions with 8-bit immediate values
+	instr_grp_1
+	
+	; The instruction group with the most opcodes
+	instr_grp_2
+	
+	; Instructions with one register and two register pairs
+	instr_grp_3
+	
+	; Branching instructions
+	instr_grp_4
+	
+	; Instructions encoded with four bytes instead of two so that
+	; there can be 16-bit immediate values
+	instr_grp_5
+	
+	
+	; The instruction is of an unknown group
+	instr_grp_unknown
+.endenum
+
+; Instruction group 1 has 3 opcode bits
+; Encoding:  0ooo aaaa iiii iiii
+.enum instr_grp_1_oper
+	; Arithmetic instructions:
+	instr_g1_op_addi
+	instr_g1_op_adci
+	
+	instr_g1_op_cmpi
+	
+	;Copy instructions:
+	
+	; (CoPY Immediate)
+	instr_g1_op_cpyi 
+.endenum
+
+
+; Instruction group 2 has 6 opcode bits
+; Encoding:  10oo oooo aaaa bbbb
+.enum instr_grp_2_oper
+	; Arithmetic instructions:
+	instr_g2_op_add
+	instr_g2_op_adc
+	
+	instr_g2_op_sub
+	instr_g2_op_sbc
+	
+	instr_g2_op_cmp
+	
+	; Bitwise instructions with two register operands:
+	instr_g2_op_and
+	instr_g2_op_orr
+	instr_g2_op_xor
+	
+	; Complement instructions with one register operand (rB ignored):
+	
+	; (one's complement of rA)
+	instr_g2_op_inv
+	
+	; (one's complement of rAp)
+	instr_g2_op_invp
+	
+	; (two's complement of rA)
+	instr_g2_op_neg
+	
+	; (two's complement of rAp)
+	instr_g2_op_negp
+	
+	
+	; Bitshifting (and rotating) instructions that use the value of rB
+	; as the number of bits to shift by:
+	instr_g2_op_lsl
+	instr_g2_op_lsr
+	instr_g2_op_asr
+	instr_g2_op_rol
+	instr_g2_op_ror
+	
+	
+	; Bit rotating instructions that use carry as bit 8 for a 9-bit
+	; rotate of { carry, rA } by one bit:
+	instr_g2_op_rolc
+	instr_g2_op_rorc
+	
+	
+	; Bitshifting (and rotating) instructions that do a 16-bit shift
+	; or rotate on the reg pair rAp, using rB as the number of bits to
+	; shift by:
+	instr_g2_op_lslp
+	instr_g2_op_lsrp
+	instr_g2_op_asrp
+	instr_g2_op_rolp
+	instr_g2_op_rorp
+	
+	
+	; Bit rotating instructions that use carry as bit 16 for a 17-bit
+	; rotate of { carry, rAp } by one bit:
+	instr_g2_op_rolcp
+	instr_g2_op_rorcp
+	
+	
+	; Copy instructions:
+	
+	; (CoPY from one register to another register)
+	instr_g2_op_cpy
+	
+	; (CoPY from reg Pair rAp to reg Pair rBp)
+	instr_g2_op_cpyp
+	
+	
+	; Swap instructions:
+	; (SWap register Pair, also can be used as a combined "call",
+	; "jump", and "return" instruction by swapping some other register
+	; pair with the "pc" [r14p] register pair)
+	instr_g2_op_swp
+	
+	
+	; Call instruction (Description:  sets the link register to the
+	; return address, then sets the program counter to the address
+	; contained in the reg pair rAp):
+	
+	; (CALL subroutine at address in reg pair rAp)
+	instr_g2_op_call
+	
+	
+	; 8-bit Load/store instructions:
+	
+	; (LoaD contents into Register rA from memory at address in rBp)
+	instr_g2_op_ldr
+	
+	; (STore Register rA contents to memory at address in rBp)
+	instr_g2_op_str 
+	
+.endenum
+
+
+; Instruction group 3 has 2 opcode bits
+; Encoding:  1100 ooaa aabb bccc
+.enum instr_grp_3_oper
+	; Indexed Load/store instructions:
+	
+	; Load 8-bit value from memory at address [rBp + rCp] into rA
+	instr_g3_op_ldrx
+	
+	; Store rA to memory at address [rBp + rCp]
+	instr_g3_op_strx 
+.endenum
+
+
+; Instruction group 4 has 4 opcode bits
+; Encoding:  1101 oooo iiii iiii
+.enum instr_grp_4_oper
+	; Branching instructions (note that iiii iiii is a SIGNED 8-bit
+	; integer):
+	
+	; (branch always)
+	instr_g4_op_bra
+	
+	; (branch never, a form of NOP)
+	instr_g4_op_bnv
+	
+	; (branch when Z == 0)
+	instr_g4_op_bne
+	
+	; (branch when Z == 1)
+	instr_g4_op_beq
+	
+	; (branch when C == 0 [unsigned less than])
+	instr_g4_op_bcc
+	
+	; (branch when C == 1 [unsigned greater than or equal])
+	instr_g4_op_bcs
+	
+	; (branch when C == 0 and Z == 1 [unsigned less than or equal])
+	instr_g4_op_bls
+	
+	; (branch when C == 1 and Z == 0 [unsigned greater than])
+	instr_g4_op_bhi
+	
+.endenum
+
+
+; Instruction group 5 has 3 opcode bits
+; Encoding:  1110 00oo oaaa abbb   iiii iiii jjjj jjjj
+.enum instr_grp_5_oper
+	; Extended copy instructions:
+	
+	; (COPY Pair Immediate, which sets the a register pair rAp to a
+	; 16-bit value in one instruction, but in twice the number of
+	; cycles due to using more than two bytes [can be used a as a jump
+	; immediate by copying a 16-bit immediate value to the pc] [this
+	; instruction ONLY has an advantage over using two successive cpyi
+	; instructions when used to copy a 16-bit immediate value to the
+	; pc])
+	instr_g5_op_cpypi
+	
+	; Call instructions
+	
+	; (CALL Immediate, which sets the link register to the return
+	; address, then sets the program counter to the destination
+	; address)
+	instr_g5_op_calli
+	
+	; Indexed Load/store instructions:
+	
+	; (Load 8-bit value from memory at address [rBp + 16-bit Immediate
+	; value] into rA)
+	instr_g5_op_ldrxi
+	
+	; (Store rA to memory at address [rBp + 16-bit Immediate value])
+	instr_g5_op_strxi
+	
+.endenum
+
+.endif		; instruction_enums_spinc

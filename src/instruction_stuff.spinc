@@ -1,0 +1,138 @@
+.ifndef instruction_stuff_spinc
+instruction_stuff_spinc = 3
+
+
+.include "instruction_constants.spinc"
+.include "instruction_enums.spinc"
+
+; It's a good thing I encode branch offsets at the end of group 4
+; instructions
+.macro _branch_offset instr, target
+	.local @distance, @next
+	@distance = (target) - @next
+	instr
+	.assert @distance >= -128 && @distance <= 127, error, "branch out of range"
+	.byte <@distance
+@next:
+.endmacro
+
+.macro error_if_bad_reg_name rA, instr
+	.if .not ( .xmatch( rA, r0 ) \
+		.or .xmatch( rA, r1 ) \
+		.or .xmatch( rA, r2 ) \
+		.or .xmatch( rA, r3 ) \
+		.or .xmatch( rA, r4 ) \
+		.or .xmatch( rA, r5 ) \
+		.or .xmatch( rA, r6 ) \
+		.or .xmatch( rA, r7 ) \
+		.or .xmatch( rA, r8 ) \
+		.or .xmatch( rA, r9 ) \
+		.or .xmatch( rA, r10 ) \
+		.or .xmatch( rA, r11 ) \
+		.or .xmatch( rA, r12 ) \
+		.or .xmatch( rA, r13 ) \
+		.or .xmatch( rA, r14 ) \
+		.or .xmatch( rA, r15 ) )
+		.error .concat( "Invalid register for the ", .string(instr), \
+			" instruction" )
+	.endif
+.endmac
+
+.macro error_if_bad_reg_pair_name rAp, instr
+	.if .not ( .xmatch( rAp, r0p ) \
+		.or .xmatch( rAp, r2p ) \
+		.or .xmatch( rAp, r4p ) \
+		.or .xmatch( rAp, r6p ) \
+		.or .xmatch( rAp, r8p ) \
+		.or .xmatch( rAp, r10p ) \
+		.or .xmatch( rAp, r12p ) \
+		.or .xmatch( rAp, r14p ) \
+		.or .xmatch( rAp, lr ) \
+		.or .xmatch( rAp, pc ) )
+		.error .concat( "Invalid register pair for the ", \
+			.string(instr), " instruction" )
+	.endif
+.endmac
+
+.macro error_if_too_large_imm_value_8 imm_value, instr
+	.if imm_value >= $100
+		.error .concat( "Invalid immediate value for the ", \
+			.string(instr), " instruction" )
+	.endif
+.endmac
+
+.macro error_if_too_large_imm_value_16 imm_value, instr
+	.if imm_value >= $10000
+		.error .concat( "Invalid immediate value for the ", \
+			.string(instr), " instruction" )
+	.endif
+.endmac
+
+
+
+
+
+
+
+; Instruction Group 1 generation macros
+; Encoding:  0ooo aaaa iiii iiii
+
+.define encode_ig1_op( op ) lshift_masked_bits{op}, \
+	{instr_g1_op_range_hi},{instr_g1_op_range_lo}
+.define encode_ig1_rA( rA ) lshift_masked_bits{rA}, \
+	{instr_g1_ra_index_range_hi},{instr_g1_ra_index_range_lo}
+.define encode_ig1_imm_value( imm_value ) lshift_masked_bits{imm_value}, \
+	{instr_g1_imm_value_range_hi},{instr_g1_imm_value_range_lo}
+
+.macro gen_grp_1_instr ig1_op, rA, imm_value
+	error_if_bad_reg_name rA, ig1_op
+	error_if_too_large_imm_value_8 imm_value, ig1_op
+	;.dbyt encode_ig1_id(3) | encode_ig1_op{ig1_op} \
+	;	| encode_ig1_rA{rA} | encode_ig1_imm_value{imm_value}
+	.dbyt encode_ig1_op{ig1_op} | encode_ig1_rA{rA} \
+		| encode_ig1_imm_value{imm_value}
+.endmac
+
+
+; Instruction Group 2 generation macros
+; Encoding:  10oo oooo aaaa bbbb
+
+.define encode_ig2_id( ig2_id ) lshift_masked_bits{ig2_id}, \
+	{instr_g2_id_range_hi},{instr_g2_id_range_lo}
+.define encode_ig2_op( op ) lshift_masked_bits{op}, \
+	{instr_g2_op_range_hi},{instr_g2_op_range_lo}
+.define encode_ig2_rA( rA ) lshift_masked_bits{rA}, \
+	{instr_g2_ra_index_range_hi},{instr_g2_ra_index_range_lo}
+.define encode_ig2_rB( rB ) lshift_masked_bits{rB}, \
+	{instr_g2_ra_index_range_hi},{instr_g2_ra_index_range_lo}
+
+;.macro gen_grp_2_instr_rA_rB ig2_op, rA, rB
+;	error_if_bad_reg_name rA, ig2_op
+;	error_if_bad_reg_name rB, ig2_op
+;	
+;	.dbyt encode_ig2_id{instr_g2_id} | encode_ig2_op{
+;.endmac
+
+
+
+
+; Macros for generating specific instructions
+.macro addi rA, imm_value
+	gen_grp_1_instr instr_grp_1_oper::instr_g1_op_addi, rA, imm_value
+.endmacro
+
+.macro adci rA, imm_value
+	gen_grp_1_instr instr_grp_1_oper::instr_g1_op_adci, rA, imm_value
+.endmac
+
+.macro cmpi rA, imm_value
+	gen_grp_1_instr instr_grp_1_oper::instr_g1_op_cmpi, rA, imm_value
+.endmac
+
+.macro cpyi rA, imm_value
+	gen_grp_1_instr instr_grp_1_oper::instr_g1_op_cpyi, rA, imm_value
+.endmac
+
+
+
+.endif		; instruction_stuff_spinc

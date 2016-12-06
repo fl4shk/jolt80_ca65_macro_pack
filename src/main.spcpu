@@ -1,17 +1,14 @@
+.include "instruction_stuff.spinc"
 
-.macro _branch_offset instr, target
-	.local @distance, @next
-	@distance = (target) - @next
-	instr
-	.assert @distance >= -128 && @distance <= 127, error, "branch out of range"
-	.byte <@distance
-@next:
 
-.macro add
-	
-.endmacro
+
+temp = $0f
 
 .segment "ROM"
+	
 main:
-	clv
-	bvc main
+	cpyi r0, $dd
+	addi r1, $ff
+	adci r2, $0a
+	;adci r12, $0f
+	adci r12, temp
