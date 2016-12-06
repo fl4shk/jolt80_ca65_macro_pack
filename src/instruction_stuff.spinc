@@ -55,15 +55,15 @@ instruction_stuff_spinc = 3
 	.endif
 .endmac
 
-;.macro error_if_too_large_imm_value_8 imm_value, instr
-;	.if imm_value >= $100
+;.macro error_if_too_large_imm_value_8 imm_value_8, instr
+;	.if imm_value_8 >= $100
 ;		.error .concat( "Invalid immediate value for the ", \
 ;			.string(instr), " instruction" )
 ;	.endif
 ;.endmac
 ;
-;.macro error_if_too_large_imm_value_16 imm_value, instr
-;	.if imm_value >= $10000
+;.macro error_if_too_large_imm_value_16 imm_value_16, instr
+;	.if imm_value_16 >= $10000
 ;		.error .concat( "Invalid immediate value for the ", \
 ;			.string(instr), " instruction" )
 ;	.endif
@@ -80,20 +80,20 @@ instruction_stuff_spinc = 3
 	{instr_g1_op_range_hi},{instr_g1_op_range_lo}
 .define encode_ig1_rA( rA ) lshift_masked_bits{rA}, \
 	{instr_g1_ra_index_range_hi},{instr_g1_ra_index_range_lo}
-.define encode_ig1_imm_value( imm_value ) lshift_masked_bits{imm_value}, \
+.define encode_ig1_imm_value_8( imm_value_8 ) \
+	lshift_masked_bits{imm_value_8},\
 	{instr_g1_imm_value_range_hi},{instr_g1_imm_value_range_lo}
 
-.macro gen_grp_1_instr ig1_op, rA, imm_value
+.macro gen_grp_1_instr ig1_op, rA, imm_value_8
 	error_if_bad_reg_name rA, ig1_op
-	;error_if_too_large_imm_value_8 imm_value, ig1_op
+	;error_if_too_large_imm_value_8_8 imm_value_8, ig1_op
 	.dbyt encode_ig1_op{ig1_op} | encode_ig1_rA{.ident(rA)} \
-		| encode_ig1_imm_value{(imm_value)}
+		| encode_ig1_imm_value_8{(.lobyte(imm_value_8))}
 .endmac
 
 
 ; Instruction Group 2 generation macros
 ; Encoding:  10oo oooo aaaa bbbb
-
 .define encode_ig2_id( ig2_id ) lshift_masked_bits{ig2_id}, \
 	{instr_g2_id_range_hi},{instr_g2_id_range_lo}
 .define encode_ig2_op( op ) lshift_masked_bits{op}, \
@@ -174,22 +174,59 @@ instruction_stuff_spinc = 3
 	{instr_g4_op_range_hi},{instr_g4_op_range_lo}
 
 .macro gen_grp_4_instr ig4_op, offset
-	.byte encode_ig4_id{instr_g4_id} | encode_ig4_op(ig4_op)
-	_branch_offset ig4_op, offset
+	_branch_offset { .byte ( encode_ig4_id{instr_g4_id} \
+		| encode_ig4_op{ig4_op} ) >> 8 }, offset
 .endmac
 
 
+; Instruction Group 5 generation macros
+; Encoding:  1110 00oo oaaa abbb   iiii iiii jjjj jjjj
+.define encode_ig5_ihi_id( ig5_id ) lshift_masked_bits{ig5_id}, \
+	{instr_g5_ihi_id_range_hi},{instr_g5_ihi_id_range_lo}
+.define encode_ig5_ihi_op( op ) lshift_masked_bits{op}, \
+	{instr_g5_ihi_op_range_hi},{instr_g5_ihi_op_range_lo}
+.define encode_ig5_ihi_rA( rA ) lshift_masked_bits{rA}, \
+	{instr_g5_ihi_ra_index_range_hi},{instr_g5_ihi_ra_index_range_lo}
+.define encode_ig5_ihi_rBp( rBp ) lshift_masked_bits{rBp}, \
+	{instr_g5_ihi_rbp_index_range_hi},{instr_g5_ihi_rbp_index_range_lo}
+
+.macro gen_grp_5_instr_rA_rBp ig5_op, rA, rBp, imm_value_16
+	error_if_bad_reg_name rA
+	error_if_bad_reg_pair_name rBp
+	
+	.dbyt encode_ig5_ihi_id{instr_g5_ihi_id} \
+		| encode_ig5_ihi_op{ig5_op} | encode_ig5_ihi_rA{.ident(rA)} \
+		| encode_ig5_ihi_rBp{encode_reg_pair{.ident(rBp)}}
+	.dbyt imm_value_16
+.endmac
+
+.macro gen_grp_5_instr_rAp ig5_op, rAp, imm_value_16
+	error_if_bad_reg_pair_name rAp
+	
+	.dbyt encode_ig5_ihi_id{instr_g5_ihi_id} \
+		| encode_ig5_ihi_op{ig5_op} \
+		| encode_ig5_ihi_rA{.ident(reg_pair_hi{rAp})}
+	.dbyt imm_value_16
+.endmac
+
+.macro gen_grp_5_instr_imm_value_16_only ig5_op, imm_value_16
+	
+	.dbyt encode_ig5_ihi_id{instr_g5_ihi_id} | encode_ig5_ihi_op{ig5_op}
+	.dbyt imm_value_16
+.endmac
 
 
 ; Group 1 Instructions
 ; Encoding:  0ooo aaaa iiii iiii
 	; Arithmetic instructions:
-.macro addi rA, imm_value
-	gen_grp_1_instr instr_grp_1_oper::instr_g1_op_addi, rA, imm_value
+.macro addi rA, imm_value_8
+	gen_grp_1_instr instr_grp_1_oper::instr_g1_op_addi, rA, imm_value_8
 .endmac
-
-.macro adci rA, imm_value
-	gen_grp_1_instr instr_grp_1_oper::instr_g1_op_adci, rA, imm_value
+.macro adci rA, imm_value_8
+	gen_grp_1_instr instr_grp_1_oper::instr_g1_op_adci, rA, imm_value_8
+.endmac
+.macro cmpi rA, imm_value_8
+	gen_grp_1_instr instr_grp_1_oper::instr_g1_op_cmpi, rA, imm_value_8
 .endmac
 
 	; Pseudo instructions
@@ -198,19 +235,25 @@ instruction_stuff_spinc = 3
 	addi reg_pair_lo{rAp}, <imm_value_16
 	adci reg_pair_hi{rAp}, >imm_value_16
 .endmac
-.macro subi16 rAp, imm_value_16
-	error_if_bad_reg_pair_name rAp, subi16
-	addi16 rAp, -imm_value_16
+
+.macro subi rA, imm_value_8
+	error_if_bad_reg_name rA, subi
+	addi rA, -imm_value_8
 .endmac
 
-.macro cmpi rA, imm_value
-	gen_grp_1_instr instr_grp_1_oper::instr_g1_op_cmpi, rA, imm_value
+; There is no sbci
+
+.macro subi16 rAp, imm_value_16
+	error_if_bad_reg_pair_name rAp, subi16
+	addi reg_pair_lo{rAp}, <(-imm_value_16)
+	adci reg_pair_hi{rAp}, >(-imm_value_16)
 .endmac
+
 
 	;Copy instructions:
 	; (CoPY Immediate)
-.macro cpyi rA, imm_value
-	gen_grp_1_instr instr_grp_1_oper::instr_g1_op_cpyi, rA, imm_value
+.macro cpyi rA, imm_value_8
+	gen_grp_1_instr instr_grp_1_oper::instr_g1_op_cpyi, rA, imm_value_8
 .endmac
 
 
@@ -236,6 +279,22 @@ instruction_stuff_spinc = 3
 .macro cmp rA, rB
 	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_cmp, rA, rB
 .endmac
+	
+	
+	; Pseudo instructions
+.macro add16 rAp, rBp
+	error_if_bad_reg_pair_name rAp, add16
+	error_if_bad_reg_pair_name rBp, add16
+	add reg_pair_lo{rAp}, reg_pair_lo{rBp}
+	adc reg_pair_hi{rAp}, reg_pair_hi{rBp}
+.endmac
+.macro sub16 rAp, rBp
+	error_if_bad_reg_pair_name rAp, sub16
+	error_if_bad_reg_pair_name rBp, sub16
+	sub reg_pair_lo{rAp}, reg_pair_lo{rBp}
+	sbc reg_pair_hi{rAp}, reg_pair_hi{rBp}
+.endmac
+
 
 	; Bitwise instructions with two register operands:
 .macro and rA, rB
@@ -326,41 +385,41 @@ instruction_stuff_spinc = 3
 .endmac
 
 
-; Copy instructions:
-; (CoPY from one register to another register)
+	; Copy instructions:
+	; (CoPY from one register to another register)
 .macro cpy rA, rB
 	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_cpy, rA, rB
 .endmac
-; (CoPY from reg Pair rAp to reg Pair rBp)
+	; (CoPY from reg Pair rAp to reg Pair rBp)
 .macro cpyp rAp, rBp
 	gen_grp_2_instr_rAp_rBp instr_grp_2_oper::instr_g2_op_cpyp, rAp, rBp
 .endmac
 
 
-; Swap instructions:
-; (SWap register Pair, also can be used as a combined "call",
-; "jump", and "return" instruction by swapping some other register
-; pair with the "pc" [r14p] register pair)
+	; Swap instructions:
+	; (SWap register Pair, also can be used as a combined "call",
+	; "jump", and "return" instruction by swapping some other register
+	; pair with the "pc" [r14p] register pair)
 .macro swp rAp, rBp
 	gen_grp_2_instr_rAp_rBp instr_grp_2_oper::instr_g2_op_swp, rAp, rBp
 .endmac
 
 
-; Call instruction (Description:  sets the link register to the
-; return address, then sets the program counter to the address
-; contained in the reg pair rAp):
-; (CALL subroutine at address in reg pair rAp)
+	; Call instruction (Description:  sets the link register to the
+	; return address, then sets the program counter to the address
+	; contained in the reg pair rAp):
+	; (CALL subroutine at address in reg pair rAp)
 .macro call rAp
 	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_call, rAp
 .endmac
 
 
-; 8-bit Load/store instructions:
-; (LoaD contents into Register rA from memory at address in rBp)
+	; 8-bit Load/store instructions:
+	; (LoaD contents into Register rA from memory at address in rBp)
 .macro ldr rA, rBp
 	gen_grp_2_instr_rA_rBp instr_grp_2_oper::instr_g2_op_ldr, rA, rBp
 .endmac
-; (STore Register rA contents to memory at address in rBp)
+	; (STore Register rA contents to memory at address in rBp)
 .macro str rA, rBp
 	gen_grp_2_instr_rA_rBp instr_grp_2_oper::instr_g2_op_str, rA, rBp
 .endmac
@@ -369,13 +428,12 @@ instruction_stuff_spinc = 3
 
 ; Group 3 Instructions
 ; Encoding:  1100 ooaa aabb bccc
-; Indexed Load/store instructions:
-; Load 8-bit value from memory at address [rBp + rCp] into rA
+	; Indexed Load/store instructions:
+	; Load 8-bit value from memory at address [rBp + rCp] into rA
 .macro ldrx rA, rBp, rCp
 	gen_grp_3_instr instr_grp_3_oper::instr_g3_op_ldrx, rA, rBp, rCp
 .endmac
-
-; Store rA to memory at address [rBp + rCp]
+	; Store rA to memory at address [rBp + rCp]
 .macro strx rA, rBp, rCp
 	gen_grp_3_instr instr_grp_3_oper::instr_g3_op_strx, rA, rBp, rCp
 .endmac
@@ -383,8 +441,92 @@ instruction_stuff_spinc = 3
 
 
 
+; Group 4 Instructions
+; Encoding:  1101 oooo iiii iiii
+	; Branching instructions (note that iiii iiii is a SIGNED 8-bit
+	; integer):
+
+	; (branch always)
+.macro bra offset
+	gen_grp_4_instr instr_grp_4_oper::instr_g4_op_bra, offset
+.endmac
+	; (branch never, a form of NOP)
+.macro bnv offset
+	gen_grp_4_instr instr_grp_4_oper::instr_g4_op_bnv, offset
+.endmac
+	; (branch when Z == 0)
+.macro bne offset
+	gen_grp_4_instr instr_grp_4_oper::instr_g4_op_bne, offset
+.endmac
+	; (branch when Z == 1)
+.macro beq offset
+	gen_grp_4_instr instr_grp_4_oper::instr_g4_op_beq, offset
+.endmac
+	; (branch when C == 0 [unsigned less than])
+.macro bcc offset
+	gen_grp_4_instr instr_grp_4_oper::instr_g4_op_bcc, offset
+.endmac
+	; (branch when C == 1 [unsigned greater than or equal])
+.macro bcs offset
+	gen_grp_4_instr instr_grp_4_oper::instr_g4_op_bcs, offset
+.endmac
+	; (branch when C == 0 and Z == 1 [unsigned less than or equal])
+.macro bls offset
+	gen_grp_4_instr instr_grp_4_oper::instr_g4_op_bls, offset
+.endmac
+	; (branch when C == 1 and Z == 0 [unsigned greater than])
+.macro bhi offset
+	gen_grp_4_instr instr_grp_4_oper::instr_g4_op_bhi, offset
+.endmac
+
+	; Pseudo instructions
+.macro nop
+	bnv $00
+.endmac
 
 
+
+; Group 5 Instructions
+; Encoding:  1110 00oo oaaa abbb   iiii iiii jjjj jjjj
+
+	; Extended copy instructions:
+	; (COPY Pair Immediate, which sets the a register pair rAp to a
+	; 16-bit value in one instruction, but in twice the number of
+	; cycles due to using more than two bytes [can be used a as a jump
+	; immediate by copying a 16-bit immediate value to the pc] [this
+	; instruction ONLY has an advantage over using two successive cpyi
+	; instructions when used to copy a 16-bit immediate value to the
+	; pc])
+.macro cpypi rAp, imm_value_16
+	error_if_bad_reg_pair_name rAp
+	gen_grp_5_instr_rAp instr_grp_5_oper::instr_g5_op_cpypi, rAp, \
+		(.loword(imm_value_16))
+.endmac
+
+	; Call instructions
+	; (CALL Immediate, which sets the link register to the return
+	; address, then sets the program counter to the destination
+	; address)
+.macro calli imm_value_16
+	gen_grp_5_instr_imm_value_16_only \
+		instr_grp_5_oper::instr_g5_op_calli, (.loword(imm_value_16))
+.endmac
+
+	; Indexed Load/store instructions:
+	; (Load 8-bit value from memory at address [rBp + 16-bit Immediate
+	; value] into rA)
+.macro ldrxi rA, rBp, imm_value_16
+	error_if_bad_reg_name rA
+	error_if_bad_reg_pair_name rBp
+	gen_grp_5_instr_rA_rBp instr_grp_5_oper::instr_g5_op_ldrxi, rA, rBp, \
+		(.loword(imm_value_16))
+.endmac
+
+	; (Store rA to memory at address [rBp + 16-bit Immediate value])
+.macro strxi rA, rBp, imm_value_16
+	gen_grp_5_instr_rA_rBp instr_grp_5_oper::instr_g5_op_strxi, rA, rBp, \
+		(.loword(imm_value_16))
+.endmac
 
 
 

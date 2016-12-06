@@ -2,31 +2,62 @@
 
 
 
-;temp = $0f
-
-.macro temp_mac imm_value
-	.byte imm_value
+.macro temp_cpypi rAp, imm_value_16
+	cpyi reg_pair_hi{rAp}, <imm_value_16
+	cpyi reg_pair_lo{rAp}, >imm_value_16
 .endmac
+.macro temp_jumpi rAp, addr
+	temp_cpypi rAp, addr
+	cpyp pc, rAp
+.endmac
+.macro temp_calli rAp, addr
+	temp_cpypi rAp, addr
+	call rAp
+.endmac
+
+
+
+.macro temp_ldr16 rAp, rBp
+	ldr reg_pair_hi{rAp}, rBp
+	addi16 rBp, 1
+	ldr reg_pair_lo{rAp}, rBp
+.endmac
+.macro temp_str16 rAp, rBp
+	str reg_pair_hi{rAp}, rBp
+	addi16 rBp, 1
+	str reg_pair_lo{rAp}, rBp
+.endmac
+
+.macro temp_push rA
+	subi16 sp, 1
+	str rA, sp
+.endmac
+
+.macro temp_pop rA
+	ldr rA, sp
+	addi16 sp, 1
+.endmac
+
+
 
 .segment "ROM"
 	
 main:
-	;addi16 r2p, $ff88
-	;subi16 sp, $01
+	;subi16 r0p, $1
+	
+	addi r0, $1
+	;strxi r0, pc, $0000
+	;cpypi r0p, $ffaa
+	strxi r0, pc, -1
+	
+	ldrxi r1, pc, 1
+	;gen_grp_5_instr_rAp instr_grp_5_oper::instr_g5_op_cpypi, r
 	
 	
-	;addi16 r2p, $ff88
-	rolc r2
-	;rolp pc, r0
-	;rolcp sp
-	;strx r1, lr, pc
+	;gen_grp_5_instr instr_grp_5_oper::instr_g5_op_cpypi r0, r2p, \
+	;	$0000
 	
-	;add r0, r9
-	;lsl r0, r1
-	;lsr r0, r0
-	;str r1, pc
-	;
-	;cpyi r1, <main
-	;cpyi r0, >main
-	;cpyp pc, r0p
-	
+	;.dbyt encode_ig5_ihi_id{instr_g5_ihi_id} \
+	;	| encode_ig5_ihi_op{instr_grp_5_oper::instr_g5_op_cpypi} \
+	;	| encode_ig5_ihi_rA{.ident(r0)} \
+	;	| encode_ig5_ihi_rBp{.ident(r0p)}
