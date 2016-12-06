@@ -121,19 +121,18 @@ pc_num = r14p_num
 .define r10p "r10p_num"
 .define r12p "r12p_num"
 .define r14p "r14p_num"
+.define sp "r10p_num"
 .define lr "r12p_num"
 .define pc "r14p_num"
 
 ; Get the ACTUAL encoding of a reg pair
-.define encode_reg_pair( rAp ) ( (rAp) - r15_num - 2 )
+.define encode_reg_pair_to_high( rAp ) ( (rAp) - r15_num - 2 )
+.define encode_reg_pair( rAp ) ( (encode_reg_pair_to_high{rAp}) >> 1 )
 
-
-.define reg_pair_hi_str( rAp ) .concat( "r", \
-	.string(encode_reg_pair{.ident(rAp)}) )
-.define reg_pair_lo_str( rAp ) .concat( "r", \
-	.string( encode_reg_pair{.ident(rAp)} + 1 ) )
-.define reg_pair_hi( rAp ) .concat( reg_pair_hi_str{rAp}, "_num" )
-.define reg_pair_lo( rAp ) .concat( reg_pair_lo_str{rAp}, "_num" )
+.define reg_pair_hi( rAp ) .concat( "r", \
+	.string(encode_reg_pair_to_high{.ident(rAp)}), "_num" )
+.define reg_pair_lo( rAp ) .concat( "r", \
+	.string( encode_reg_pair_to_high{.ident(rAp)} + 1 ), "_num" )
 
 
 

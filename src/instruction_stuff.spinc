@@ -47,6 +47,7 @@ instruction_stuff_spinc = 3
 		.or .xmatch( rAp, r10p ) \
 		.or .xmatch( rAp, r12p ) \
 		.or .xmatch( rAp, r14p ) \
+		.or .xmatch( rAp, sp ) \
 		.or .xmatch( rAp, lr ) \
 		.or .xmatch( rAp, pc ) )
 		.error .concat( "Invalid register pair for the ", \
@@ -107,8 +108,77 @@ instruction_stuff_spinc = 3
 	error_if_bad_reg_name rB, ig2_op
 	
 	.dbyt encode_ig2_id{instr_g2_id} | encode_ig2_op{ig2_op} \
-		encode_ig2_rA{.ident(rA)} | encode_ig2_rB{.ident(rB)}
+		| encode_ig2_rA{.ident(rA)} | encode_ig2_rB{.ident(rB)}
 .endmac
+.macro gen_grp_2_instr_rAp ig2_op, rAp
+	error_if_bad_reg_pair_name rAp, ig2_op
+	
+	.dbyt encode_ig2_id{instr_g2_id} | encode_ig2_op{ig2_op} \
+		| encode_ig2_rA{.ident(reg_pair_hi{rAp})}
+.endmac
+.macro gen_grp_2_instr_rAp_rB ig2_op, rAp, rB
+	error_if_bad_reg_pair_name rAp, ig2_op
+	error_if_bad_reg_name rB, ig2_op
+	
+	.dbyt encode_ig2_id{instr_g2_id} | encode_ig2_op{ig2_op} \
+		| encode_ig2_rA{.ident(reg_pair_hi{rAp})} \
+		| encode_ig2_rB{.ident(rB)}
+.endmac
+.macro gen_grp_2_instr_rA_rBp ig2_op, rA, rBp
+	error_if_bad_reg_name rA, ig2_op
+	error_if_bad_reg_pair_name rBp, ig2_op
+	
+	.dbyt encode_ig2_id{instr_g2_id} | encode_ig2_op{ig2_op} \
+		| encode_ig2_rA{.ident(rA)} \
+		| encode_ig2_rB{.ident(reg_pair_hi{rBp})}
+.endmac
+.macro gen_grp_2_instr_rAp_rBp ig2_op, rAp, rBp
+	error_if_bad_reg_pair_name rAp, ig2_op
+	error_if_bad_reg_pair_name rBp, ig2_op
+	
+	.dbyt encode_ig2_id{instr_g2_id} | encode_ig2_op{ig2_op} \
+		| encode_ig2_rA{.ident(reg_pair_hi{rAp})} \
+		| encode_ig2_rB{.ident(reg_pair_hi{rBp})}
+.endmac
+
+; Instruction Group 3 generation macros
+; Encoding:  1100 ooaa aabb bccc
+.define encode_ig3_id( ig3_id ) lshift_masked_bits{ig3_id}, \
+	{instr_g3_id_range_hi},{instr_g3_id_range_lo}
+.define encode_ig3_op( op ) lshift_masked_bits{op}, \
+	{instr_g3_op_range_hi},{instr_g3_op_range_lo}
+.define encode_ig3_rA( rA ) lshift_masked_bits{rA}, \
+	{instr_g3_ra_index_range_hi},{instr_g3_ra_index_range_lo}
+.define encode_ig3_rBp( rBp ) lshift_masked_bits{rBp}, \
+	{instr_g3_rbp_index_range_hi},{instr_g3_rbp_index_range_lo}
+.define encode_ig3_rCp( rCp ) lshift_masked_bits{rCp}, \
+	{instr_g3_rcp_index_range_hi},{instr_g3_rcp_index_range_lo}
+
+.macro gen_grp_3_instr ig3_op, rA, rBp, rCp
+	error_if_bad_reg_name rA, ig3_op
+	error_if_bad_reg_pair_name rBp, ig3_op
+	error_if_bad_reg_pair_name rCp, ig3_op
+	
+	.dbyt encode_ig3_id{instr_g3_id} | encode_ig3_op{ig3_op} \
+		| encode_ig3_rA{.ident(rA)} \
+		| encode_ig3_rBp{encode_reg_pair{.ident(rBp)}} \
+		| encode_ig3_rCp{encode_reg_pair{.ident(rCp)}}
+.endmac
+
+
+; Instruction Group 4 generation macros
+; Encoding:  1101 oooo iiii iiii
+.define encode_ig4_id( ig4_id ) lshift_masked_bits{ig4_id}, \
+	{instr_g4_id_range_hi},{instr_g4_id_range_lo}
+.define encode_ig4_op( op ) lshift_masked_bits{op}, \
+	{instr_g4_op_range_hi},{instr_g4_op_range_lo}
+
+.macro gen_grp_4_instr ig4_op, offset
+	.byte encode_ig4_id{instr_g4_id} | encode_ig4_op(ig4_op)
+	_branch_offset ig4_op, offset
+.endmac
+
+
 
 
 ; Group 1 Instructions
@@ -122,12 +192,12 @@ instruction_stuff_spinc = 3
 	gen_grp_1_instr instr_grp_1_oper::instr_g1_op_adci, rA, imm_value
 .endmac
 
+	; Pseudo instructions
 .macro addi16 rAp, imm_value_16
 	error_if_bad_reg_pair_name rAp, addi16
 	addi reg_pair_lo{rAp}, <imm_value_16
 	adci reg_pair_hi{rAp}, >imm_value_16
 .endmac
-
 .macro subi16 rAp, imm_value_16
 	error_if_bad_reg_pair_name rAp, subi16
 	addi16 rAp, -imm_value_16
@@ -137,30 +207,184 @@ instruction_stuff_spinc = 3
 	gen_grp_1_instr instr_grp_1_oper::instr_g1_op_cmpi, rA, imm_value
 .endmac
 
-;Copy instructions:
-
-; (CoPY Immediate)
+	;Copy instructions:
+	; (CoPY Immediate)
 .macro cpyi rA, imm_value
 	gen_grp_1_instr instr_grp_1_oper::instr_g1_op_cpyi, rA, imm_value
 .endmac
 
 
-;; Group 2 Instructions (rA, rB)
-;; Encoding:  10oo oooo aaaa bbbb
-;
-;; Arithmetic instructions:
-;instr_g2_op_add
-;instr_g2_op_adc
-;
-;instr_g2_op_sub
-;instr_g2_op_sbc
-;
-;instr_g2_op_cmp
-;
-;; Bitwise instructions with two register operands:
-;instr_g2_op_and
-;instr_g2_op_orr
-;instr_g2_op_xor
+
+
+
+; Group 2 Instructions
+; Encoding:  10oo oooo aaaa bbbb
+
+	; Arithmetic instructions:
+.macro add rA, rB
+	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_add, rA, rB
+.endmac
+.macro adc rA, rB
+	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_adc, rA, rB
+.endmac
+.macro sub rA, rB
+	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_sub, rA, rB
+.endmac
+.macro sbc rA, rB
+	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_sbc, rA, rB
+.endmac
+.macro cmp rA, rB
+	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_cmp, rA, rB
+.endmac
+
+	; Bitwise instructions with two register operands:
+.macro and rA, rB
+	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_and, rA, rB
+.endmac
+.macro orr rA, rB
+	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_orr, rA, rB
+.endmac
+.macro xor rA, rB
+	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_xor, rA, rB
+.endmac
+
+
+	; Complement instructions with one register operand (rB ignored):
+	; (one's complement of rA)
+.macro inv rA
+	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_inv, rA, 0
+.endmac
+	; (one's complement of rAp)
+.macro invp rAp
+	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_invp, rAp
+.endmac
+	; (two's complement of rA)
+.macro neg rA
+	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_neg, rA, 0
+.endmac
+	; (two's complement of rAp)
+.macro negp rAp
+	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_negp, rAp
+.endmac
+
+
+	; Bitshifting (and rotating) instructions that use the value of rB
+	; as the number of bits to shift by:
+.macro lsl rA, rB
+	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_lsl, rA, rB
+.endmac
+.macro lsr rA, rB
+	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_lsr, rA, rB
+.endmac
+.macro asr rA, rB
+	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_asr, rA, rB
+.endmac
+.macro rol rA, rB
+	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_rol, rA, rB
+.endmac
+.macro ror rA, rB
+	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_ror, rA, rB
+.endmac
+
+	; Bit rotating instructions that use carry as bit 8 for a 9-bit
+	; rotate of { carry, rA } by one bit:
+.macro rolc rA
+	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_rolc, rA, r0
+.endmac
+.macro rorc rA
+	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_rorc, rA, r0
+.endmac
+
+
+	; Bitshifting (and rotating) instructions that do a 16-bit shift
+	; or rotate on the reg pair rAp, using rB as the number of bits to
+	; shift by:
+.macro lslp rAp, rB
+	gen_grp_2_instr_rAp_rB instr_grp_2_oper::instr_g2_op_lslp, rAp, rB
+.endmac
+.macro lsrp rAp, rB
+	gen_grp_2_instr_rAp_rB instr_grp_2_oper::instr_g2_op_lsrp, rAp, rB
+.endmac
+.macro asrp rAp, rB
+	gen_grp_2_instr_rAp_rB instr_grp_2_oper::instr_g2_op_asrp, rAp, rB
+.endmac
+.macro rolp rAp, rB
+	gen_grp_2_instr_rAp_rB instr_grp_2_oper::instr_g2_op_rolp, rAp, rB
+.endmac
+.macro rorp rAp, rB
+	gen_grp_2_instr_rAp_rB instr_grp_2_oper::instr_g2_op_rorp, rAp, rB
+.endmac
+
+
+	; Bit rotating instructions that use carry as bit 16 for a 17-bit
+	; rotate of { carry, rAp } by one bit:
+.macro rolcp rAp
+	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_rolcp, rAp
+.endmac
+.macro rorcp rAp
+	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_rorcp, rAp
+.endmac
+
+
+; Copy instructions:
+; (CoPY from one register to another register)
+.macro cpy rA, rB
+	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_cpy, rA, rB
+.endmac
+; (CoPY from reg Pair rAp to reg Pair rBp)
+.macro cpyp rAp, rBp
+	gen_grp_2_instr_rAp_rBp instr_grp_2_oper::instr_g2_op_cpyp, rAp, rBp
+.endmac
+
+
+; Swap instructions:
+; (SWap register Pair, also can be used as a combined "call",
+; "jump", and "return" instruction by swapping some other register
+; pair with the "pc" [r14p] register pair)
+.macro swp rAp, rBp
+	gen_grp_2_instr_rAp_rBp instr_grp_2_oper::instr_g2_op_swp, rAp, rBp
+.endmac
+
+
+; Call instruction (Description:  sets the link register to the
+; return address, then sets the program counter to the address
+; contained in the reg pair rAp):
+; (CALL subroutine at address in reg pair rAp)
+.macro call rAp
+	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_call, rAp
+.endmac
+
+
+; 8-bit Load/store instructions:
+; (LoaD contents into Register rA from memory at address in rBp)
+.macro ldr rA, rBp
+	gen_grp_2_instr_rA_rBp instr_grp_2_oper::instr_g2_op_ldr, rA, rBp
+.endmac
+; (STore Register rA contents to memory at address in rBp)
+.macro str rA, rBp
+	gen_grp_2_instr_rA_rBp instr_grp_2_oper::instr_g2_op_str, rA, rBp
+.endmac
+
+
+
+; Group 3 Instructions
+; Encoding:  1100 ooaa aabb bccc
+; Indexed Load/store instructions:
+; Load 8-bit value from memory at address [rBp + rCp] into rA
+.macro ldrx rA, rBp, rCp
+	gen_grp_3_instr instr_grp_3_oper::instr_g3_op_ldrx, rA, rBp, rCp
+.endmac
+
+; Store rA to memory at address [rBp + rCp]
+.macro strx rA, rBp, rCp
+	gen_grp_3_instr instr_grp_3_oper::instr_g3_op_strx, rA, rBp, rCp
+.endmac
+
+
+
+
+
+
 
 
 
