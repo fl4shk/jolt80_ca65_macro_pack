@@ -54,21 +54,19 @@ instruction_stuff_spinc = 3
 	.endif
 .endmac
 
-.macro error_if_too_large_imm_value_8 imm_value, instr
-	.if imm_value >= $100
-		.error .concat( "Invalid immediate value for the ", \
-			.string(instr), " instruction" )
-	.endif
-.endmac
-
-.macro error_if_too_large_imm_value_16 imm_value, instr
-	.if imm_value >= $10000
-		.error .concat( "Invalid immediate value for the ", \
-			.string(instr), " instruction" )
-	.endif
-.endmac
-
-
+;.macro error_if_too_large_imm_value_8 imm_value, instr
+;	.if imm_value >= $100
+;		.error .concat( "Invalid immediate value for the ", \
+;			.string(instr), " instruction" )
+;	.endif
+;.endmac
+;
+;.macro error_if_too_large_imm_value_16 imm_value, instr
+;	.if imm_value >= $10000
+;		.error .concat( "Invalid immediate value for the ", \
+;			.string(instr), " instruction" )
+;	.endif
+;.endmac
 
 
 
@@ -86,11 +84,9 @@ instruction_stuff_spinc = 3
 
 .macro gen_grp_1_instr ig1_op, rA, imm_value
 	error_if_bad_reg_name rA, ig1_op
-	error_if_too_large_imm_value_8 imm_value, ig1_op
-	;.dbyt encode_ig1_id(3) | encode_ig1_op{ig1_op} \
-	;	| encode_ig1_rA{rA} | encode_ig1_imm_value{imm_value}
-	.dbyt encode_ig1_op{ig1_op} | encode_ig1_rA{rA} \
-		| encode_ig1_imm_value{imm_value}
+	;error_if_too_large_imm_value_8 imm_value, ig1_op
+	.dbyt encode_ig1_op{ig1_op} | encode_ig1_rA{.ident(rA)} \
+		| encode_ig1_imm_value{(imm_value)}
 .endmac
 
 
@@ -106,32 +102,65 @@ instruction_stuff_spinc = 3
 .define encode_ig2_rB( rB ) lshift_masked_bits{rB}, \
 	{instr_g2_ra_index_range_hi},{instr_g2_ra_index_range_lo}
 
-;.macro gen_grp_2_instr_rA_rB ig2_op, rA, rB
-;	error_if_bad_reg_name rA, ig2_op
-;	error_if_bad_reg_name rB, ig2_op
-;	
-;	.dbyt encode_ig2_id{instr_g2_id} | encode_ig2_op{
-;.endmac
+.macro gen_grp_2_instr_rA_rB ig2_op, rA, rB
+	error_if_bad_reg_name rA, ig2_op
+	error_if_bad_reg_name rB, ig2_op
+	
+	.dbyt encode_ig2_id{instr_g2_id} | encode_ig2_op{ig2_op} \
+		encode_ig2_rA{.ident(rA)} | encode_ig2_rB{.ident(rB)}
+.endmac
 
 
-
-
-; Macros for generating specific instructions
+; Group 1 Instructions
+; Encoding:  0ooo aaaa iiii iiii
+	; Arithmetic instructions:
 .macro addi rA, imm_value
 	gen_grp_1_instr instr_grp_1_oper::instr_g1_op_addi, rA, imm_value
-.endmacro
+.endmac
 
 .macro adci rA, imm_value
 	gen_grp_1_instr instr_grp_1_oper::instr_g1_op_adci, rA, imm_value
+.endmac
+
+.macro addi16 rAp, imm_value_16
+	error_if_bad_reg_pair_name rAp, addi16
+	addi reg_pair_lo{rAp}, <imm_value_16
+	adci reg_pair_hi{rAp}, >imm_value_16
+.endmac
+
+.macro subi16 rAp, imm_value_16
+	error_if_bad_reg_pair_name rAp, subi16
+	addi16 rAp, -imm_value_16
 .endmac
 
 .macro cmpi rA, imm_value
 	gen_grp_1_instr instr_grp_1_oper::instr_g1_op_cmpi, rA, imm_value
 .endmac
 
+;Copy instructions:
+
+; (CoPY Immediate)
 .macro cpyi rA, imm_value
 	gen_grp_1_instr instr_grp_1_oper::instr_g1_op_cpyi, rA, imm_value
 .endmac
+
+
+;; Group 2 Instructions (rA, rB)
+;; Encoding:  10oo oooo aaaa bbbb
+;
+;; Arithmetic instructions:
+;instr_g2_op_add
+;instr_g2_op_adc
+;
+;instr_g2_op_sub
+;instr_g2_op_sbc
+;
+;instr_g2_op_cmp
+;
+;; Bitwise instructions with two register operands:
+;instr_g2_op_and
+;instr_g2_op_orr
+;instr_g2_op_xor
 
 
 

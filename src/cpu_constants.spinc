@@ -64,39 +64,76 @@ cpu_state_width = 4
 cpu_state_msb_pos = width_to_msb_pos(cpu_state_width)
 
 
-r0 = 0
-r1 = 1
-r2 = 2
-r3 = 3
-r4 = 4
-r5 = 5
-r6 = 6
-r7 = 7
-r8 = 8
-r9 = 9
-r10 = 10
-r11 = 11
-r12 = 12
-r13 = 13
-r14 = 14
-r15 = 15
+r0_num = 0
+r1_num = 1
+r2_num = 2
+r3_num = 3
+r4_num = 4
+r5_num = 5
+r6_num = 6
+r7_num = 7
+r8_num = 8
+r9_num = 9
+r10_num = 10
+r11_num = 11
+r12_num = 12
+r13_num = 13
+r14_num = 14
+r15_num = 15
 
 
 ; REQUIRE the use of the "p" character, or use the "lr" or "pc" special
 ; registers
-r0p = r15 + 2
-r2p = r15 + 4
-r4p = r15 + 6
-r6p = r15 + 8
-r8p = r15 + 10
-r10p = r15 + 12
-r12p = r15 + 14
-r14p = r15 + 16
-lr = r12p
-pc = r14p
+r0p_num = r15_num + 2
+r2p_num = r15_num + 4
+r4p_num = r15_num + 6
+r6p_num = r15_num + 8
+r8p_num = r15_num + 10
+r10p_num = r15_num + 12
+r12p_num = r15_num + 14
+r14p_num = r15_num + 16
+lr_num = r12p_num
+pc_num = r14p_num
+
+
+.define r0 "r0_num"
+.define r1 "r1_num"
+.define r2 "r2_num"
+.define r3 "r3_num"
+.define r4 "r4_num"
+.define r5 "r5_num"
+.define r6 "r6_num"
+.define r7 "r7_num"
+.define r8 "r8_num"
+.define r9 "r9_num"
+.define r10 "r10_num"
+.define r11 "r11_num"
+.define r12 "r12_num"
+.define r13 "r13_num"
+.define r14 "r14_num"
+.define r15 "r15_num"
+
+.define r0p "r0p_num"
+.define r2p "r2p_num"
+.define r4p "r4p_num"
+.define r6p "r6p_num"
+.define r8p "r8p_num"
+.define r10p "r10p_num"
+.define r12p "r12p_num"
+.define r14p "r14p_num"
+.define lr "r12p_num"
+.define pc "r14p_num"
 
 ; Get the ACTUAL encoding of a reg pair
-.define encode_reg_pair( rAp ) ( (rAp) - r15 - 2 )
+.define encode_reg_pair( rAp ) ( (rAp) - r15_num - 2 )
+
+
+.define reg_pair_hi_str( rAp ) .concat( "r", \
+	.string(encode_reg_pair{.ident(rAp)}) )
+.define reg_pair_lo_str( rAp ) .concat( "r", \
+	.string( encode_reg_pair{.ident(rAp)} + 1 ) )
+.define reg_pair_hi( rAp ) .concat( reg_pair_hi_str{rAp}, "_num" )
+.define reg_pair_lo( rAp ) .concat( reg_pair_lo_str{rAp}, "_num" )
 
 
 

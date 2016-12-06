@@ -2,13 +2,23 @@
 
 
 
-temp = $0f
+;temp = $0f
+
+.macro temp_mac imm_value
+	.byte imm_value
+.endmac
 
 .segment "ROM"
 	
 main:
-	cpyi r0, $dd
-	addi r1, $ff
-	adci r2, $0a
-	;adci r12, $0f
-	adci r12, temp
+	;addi16 r0p, $ff88
+	;.out reg_pair_hi{r2p}
+	;addi r0, $ff88
+	;addi r0, $ff88
+	;addi .concat( .string(encode_reg_pair{r0p})
+	;.out .string(.ident(r0))
+	;.out r0_num
+	;.byte .ident(r1)
+	;addi reg_pair_lo{r2p}, $ff
+	addi16 r2p, $ff88
+	subi16 r4p, $0011
