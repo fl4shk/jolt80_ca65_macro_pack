@@ -12,8 +12,9 @@ main:
 	str r0, r2p
 
 infin:
-	bra test_infin
-	jumpi test_infin
+	;bra test_infin
+	bra infin
+	;jumpi test_infin
 	
 mac_test:
 	
