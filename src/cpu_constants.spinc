@@ -135,5 +135,31 @@ pc_num = r14p_num
 	.string( encode_reg_pair_to_high{.ident(rAp)} + 1 ), "_num" )
 
 
+; Number of bytes for specific numbers of regs
+num_bytes_1_reg = 1
+num_bytes_2_reg = num_bytes_1_reg + num_bytes_1_reg
+num_bytes_3_reg = num_bytes_2_reg + num_bytes_1_reg
+num_bytes_4_reg = num_bytes_3_reg + num_bytes_1_reg
+num_bytes_5_reg = num_bytes_4_reg + num_bytes_1_reg
+num_bytes_6_reg = num_bytes_5_reg + num_bytes_1_reg
+num_bytes_7_reg = num_bytes_6_reg + num_bytes_1_reg
+num_bytes_8_reg = num_bytes_7_reg + num_bytes_1_reg
+num_bytes_9_reg = num_bytes_8_reg + num_bytes_1_reg
+num_bytes_10_reg = num_bytes_9_reg + num_bytes_1_reg
+num_bytes_11_reg = num_bytes_10_reg + num_bytes_1_reg
+num_bytes_12_reg = num_bytes_11_reg + num_bytes_1_reg
+num_bytes_13_reg = num_bytes_12_reg + num_bytes_1_reg
+num_bytes_14_reg = num_bytes_13_reg + num_bytes_1_reg
+num_bytes_15_reg = num_bytes_14_reg + num_bytes_1_reg
+
+; Number of bytes for specific numbers of reg pairs
+num_bytes_1_pair = 2
+num_bytes_2_pair = num_bytes_1_pair + num_bytes_1_pair
+num_bytes_3_pair = num_bytes_2_pair + num_bytes_1_pair
+num_bytes_4_pair = num_bytes_3_pair + num_bytes_1_pair
+num_bytes_5_pair = num_bytes_4_pair + num_bytes_1_pair
+num_bytes_6_pair = num_bytes_5_pair + num_bytes_1_pair
+num_bytes_7_pair = num_bytes_6_pair + num_bytes_1_pair
+
 
 .endif		; cpu_constants_spinc

@@ -88,7 +88,7 @@ instruction_stuff_spinc = 3
 	error_if_bad_reg_name rA, ig1_op
 	;error_if_too_large_imm_value_8_8 imm_value_8, ig1_op
 	.dbyt encode_ig1_op{ig1_op} | encode_ig1_rA{.ident(rA)} \
-		| encode_ig1_imm_value_8{(.lobyte(imm_value_8))}
+		| encode_ig1_imm_value_8{imm_value_8}
 .endmac
 
 
@@ -197,7 +197,7 @@ instruction_stuff_spinc = 3
 	.dbyt encode_ig5_ihi_id{instr_g5_ihi_id} \
 		| encode_ig5_ihi_op{ig5_op} | encode_ig5_ihi_rA{.ident(rA)} \
 		| encode_ig5_ihi_rBp{encode_reg_pair{.ident(rBp)}}
-	.dbyt imm_value_16
+	.dbyt .loword(imm_value_16)
 .endmac
 
 .macro gen_grp_5_instr_rAp ig5_op, rAp, imm_value_16
@@ -206,13 +206,13 @@ instruction_stuff_spinc = 3
 	.dbyt encode_ig5_ihi_id{instr_g5_ihi_id} \
 		| encode_ig5_ihi_op{ig5_op} \
 		| encode_ig5_ihi_rA{.ident(reg_pair_hi{rAp})}
-	.dbyt imm_value_16
+	.dbyt .loword(imm_value_16)
 .endmac
 
 .macro gen_grp_5_instr_imm_value_16_only ig5_op, imm_value_16
 	
 	.dbyt encode_ig5_ihi_id{instr_g5_ihi_id} | encode_ig5_ihi_op{ig5_op}
-	.dbyt imm_value_16
+	.dbyt .loword(imm_value_16)
 .endmac
 
 
@@ -229,25 +229,6 @@ instruction_stuff_spinc = 3
 	gen_grp_1_instr instr_grp_1_oper::instr_g1_op_cmpi, rA, imm_value_8
 .endmac
 
-	; Pseudo instructions
-.macro addi16 rAp, imm_value_16
-	error_if_bad_reg_pair_name rAp, addi16
-	addi reg_pair_lo{rAp}, <imm_value_16
-	adci reg_pair_hi{rAp}, >imm_value_16
-.endmac
-
-.macro subi rA, imm_value_8
-	error_if_bad_reg_name rA, subi
-	addi rA, -imm_value_8
-.endmac
-
-; There is no sbci
-
-.macro subi16 rAp, imm_value_16
-	error_if_bad_reg_pair_name rAp, subi16
-	addi reg_pair_lo{rAp}, <(-imm_value_16)
-	adci reg_pair_hi{rAp}, >(-imm_value_16)
-.endmac
 
 
 	;Copy instructions:
@@ -281,19 +262,6 @@ instruction_stuff_spinc = 3
 .endmac
 	
 	
-	; Pseudo instructions
-.macro add16 rAp, rBp
-	error_if_bad_reg_pair_name rAp, add16
-	error_if_bad_reg_pair_name rBp, add16
-	add reg_pair_lo{rAp}, reg_pair_lo{rBp}
-	adc reg_pair_hi{rAp}, reg_pair_hi{rBp}
-.endmac
-.macro sub16 rAp, rBp
-	error_if_bad_reg_pair_name rAp, sub16
-	error_if_bad_reg_pair_name rBp, sub16
-	sub reg_pair_lo{rAp}, reg_pair_lo{rBp}
-	sbc reg_pair_hi{rAp}, reg_pair_hi{rBp}
-.endmac
 
 
 	; Bitwise instructions with two register operands:
@@ -479,10 +447,6 @@ instruction_stuff_spinc = 3
 	gen_grp_4_instr instr_grp_4_oper::instr_g4_op_bhi, offset
 .endmac
 
-	; Pseudo instructions
-.macro nop
-	bnv $00
-.endmac
 
 
 
@@ -498,10 +462,11 @@ instruction_stuff_spinc = 3
 	; instructions when used to copy a 16-bit immediate value to the
 	; pc])
 .macro cpypi rAp, imm_value_16
-	error_if_bad_reg_pair_name rAp
+	;error_if_bad_reg_pair_name rAp
 	gen_grp_5_instr_rAp instr_grp_5_oper::instr_g5_op_cpypi, rAp, \
-		(.loword(imm_value_16))
+		imm_value_16
 .endmac
+	
 
 	; Call instructions
 	; (CALL Immediate, which sets the link register to the return
@@ -509,25 +474,164 @@ instruction_stuff_spinc = 3
 	; address)
 .macro calli imm_value_16
 	gen_grp_5_instr_imm_value_16_only \
-		instr_grp_5_oper::instr_g5_op_calli, (.loword(imm_value_16))
+		instr_grp_5_oper::instr_g5_op_calli, imm_value_16
 .endmac
 
 	; Indexed Load/store instructions:
 	; (Load 8-bit value from memory at address [rBp + 16-bit Immediate
 	; value] into rA)
 .macro ldrxi rA, rBp, imm_value_16
-	error_if_bad_reg_name rA
-	error_if_bad_reg_pair_name rBp
+	;error_if_bad_reg_name rA
+	;error_if_bad_reg_pair_name rBp
 	gen_grp_5_instr_rA_rBp instr_grp_5_oper::instr_g5_op_ldrxi, rA, rBp, \
-		(.loword(imm_value_16))
+		imm_value_16
 .endmac
 
 	; (Store rA to memory at address [rBp + 16-bit Immediate value])
 .macro strxi rA, rBp, imm_value_16
+	;error_if_bad_reg_name rA
+	;error_if_bad_reg_pair_name rBp
+	
 	gen_grp_5_instr_rA_rBp instr_grp_5_oper::instr_g5_op_strxi, rA, rBp, \
-		(.loword(imm_value_16))
+		imm_value_16
 .endmac
 
+
+
+
+	; Pseudo instructions
+.macro addi16 rAp, imm_value_16
+	error_if_bad_reg_pair_name rAp, addi16
+	addi reg_pair_lo{rAp}, <imm_value_16
+	adci reg_pair_hi{rAp}, >imm_value_16
+.endmac
+
+.macro subi rA, imm_value_8
+	error_if_bad_reg_name rA, subi
+	addi rA, -imm_value_8
+.endmac
+
+; There is no sbci
+.macro subi16 rAp, imm_value_16
+	error_if_bad_reg_pair_name rAp, subi16
+	addi reg_pair_lo{rAp}, <(-imm_value_16)
+	adci reg_pair_hi{rAp}, >(-imm_value_16)
+.endmac
+
+
+.macro add16 rAp, rBp
+	error_if_bad_reg_pair_name rAp, add16
+	error_if_bad_reg_pair_name rBp, add16
+	add reg_pair_lo{rAp}, reg_pair_lo{rBp}
+	adc reg_pair_hi{rAp}, reg_pair_hi{rBp}
+.endmac
+.macro sub16 rAp, rBp
+	error_if_bad_reg_pair_name rAp, sub16
+	error_if_bad_reg_pair_name rBp, sub16
+	sub reg_pair_lo{rAp}, reg_pair_lo{rBp}
+	sbc reg_pair_hi{rAp}, reg_pair_hi{rBp}
+.endmac
+
+
+
+
+; This is the only reason I know of to use bnv
+.macro nop
+	.local @next
+@next:
+	bnv @next
+.endmac
+
+
+
+
+; Jump pseudo instructions
+.macro jump rAp
+	cpyp pc, rAp
+.endmac
+.macro jumpi imm_value_16
+	cpypi pc, imm_value_16
+.endmac
+
+
+.include "multi_ldr_str_macros.spinc"
+.include "multi_ldp_stp_macros.spinc"
+
+
+
+
+.macro push_reg rA
+	subi16 sp, num_bytes_1_reg
+	str rA, sp
+.endmac
+.macro pop_reg rA
+	ldr rA, sp
+	addi16 sp, num_bytes_1_reg
+.endmac
+
+
+.macro multi_push_regs __multi_ldst_all_regs
+.if ( .blank(some_reg_0) )
+	; Required parameter is blank
+	.exitmacro
+.else
+	subi16 sp, .paramcount
+	str some_reg_0, sp
+.endif
+	_store_multi_regs_innards sp, num_bytes_1_reg, \
+		__multi_ldst_continue_regs
+.endmac
+.macro multi_pop_regs __multi_ldst_all_regs
+.if ( .blank(some_reg_0) )
+	; Required parameter is blank
+	.exitmacro
+.else
+	ldr some_reg_0, sp
+.endif
+	_load_multi_regs_innards sp, num_bytes_1_reg, \
+		__multi_ldst_continue_regs
+	addi16 sp, .paramcount
+.endmac
+
+
+
+
+.macro push_pair rAp
+	subi16 sp, num_bytes_1_pair
+	stp rAp, sp
+.endmac
+
+.macro pop_pair rAp
+	ldp rAp, sp
+	addi16 sp, num_bytes_1_pair
+.endmac
+
+
+.macro multi_push_pairs __multi_ldst_all_pairs
+.if ( .blank(some_pair_0) )
+	; Required parameter is blank
+	.exitmacro
+.else
+	subi16 sp, .paramcount * 2
+	stp some_pair_0, sp
+.endif
+	_store_multi_pairs_innards sp, num_bytes_1_pair, \
+		__multi_ldst_continue_pairs
+.endmac
+.macro multi_pop_pairs __multi_ldst_all_pairs
+.if ( .blank(some_pair_0) )
+	; Required parameter is blank
+	.exitmacro
+.else
+	ldp some_pair_0, sp
+.endif
+	_load_multi_pairs_innards sp, num_bytes_1_pair, \
+		__multi_ldst_continue_pairs
+	addi16 sp, .paramcount * 2
+.endmac
+
+
+;.macro multi_push_pairs
 
 
 .endif		; instruction_stuff_spinc

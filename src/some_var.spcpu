@@ -1,0 +1,14 @@
+.include "instruction_stuff.spinc"
+
+.segment "ROM"
+
+.export test_infin
+test_infin:
+	bra test_infin
+
+
+.export some_var
+
+.segment "BSS"
+some_var:
+	.res 4
