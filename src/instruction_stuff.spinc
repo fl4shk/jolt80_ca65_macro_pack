@@ -474,7 +474,8 @@ instruction_stuff_spinc = 3
 	; address)
 .macro calli imm_value_16
 	gen_grp_5_instr_imm_value_16_only \
-		instr_grp_5_oper::instr_g5_op_calli, imm_value_16
+		instr_grp_5_oper::instr_g5_op_calli, imm_value_16 
+			- num_bytes_instr_32
 .endmac
 
 	; Indexed Load/store instructions:
@@ -502,8 +503,8 @@ instruction_stuff_spinc = 3
 	; Pseudo instructions
 .macro addi16 rAp, imm_value_16
 	error_if_bad_reg_pair_name rAp, addi16
-	addi reg_pair_lo{rAp}, <imm_value_16
-	adci reg_pair_hi{rAp}, >imm_value_16
+	addi reg_pair_lo{rAp}, <(imm_value_16)
+	adci reg_pair_hi{rAp}, >(imm_value_16)
 .endmac
 
 .macro subi rA, imm_value_8
@@ -514,8 +515,8 @@ instruction_stuff_spinc = 3
 ; There is no sbci
 .macro subi16 rAp, imm_value_16
 	error_if_bad_reg_pair_name rAp, subi16
-	addi reg_pair_lo{rAp}, <(-imm_value_16)
-	adci reg_pair_hi{rAp}, >(-imm_value_16)
+	addi reg_pair_lo{rAp}, <(-(imm_value_16))
+	adci reg_pair_hi{rAp}, >(-(imm_value_16))
 .endmac
 
 
@@ -545,12 +546,22 @@ instruction_stuff_spinc = 3
 
 
 
-; Jump pseudo instructions
-.macro jump rAp
+; Jump/call pseudo instructions
+.macro basic_jump rAp
 	cpyp pc, rAp
 .endmac
-.macro jumpi imm_value_16
+.macro basic_jumpi imm_value_16
 	cpypi pc, imm_value_16
+.endmac
+
+.macro jump rAp
+	;subi16 rAp, num_bytes_instr_32
+	subi16 rAp, num_bytes_instr_32 + num_bytes_instr_16 \
+		+ num_bytes_instr_16
+	cpyp pc, rAp
+.endmac
+.macro jumpi label
+	cpypi pc, ( label - num_bytes_instr_32 )
 .endmac
 
 

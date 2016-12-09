@@ -10,31 +10,39 @@
 
 
 start:
-	;lsl r15, r0
-	;;lsl r14, r1
-	;
-	;lslp pc, r0
-	;lslp lr, r1
-	addi r15, 0
-	;adci r14, 3
-	;cpyi r14, 9
-	;cpy r14, r14
-	sub r0, r1
-	sub r0, r1
-	sub r0, r1
-	sub r0, r1
+	;cpyi r0, 1
+	;bra start
+	;addi r15, 2
+	;subi r15, 2
+	;addi r14, 2
+	;addi r3, 4
+	;;jumpi start + 4
+	;;jumpi start
+	;addi r3, 4
+	;subi r15, 4
+	;cpypi pc, start - 4
+	;cpyi r0, 3
+	;cpypi pc, start + 4
+	;addi r0, 9
+	;jumpi start
+	;cpypi pc, 3
+	;jumpi start
 	
-	;;addi r1, 3
-	;;adci r1, 3
-	;;adci r1, 3
-	;;adci r1, 3
-	jumpi start
-	bra start
-	jumpi start
-	jumpi start
-	cpyp r0p, pc
-	lsl r14, r1
-	add16 pc, pc
+	;jump
+	;jumpi nice
+	;jumpi start
+	
+	cpypi r0p, $fff
+	addi16 r0p, $fff
+	
+	;subi16 r0p, $999
+	subi16 r0p, $fff + $fff
+	addi r0, $ff
+	;jumpi start
+
+nice:
+	bra nice
+
 
 ;start:
 ;	cpyi r0, $1

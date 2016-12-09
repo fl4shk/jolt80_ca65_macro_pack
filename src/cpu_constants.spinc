@@ -161,5 +161,8 @@ num_bytes_5_pair = num_bytes_4_pair + num_bytes_1_pair
 num_bytes_6_pair = num_bytes_5_pair + num_bytes_1_pair
 num_bytes_7_pair = num_bytes_6_pair + num_bytes_1_pair
 
+num_bytes_instr_16 = 2
+num_bytes_instr_32 = 4
+
 
 .endif		; cpu_constants_spinc
