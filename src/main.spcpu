@@ -19,19 +19,22 @@ start:
 	;adci r14, 3
 	;cpyi r14, 9
 	;cpy r14, r14
-	;sub r0, r1
+	sub r0, r1
+	sub r0, r1
+	sub r0, r1
+	sub r0, r1
 	
 	;;addi r1, 3
 	;;adci r1, 3
 	;;adci r1, 3
 	;;adci r1, 3
-	;jumpi start
-	;;bra start
-	;jumpi start
-	;jumpi start
-	;cpypi r2p, $10
-	;cpyp r4p, pc
+	jumpi start
+	bra start
+	jumpi start
+	jumpi start
 	cpyp r0p, pc
+	lsl r14, r1
+	add16 pc, pc
 
 ;start:
 ;	cpyi r0, $1
