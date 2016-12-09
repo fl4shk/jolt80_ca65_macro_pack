@@ -2,9 +2,9 @@
 
 .segment "ROM"
 
-.export test_infin
-test_infin:
-	bra test_infin
+;.export test_infin
+;test_infin:
+;	bra test_infin
 
 
 .export some_var

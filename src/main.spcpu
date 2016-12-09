@@ -5,19 +5,47 @@
 
 .segment "ROM"
 
-main:
-	cpyi r0, $1
-	
-	cpypi r2p, some_var
-	str r0, r2p
+; Use .org so that the start of code ends up where it should
+.org 0
 
-infin:
-	;bra test_infin
-	bra infin
-	;jumpi test_infin
+
+start:
+	;lsl r15, r0
+	;;lsl r14, r1
+	;
+	;lslp pc, r0
+	;lslp lr, r1
+	addi r15, 0
+	;adci r14, 3
+	;cpyi r14, 9
+	;cpy r14, r14
+	;sub r0, r1
 	
-mac_test:
-	
+	;;addi r1, 3
+	;;adci r1, 3
+	;;adci r1, 3
+	;;adci r1, 3
+	;jumpi start
+	;;bra start
+	;jumpi start
+	;jumpi start
+	;cpypi r2p, $10
+	;cpyp r4p, pc
+	cpyp r0p, pc
+
+;start:
+;	cpyi r0, $1
+;	
+;	cpypi r2p, some_var
+;	str r0, r2p
+;
+;infin:
+;	;bra test_infin
+;	bra infin
+;	;jumpi test_infin
+;	
+;mac_test:
+;	
 
 
 ;; ARM-style register saving
