@@ -13,69 +13,57 @@ true_start:
 .segment "ROM"
 
 
+
+;non_immediate_indexed_ldst_test:
+;	;;cpypi r2p, $33aa
+;	;;cpypi r4p, $99bb
+;	cpypi r8p, some_var
+;	cpypi lr, 0
+;	
+;	cpyi r0, $f8
+;	strx r0, r8p, lr
+;	;strx r0, r8p, lr
+;	
+;	
+;	addi r13, 1
+;	;addi r9, 1
+;	
+;	cpyi r0, $aa
+;	strx r0, r8p, lr
+;	
+;	
+;	subi r13, 1
+;	;subi r9, 1
+;	ldrx r1, r8p, lr
+;	
+;	addi r13, 1
+;	;addi r9, 1
+;	ldrx r2, r8p, lr
+
+
+; ARM-style register saving
+test_sr:
+	; Allow lr to be used for local variables and stuffs
+	push_pair lr
+	
+	
+	; return
+	;pop_pair pc
+	pop_pair lr
+	swp lr, pc
+	;cpyp pc, lr
+	
+	;jump lr
+	
+
 start:
-	;;cpypi r2p, $33aa
-	;;cpypi r4p, $99bb
-	cpypi r8p, some_var
-	cpypi lr, 0
-	
-	cpyi r0, $f8
-	strx r0, r8p, lr
-	;strx r0, r8p, lr
-	
-	
-	addi r13, 1
-	;addi r9, 1
-	
-	cpyi r0, $aa
-	strx r0, r8p, lr
-	
-	
-	subi r13, 1
-	;subi r9, 1
-	ldrx r1, r8p, lr
-	
-	addi r13, 1
-	;addi r9, 1
-	ldrx r2, r8p, lr
-	
-	;;;str r0, r8p
-	;;;addi r9, 1
-	;;;
-	;;;cpyi r0, $aa
-	;;;str r0, r8p
-	;;;
-	;;;
-	;;;subi r9, 1
-	;;;ldr r1, r8p
-	;;;
-	;;;addi r9, 1
-	;;;ldr r2, r8p
-	
-	
-	
-	
-	
-	
-;	bra test
-;nice:
-;	cpyi r4, 80
-;	
-;test:
-;	;bra meme
-;	cpyi r0, 3
+	;calli test_sr
+	;bra start
+	cpyi r0, 4
+	cmpi r0, 3
+	;bcs start
+	;bls start
+	bhi start
 	
 
 
-;; ARM-style register saving
-;test_sr:
-;	; Allow lr to be used for local variables and stuffs
-;	push_pair lr
-;	
-;	
-;	; return
-;	pop_pair pc
-;	;cpyp pc, lr
-;	
-;	;jump lr
-;	
