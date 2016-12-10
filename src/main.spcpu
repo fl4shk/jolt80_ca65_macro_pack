@@ -6,41 +6,65 @@
 .segment "INIT"
 true_start:
 	jumpi start
+	;cpypi r0p, 3
+	;cpypi r2p, 3
+	;jumpi infin
 
 .segment "ROM"
 
 
 start:
-	;cpypi r0p, $fff
-	;cpyi r0, 3
-	;cpypi r0p, start
-	;subi16 r0p, num_bytes_instr_16
-	;basic_jump r0p
+	;;cpypi r2p, $33aa
+	;;cpypi r4p, $99bb
+	cpypi r8p, some_var
+	cpypi lr, 0
 	
-	cpypi r0p, start
-meme:
-	;rpair_chng_jump r0p
-	;jumpi start
-	call r0p
+	cpyi r0, $f8
+	strx r0, r8p, lr
+	;strx r0, r8p, lr
 	
-
-nice:
-	bra nice
-
-
-;start:
-;	cpyi r0, $1
+	
+	addi r13, 1
+	;addi r9, 1
+	
+	cpyi r0, $aa
+	strx r0, r8p, lr
+	
+	
+	subi r13, 1
+	;subi r9, 1
+	ldrx r1, r8p, lr
+	
+	addi r13, 1
+	;addi r9, 1
+	ldrx r2, r8p, lr
+	
+	;;;str r0, r8p
+	;;;addi r9, 1
+	;;;
+	;;;cpyi r0, $aa
+	;;;str r0, r8p
+	;;;
+	;;;
+	;;;subi r9, 1
+	;;;ldr r1, r8p
+	;;;
+	;;;addi r9, 1
+	;;;ldr r2, r8p
+	
+	
+	
+	
+	
+	
+;	bra test
+;nice:
+;	cpyi r4, 80
 ;	
-;	cpypi r2p, some_var
-;	str r0, r2p
-;
-;infin:
-;	;bra test_infin
-;	bra infin
-;	;jumpi test_infin
-;	
-;mac_test:
-;	
+;test:
+;	;bra meme
+;	cpyi r0, 3
+	
 
 
 ;; ARM-style register saving

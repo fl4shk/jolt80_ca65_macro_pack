@@ -5,6 +5,16 @@ instruction_stuff_spinc = 3
 .include "instruction_constants.spinc"
 .include "instruction_enums.spinc"
 
+;.macro _branch_offset instr, target
+;	.local @distance, @next
+;	@distance = (target) - @next
+;	instr
+;	.assert @distance >= -128 && @distance <= 127, error, "branch out of range"
+;	.byte <@distance
+;@next:
+;.endmacro
+
+
 ; It's a good thing I encode branch offsets at the end of group 4
 ; instructions
 .macro _branch_offset instr, target
@@ -560,7 +570,9 @@ instruction_stuff_spinc = 3
 	cpyp pc, rAp
 .endmac
 .macro jumpi label
-	cpypi pc, ( label - num_bytes_instr_32 )
+	;cpypi pc, ( label - num_bytes_instr_32 )
+	cpypi pc, ( label - num_bytes_instr_16 )
+	;cpypi pc, label
 .endmac
 
 
