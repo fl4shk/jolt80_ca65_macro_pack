@@ -66,9 +66,25 @@ branch_test:
 	bhi branch_test
 
 start:
-	cpypi r2p, 3
-	addpbi r2p, 9
-	subpbi r2p, 8
+	;cpypi sp, $7ffc
+	cpypi sp, $8000
+	cpyi r0, $99
+	cpyi r1, $77
+	cpyi r2, $66
+	
+	;subpbi sp, 3
+	;str r0, sp
+	;strxi r1, sp, 1
+	;strxi r2, sp, 2
+	
+	
+	;ldr r4, sp
+	;ldrxi r5, sp, 1
+	;ldrxi r6, sp, 2
+	multi_push_regs r0, r1, r2
+	multi_pop_regs r4, r5, r6
+	
+	
 
 
 
