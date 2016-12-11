@@ -29,7 +29,9 @@ instruction_enums_spinc = 3
 	; Arithmetic instructions:
 	instr_g1_op_addi
 	instr_g1_op_adci
+	instr_g1_op_addpbi
 	
+	instr_g1_op_subpbi
 	instr_g1_op_cmpi
 	
 	;Copy instructions:

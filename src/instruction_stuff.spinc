@@ -94,10 +94,17 @@ instruction_stuff_spinc = 3
 	lshift_masked_bits{imm_value_8},\
 	{instr_g1_imm_value_range_hi},{instr_g1_imm_value_range_lo}
 
-.macro gen_grp_1_instr ig1_op, rA, imm_value_8
+.macro gen_grp_1_instr_rA ig1_op, rA, imm_value_8
 	error_if_bad_reg_name rA, ig1_op
 	;error_if_too_large_imm_value_8_8 imm_value_8, ig1_op
 	.dbyt encode_ig1_op{ig1_op} | encode_ig1_rA{.ident(rA)} \
+		| encode_ig1_imm_value_8{imm_value_8}
+.endmac
+
+.macro gen_grp_1_instr_rAp ig1_op, rAp, imm_value_8
+	error_if_bad_reg_pair_name rAp, ig1_op
+	;error_if_too_large_imm_value_8_8 imm_value_8, ig1_op
+	.dbyt encode_ig1_op{ig1_op} | encode_ig1_rA{.ident(reg_pair_hi{rAp})} \
 		| encode_ig1_imm_value_8{imm_value_8}
 .endmac
 
@@ -230,13 +237,27 @@ instruction_stuff_spinc = 3
 ; Encoding:  0ooo aaaa iiii iiii
 	; Arithmetic instructions:
 .macro addi rA, imm_value_8
-	gen_grp_1_instr instr_grp_1_oper::instr_g1_op_addi, rA, imm_value_8
+	gen_grp_1_instr_rA instr_grp_1_oper::instr_g1_op_addi, rA, imm_value_8
 .endmac
 .macro adci rA, imm_value_8
-	gen_grp_1_instr instr_grp_1_oper::instr_g1_op_adci, rA, imm_value_8
+	gen_grp_1_instr_rA instr_grp_1_oper::instr_g1_op_adci, rA, imm_value_8
 .endmac
+
+; (ADd 8-bit Immediate value to reg Pair rAp)
+.macro addpbi rAp, imm_value_8
+	gen_grp_1_instr_rAp instr_grp_1_oper::instr_g1_op_addpbi, rAp, \
+		imm_value_8
+.endmac
+
+; (SuBtract 8-bit Immediate value from reg Pair rAp [NOT an assembler alias
+; for addpbi])
+.macro subpbi rAp, imm_value_8
+	gen_grp_1_instr_rAp instr_grp_1_oper::instr_g1_op_subpbi, rAp, \
+		imm_value_8
+.endmac
+
 .macro cmpi rA, imm_value_8
-	gen_grp_1_instr instr_grp_1_oper::instr_g1_op_cmpi, rA, imm_value_8
+	gen_grp_1_instr_rA instr_grp_1_oper::instr_g1_op_cmpi, rA, imm_value_8
 .endmac
 
 
@@ -244,7 +265,7 @@ instruction_stuff_spinc = 3
 	;Copy instructions:
 	; (CoPY Immediate)
 .macro cpyi rA, imm_value_8
-	gen_grp_1_instr instr_grp_1_oper::instr_g1_op_cpyi, rA, imm_value_8
+	gen_grp_1_instr_rA instr_grp_1_oper::instr_g1_op_cpyi, rA, imm_value_8
 .endmac
 
 
@@ -565,8 +586,8 @@ instruction_stuff_spinc = 3
 .endmac
 
 .macro rpair_chng_jump rAp
-	subi16 rAp, num_bytes_instr_16
-	;subi16 rAp, num_bytes_instr_32
+	subpbi rAp, num_bytes_instr_16
+	;subpbi rAp, num_bytes_instr_32
 	cpyp pc, rAp
 .endmac
 .macro jumpi label
@@ -583,12 +604,12 @@ instruction_stuff_spinc = 3
 
 
 .macro push_reg rA
-	subi16 sp, num_bytes_1_reg
+	subpbi sp, num_bytes_1_reg
 	str rA, sp
 .endmac
 .macro pop_reg rA
 	ldr rA, sp
-	addi16 sp, num_bytes_1_reg
+	addpbi sp, num_bytes_1_reg
 .endmac
 
 
@@ -597,7 +618,7 @@ instruction_stuff_spinc = 3
 	; Required parameter is blank
 	.exitmacro
 .else
-	subi16 sp, .paramcount
+	subpbi sp, .paramcount
 	str some_reg_0, sp
 .endif
 	_store_multi_regs_innards sp, num_bytes_1_reg, \
@@ -612,20 +633,20 @@ instruction_stuff_spinc = 3
 .endif
 	_load_multi_regs_innards sp, num_bytes_1_reg, \
 		__multi_ldst_continue_regs
-	addi16 sp, .paramcount
+	addpbi sp, .paramcount
 .endmac
 
 
 
 
 .macro push_pair rAp
-	subi16 sp, num_bytes_1_pair
+	subpbi sp, num_bytes_1_pair
 	stp rAp, sp
 .endmac
 
 .macro pop_pair rAp
 	ldp rAp, sp
-	addi16 sp, num_bytes_1_pair
+	addpbi sp, num_bytes_1_pair
 .endmac
 
 
@@ -634,7 +655,7 @@ instruction_stuff_spinc = 3
 	; Required parameter is blank
 	.exitmacro
 .else
-	subi16 sp, .paramcount * 2
+	subpbi sp, .paramcount * 2
 	stp some_pair_0, sp
 .endif
 	_store_multi_pairs_innards sp, num_bytes_1_pair, \
@@ -649,7 +670,7 @@ instruction_stuff_spinc = 3
 .endif
 	_load_multi_pairs_innards sp, num_bytes_1_pair, \
 		__multi_ldst_continue_pairs
-	addi16 sp, .paramcount * 2
+	addpbi sp, .paramcount * 2
 .endmac
 
 

@@ -56,14 +56,19 @@ test_sr:
 	;jump lr
 	
 
-start:
+branch_test:
 	;calli test_sr
-	;bra start
+	;bra branch_test
 	cpyi r0, 4
 	cmpi r0, 3
-	;bcs start
-	;bls start
-	bhi start
-	
+	;bcs branch_test
+	;bls branch_test
+	bhi branch_test
+
+start:
+	cpypi r2p, 3
+	addpbi r2p, 9
+	subpbi r2p, 8
+
 
 

@@ -95,7 +95,7 @@ multi_ldp_stp_macros_spinc = 3
 
 
 
-; Pseudo immediate indexed block move (load-pair version)
+; Immediate indexed pseudo block move (load-pair version)
 .macro multi_ldpxi base_pair, index, __multi_ldst_all_pairs
 .if ( .blank(base_pair) .or .blank(some_pair_0) )
 	; At least one required parameter is empty
@@ -108,7 +108,7 @@ multi_ldp_stp_macros_spinc = 3
 .endmac
 
 
-; Pseudo immediate indexed block move (store-pair version)
+; Immediate indexed pseudo block move (store-pair version)
 .macro multi_stpxi base_pair, index, __multi_ldst_all_pairs
 .if ( .blank(base_pair) .or .blank(some_pair_0) )
 	; At least one required parameter is empty
