@@ -9,3 +9,4 @@ This is what I've been using to write test code for Small Practice CPU.
 ## How to use this macro pack:
 1.  Include "include/spcpu\_ca65\_macro\_pack.spinc"
 2.  Optionally use the existing "makefile" and "ldconfig.cfg"
+3.  Optionally look at the files in src/ for some examples
