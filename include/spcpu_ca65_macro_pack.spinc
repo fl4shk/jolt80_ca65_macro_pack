@@ -532,7 +532,7 @@ spcpu_ca65_macro_pack_spinc = 3
 
 
 	; Pseudo instructions
-.macro addi16 rAp, imm_value_16
+.macro addpi rAp, imm_value_16
 	error_if_bad_reg_pair_name rAp, addi16
 	addi reg_pair_lo{rAp}, <(imm_value_16)
 	adci reg_pair_hi{rAp}, >(imm_value_16)
@@ -544,20 +544,20 @@ spcpu_ca65_macro_pack_spinc = 3
 .endmac
 
 ; There is no sbci
-.macro subi16 rAp, imm_value_16
+.macro subpi rAp, imm_value_16
 	error_if_bad_reg_pair_name rAp, subi16
 	addi reg_pair_lo{rAp}, <(-(imm_value_16))
 	adci reg_pair_hi{rAp}, >(-(imm_value_16))
 .endmac
 
 
-.macro add16 rAp, rBp
+.macro addp rAp, rBp
 	error_if_bad_reg_pair_name rAp, add16
 	error_if_bad_reg_pair_name rBp, add16
 	add reg_pair_lo{rAp}, reg_pair_lo{rBp}
 	adc reg_pair_hi{rAp}, reg_pair_hi{rBp}
 .endmac
-.macro sub16 rAp, rBp
+.macro subp rAp, rBp
 	error_if_bad_reg_pair_name rAp, sub16
 	error_if_bad_reg_pair_name rBp, sub16
 	sub reg_pair_lo{rAp}, reg_pair_lo{rBp}

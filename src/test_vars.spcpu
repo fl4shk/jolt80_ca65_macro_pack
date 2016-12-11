@@ -1,0 +1,14 @@
+.include "../include/spcpu_ca65_macro_pack.spinc"
+.include "test_var_stuff.spinc"
+
+.export some_var
+.export some_arr
+
+
+.segment "BSS"
+some_var:
+	.res some_var_size
+
+
+some_arr:
+	.res some_arr_size

@@ -1,0 +1,24 @@
+.include "../include/spcpu_ca65_macro_pack.spinc"
+.include "misc_utility_macros.spinc"
+
+
+.export other_file_test_subroutine
+.export quit
+
+.segment "ROM"
+
+
+other_file_test_subroutine:
+	;push_pair lr
+	
+	
+	cpypi r0p, 2016
+	subpi r0p, 2004
+	
+	
+	;pop_and_ret lr
+	basic_jump lr
+
+
+quit:
+	end_simulation

@@ -1,9 +1,9 @@
 # SPCPU ca65 Macro Pack
-This is macro pack for assembling Small Practice CPU code with ca65.
+This is an assembler for Small Practice CPU implemented entirely in macros
+for ca65, which is the assembler component of cc65.
 
+You can get cc65 (ca65 is included) here:  https://github.com/cc65/cc65
 ca65 Documentation:  http://cc65.github.io/doc/ca65.html
-
-This is what I've been using to write test code for Small Practice CPU.
 
 
 ## How to use this macro pack:

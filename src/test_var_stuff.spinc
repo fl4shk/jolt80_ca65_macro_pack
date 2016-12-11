@@ -1,0 +1,9 @@
+.ifndef test_var_stuff_spinc
+test_var_stuff_spinc = 3
+
+
+some_var_size = 1
+some_arr_size = 20
+
+
+.endif		; test_var_stuff_spinc
