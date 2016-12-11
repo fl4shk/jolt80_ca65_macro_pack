@@ -604,8 +604,9 @@ spcpu_ca65_macro_pack_spinc = 3
 	;cpypi pc, label
 .endmac
 
-.macro ret rAp
-	rpair_chng_jump rAp
+.macro pop_and_ret rAp
+	pop_pair rAp
+	basic_jump rAp
 .endmac
 
 

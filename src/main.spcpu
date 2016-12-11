@@ -89,23 +89,26 @@ true_start:
 temp:
 	push_pair lr
 	
-	pop_pair r0p
-	subpbi lr, 2
+	;pop_pair r0p
+	;subpbi lr, 2
 	;cpyp pc, lr
-	ret r0p
+	pop_and_ret r0p
+	;cpyp pc, r0p
 
 
 start:
-	cpypi sp, initial_sp
-	
-	cpypi lr, $ff30
-	
-	push_pair lr
-	
-	calli temp
-	
-	pop_pair r0p
+	;cpypi sp, initial_sp
+	;
+	;cpypi lr, $aa23
+	;
+	;push_pair lr
+	;
+	;calli temp
+	;
+	;pop_pair r0p
 	;addpbi sp, 2
 	;subpbi sp, 2
+	bra start
 	
+
 
