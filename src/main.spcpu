@@ -88,6 +88,10 @@ true_start:
 ;	pop_pair lr
 ;	basic_jump lr 
 
+;.macro abs rA
+;	
+;.endmac
+
 temp:
 	;push_pair lr
 	
@@ -98,14 +102,42 @@ temp:
 
 start:
 	init_sp
-	calli other_file_test_subroutine
+	;calli other_file_test_subroutine
 	
 	cpypi r2p, some_arr
-	stp r0p, r2p
 	
-	ldp r4p, r2p
+	cpyi r0, 3
+	cpypi r4p, 0
 	
-	jumpi quit
+	strx r0, r2p, r4p
+	
+	
+	addpbi r4p, 1
+	addi r0, 1
+	strx r0, r2p, r4p
+	
+	
+	subpbi r4p, 1
+	ldrx r6, r2p, r4p
+	addpbi r4p, 1
+	ldrx r7, r2p, r4p
+	
+	
+	;stp r0p, r2p
+	;
+	;ldp r4p, r2p
+	
+	;cpypi r0p, -3
+	
+	
+	;cpypi lr, end_simulation
+	;
+	;cpyi r0, 3
+	;cmpi r0, 2
+	;bhi temp
+	;bhi start
+	
+	jumpi end_simulation
 	
 
 

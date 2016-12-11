@@ -3,7 +3,7 @@
 
 
 .export other_file_test_subroutine
-.export quit
+.export end_simulation
 
 .segment "ROM"
 
@@ -20,5 +20,9 @@ other_file_test_subroutine:
 	basic_jump lr
 
 
-quit:
-	end_simulation
+; End RTL Simulation of the CPU by using a special instruction sequence of
+; four 0000's
+end_simulation:
+	.repeat 4
+	addi r0, 0
+	.endrep

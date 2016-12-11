@@ -8,11 +8,11 @@ misc_utility_macros_spinc = 3
 .endmac
 
 
-; End RTL Simulation of the CPU
-.macro end_simulation
-	.repeat 4
-	addi r0, 0
-	.endrep
-.endmac
+;; End RTL Simulation of the CPU
+;.macro end_simulation
+;	.repeat 4
+;	addi r0, 0
+;	.endrep
+;.endmac
 
 .endif		; misc_utility_macros_spinc
