@@ -1,5 +1,5 @@
-.ifndef instruction_stuff_spinc
-instruction_stuff_spinc = 3
+.ifndef spcpu_ca65_macro_pack_spinc
+spcpu_ca65_macro_pack_spinc = 3
 
 
 .include "instruction_constants.spinc"
@@ -677,4 +677,4 @@ instruction_stuff_spinc = 3
 ;.macro multi_push_pairs
 
 
-.endif		; instruction_stuff_spinc
+.endif		; spcpu_ca65_macro_pack_spinc

@@ -1,4 +1,4 @@
-.include "instruction_stuff.spinc"
+.include "../include/spcpu_ca65_macro_pack.spinc"
 
 
 
