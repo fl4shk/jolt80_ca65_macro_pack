@@ -22,3 +22,4 @@ spcpu_ca65_macro_pack*.bin
 instructions_and_encodings.txt
 used_addresses.txt
 *.txt.ignore
+open_all_source_files_in_vim.sh

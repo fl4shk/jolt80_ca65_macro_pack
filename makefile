@@ -39,7 +39,7 @@ ASOBJS=$(ASFILES:.spcpu=.o)
 #ASLSTS=$(ASFILES:.spcpu=.lst)
 
 all:  all_pre $(ASOBJS)
-	$(call LINK, objs/*.o) && ./dump_readmemh_input.sh
+	$(call LINK, objs/*.o) && ./tools/dump_readmemh_input.sh
 
 all_pre: 
 	mkdir -p objs
