@@ -41,41 +41,71 @@ true_start:
 ;	ldrx r2, r8p, lr
 
 
-; ARM-style register saving
-test_sr:
-	; Allow lr to be used for local variables and stuffs
+;; ARM-style register saving
+;test_sr:
+;	; Allow lr to be used for local variables and stuffs
+;	push_pair lr
+;	
+;	
+;	; return
+;	;pop_pair pc
+;	pop_pair lr
+;	swp lr, pc
+;	
+;	
+;	;cpyp pc, lr
+;	
+;	;jump lr
+;	
+;
+;branch_test:
+;	;calli test_sr
+;	;bra branch_test
+;	cpyi r0, 4
+;	;cmpi r0, 3
+;	;bcs branch_test
+;	;bls branch_test
+;	;bhi branch_test
+
+;stack_test:
+;	push_pair lr
+;	
+;	cpyi r0, $99
+;	cpyi r1, $77
+;	cpyi r2, $66
+;	
+;	;multi_push_regs r0, r1, r2
+;	;multi_pop_regs r4, r5, r6
+;	push_reg r0
+;	push_reg r1
+;	
+;	pop_reg r1
+;	pop_reg r0
+;	
+;	
+;	pop_pair lr
+;	basic_jump lr 
+
+temp:
 	push_pair lr
 	
-	
-	; return
-	;pop_pair pc
-	pop_pair lr
-	swp lr, pc
+	pop_pair r0p
+	subpbi lr, 2
 	;cpyp pc, lr
-	
-	;jump lr
-	
+	ret r0p
 
-branch_test:
-	;calli test_sr
-	;bra branch_test
-	cpyi r0, 4
-	cmpi r0, 3
-	;bcs branch_test
-	;bls branch_test
-	bhi branch_test
 
 start:
-	;cpypi sp, $7ffc
-	cpypi sp, $8000
-	cpyi r0, $99
-	cpyi r1, $77
-	cpyi r2, $66
+	cpypi sp, initial_sp
 	
-	multi_push_regs r0, r1, r2
-	multi_pop_regs r4, r5, r6
+	cpypi lr, $ff30
 	
+	push_pair lr
 	
-
-
+	calli temp
+	
+	pop_pair r0p
+	;addpbi sp, 2
+	;subpbi sp, 2
+	
 
