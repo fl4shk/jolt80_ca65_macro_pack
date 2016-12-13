@@ -112,7 +112,7 @@ start:
 	cmpi r0, 10
 	
 infin:
-	bhs infin
+	blo infin
 	
 	jumpi end_simulation
 	

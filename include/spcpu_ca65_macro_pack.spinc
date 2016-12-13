@@ -584,6 +584,15 @@ spcpu_ca65_macro_pack_spinc = 3
 .endmac
 
 
+	; (branch when Z == 0 )
+.macro bzc offset
+	bne offset
+.endmac
+	; (branch when Z == 1 )
+.macro bzs offset
+	beq offset
+.endmac
+
 	; (branch when C == 0 [unsigned greater than or equal])
 .macro bhs offset
 	bcc offset
