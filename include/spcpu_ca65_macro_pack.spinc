@@ -5,16 +5,6 @@ spcpu_ca65_macro_pack_spinc = 3
 .include "instruction_constants.spinc"
 .include "instruction_enums.spinc"
 
-;.macro _branch_offset instr, target
-;	.local @distance, @next
-;	@distance = (target) - @next
-;	instr
-;	.assert @distance >= -128 && @distance <= 127, error, "branch out of range"
-;	.byte <@distance
-;@next:
-;.endmacro
-
-
 ; It's a good thing I encode branch offsets at the end of group 4
 ; instructions
 .macro _branch_offset instr, target
@@ -25,6 +15,25 @@ spcpu_ca65_macro_pack_spinc = 3
 	.byte <@distance
 @next:
 .endmacro
+
+
+;.macro _branch_offset instr, target
+;	.local @distance, @next
+;	@distance = (target) - @next - 2
+;	instr
+;	.assert @distance >= -128 && @distance <= 127, error, "branch out of range"
+;	.byte <@distance
+;@next:
+;.endmacro
+
+;.macro _branch_offset instr, target
+;	.local @distance, @next
+;@next:
+;	@distance = (target) - @next
+;	instr
+;	.assert @distance >= -128 && @distance <= 127, error, "branch out of range"
+;	.byte <@distance
+;.endmacro
 
 .macro error_if_bad_reg_name rA, instr
 	.if .not ( .xmatch( rA, r0 ) \
@@ -461,11 +470,11 @@ spcpu_ca65_macro_pack_spinc = 3
 .macro beq offset
 	gen_grp_4_instr instr_grp_4_oper::instr_g4_op_beq, offset
 .endmac
-	; (branch when C == 0 [unsigned less than])
+	; (branch when C == 0 [unsigned greater than or equal])
 .macro bcc offset
 	gen_grp_4_instr instr_grp_4_oper::instr_g4_op_bcc, offset
 .endmac
-	; (branch when C == 1 [unsigned greater than or equal])
+	; (branch when C == 1 [unsigned less than])
 .macro bcs offset
 	gen_grp_4_instr instr_grp_4_oper::instr_g4_op_bcs, offset
 .endmac
@@ -575,12 +584,12 @@ spcpu_ca65_macro_pack_spinc = 3
 .endmac
 
 
-	; (branch when C == 0 [unsigned less than])
-.macro blo offset
+	; (branch when C == 0 [unsigned greater than or equal])
+.macro bhs offset
 	bcc offset
 .endmac
-	; (branch when C == 1 [unsigned greater than or equal])
-.macro bhs offset
+	; (branch when C == 1 [unsigned less than])
+.macro blo offset
 	bcs offset
 .endmac
 
@@ -594,14 +603,14 @@ spcpu_ca65_macro_pack_spinc = 3
 .endmac
 
 .macro rpair_chng_jump rAp
-	subpbi rAp, num_bytes_instr_16
-	;subpbi rAp, num_bytes_instr_32
+	;subpbi rAp, num_bytes_instr_16
+	subpbi rAp, num_bytes_instr_32
 	cpyp pc, rAp
 .endmac
 .macro jumpi label
 	;cpypi pc, ( label - num_bytes_instr_32 )
-	cpypi pc, ( label - num_bytes_instr_16 )
-	;cpypi pc, label
+	;cpypi pc, ( label - num_bytes_instr_16 )
+	cpypi pc, label
 .endmac
 
 .macro pop_and_ret rAp
