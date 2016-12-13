@@ -17,13 +17,14 @@ other_file_test_subroutine:
 	;
 	;
 	;;pop_and_ret lr
-	;basic_jump lr
+	basic_jump lr
 
 
 ; End RTL Simulation of the CPU by using a special instruction sequence of
 ; four 0000's
 end_simulation:
-	cpypi r0p, $99bb
+	;cpypi r2p, $99bb
 	.repeat 4
 	addi r0, 0
 	.endrep
+	.asciiz "abcdef"

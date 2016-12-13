@@ -635,12 +635,12 @@ spcpu_ca65_macro_pack_spinc = 3
 
 
 .macro push_reg rA
-	subpbi sp, num_bytes_1_reg
 	str rA, sp
+	subpbi sp, num_bytes_1_reg
 .endmac
 .macro pop_reg rA
-	ldr rA, sp
 	addpbi sp, num_bytes_1_reg
+	ldr rA, sp
 .endmac
 
 
@@ -650,34 +650,39 @@ spcpu_ca65_macro_pack_spinc = 3
 	.exitmacro
 .else
 	subpbi sp, .paramcount
-	str some_reg_0, sp
+	multi_strxi sp, 1, __multi_ldst_all_regs
 .endif
-	_store_multi_regs_innards sp, num_bytes_1_reg, \
-		__multi_ldst_continue_regs
 .endmac
+
 .macro multi_pop_regs __multi_ldst_all_regs
 .if ( .blank(some_reg_0) )
 	; Required parameter is blank
 	.exitmacro
 .else
-	ldr some_reg_0, sp
-.endif
-	_load_multi_regs_innards sp, num_bytes_1_reg, \
-		__multi_ldst_continue_regs
+	multi_ldrxi sp, 1, __multi_ldst_all_regs
 	addpbi sp, .paramcount
+.endif
 .endmac
 
 
 
 
+;.macro push_pair rAp
+;	stp rAp, sp
+;	subpbi sp, num_bytes_1_pair
+;.endmac
+;
+;.macro pop_pair rAp
+;	;ldp rAp, sp
+;	ldpxi rAp, sp, 1
+;	addpbi sp, num_bytes_1_pair
+;.endmac
 .macro push_pair rAp
-	subpbi sp, num_bytes_1_pair
-	stp rAp, sp
+	multi_push_regs convert_pair_to_two_regs{rAp}
 .endmac
 
 .macro pop_pair rAp
-	ldp rAp, sp
-	addpbi sp, num_bytes_1_pair
+	multi_pop_regs convert_pair_to_two_regs{rAp}
 .endmac
 
 
@@ -687,25 +692,21 @@ spcpu_ca65_macro_pack_spinc = 3
 	.exitmacro
 .else
 	subpbi sp, .paramcount * 2
-	stp some_pair_0, sp
+	multi_stpxi sp, 1, __multi_ldst_all_pairs
 .endif
-	_store_multi_pairs_innards sp, num_bytes_1_pair, \
-		__multi_ldst_continue_pairs
 .endmac
+
 .macro multi_pop_pairs __multi_ldst_all_pairs
 .if ( .blank(some_pair_0) )
 	; Required parameter is blank
 	.exitmacro
 .else
-	ldp some_pair_0, sp
-.endif
-	_load_multi_pairs_innards sp, num_bytes_1_pair, \
-		__multi_ldst_continue_pairs
+	multi_ldpxi sp, 1, __multi_ldst_all_pairs
 	addpbi sp, .paramcount * 2
+.endif
 .endmac
 
 
-;.macro multi_push_pairs
 
 
 .endif		; spcpu_ca65_macro_pack_spinc

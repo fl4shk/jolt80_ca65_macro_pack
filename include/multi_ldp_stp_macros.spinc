@@ -59,7 +59,7 @@ multi_ldp_stp_macros_spinc = 3
 .else
 	;stpxi some_pair_2, base_pair, index
 	strxi reg_pair_hi{some_pair_2}, base_pair, index
-	strxi reg_pair_lo{some_pair_2}, base_pair, index + num_bytes_1_pair
+	strxi reg_pair_lo{some_pair_2}, base_pair, index + num_bytes_1_reg
 .endif
 	_store_multi_pairs_innards base_pair, index + num_bytes_1_pair, \
 		__innards_multi_ldst_continue_ldst_pairs

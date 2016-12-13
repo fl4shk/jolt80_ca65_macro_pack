@@ -165,7 +165,8 @@ num_bytes_instr_16 = 2
 num_bytes_instr_32 = 4
 
 
-initial_sp = $8000
+;initial_sp = $8000
+initial_sp = $7fff
 
 
 .endif		; cpu_constants_spinc

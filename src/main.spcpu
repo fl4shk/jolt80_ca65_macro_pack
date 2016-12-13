@@ -101,24 +101,43 @@ true_start:
 
 
 start:
-	;init_sp
-	;cpypi lr, other_file_test_subroutine
-	;call lr
+	init_sp
+	;cpypi r2p, other_file_test_subroutine
+	;call r2p
 	;calli other_file_test_subroutine
+	;cpypi r0p, 3
+	;cpypi 
 	
 	
-	cpyi r0, 9
-	;addi r0, $ff
-	cmpi r0, 10
+	;cpyi r0, $89
+	;cpyi r1, $73
+	;cpyi r2, $3b
+	;cpyi r3, $6a
+	cpypi r0p, $8973
+	cpypi r2p, $3b6a
 	
-infin:
-	blo infin
+	;push_pair r0p
+	;push_pair r2p
+	
+	;pop_pair r4p
+	;pop_pair r6p
+	
+	
+	;multi_push_regs r0, r1, r2, r3
+	;multi_push_pairs r2p
+	multi_push_pairs r0p, r2p
+	
+	pop_reg r7
+	pop_reg r6
+	;pop_reg r5
+	;pop_reg r4
+	pop_pair r4p
+	
+	;;pop_pair r4p
+	;;multi_ldpxi 
+	;multi_pop_pairs r4p
 	
 	jumpi end_simulation
-	
-	;cpypi r0p, $99bb
-	.repeat 4
-	addi r0, 0
-	.endrep
-	
+
+
 
