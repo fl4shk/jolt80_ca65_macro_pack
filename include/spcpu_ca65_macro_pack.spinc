@@ -649,7 +649,7 @@ spcpu_ca65_macro_pack_spinc = 3
 	; Required parameter is blank
 	.exitmacro
 .else
-	subpbi sp, .paramcount
+	subpbi sp, ( .paramcount * num_bytes_1_reg )
 	multi_strxi sp, 1, __multi_ldst_all_regs
 .endif
 .endmac
@@ -660,7 +660,7 @@ spcpu_ca65_macro_pack_spinc = 3
 	.exitmacro
 .else
 	multi_ldrxi sp, 1, __multi_ldst_all_regs
-	addpbi sp, .paramcount
+	addpbi sp, ( .paramcount * num_bytes_1_reg )
 .endif
 .endmac
 
@@ -691,7 +691,7 @@ spcpu_ca65_macro_pack_spinc = 3
 	; Required parameter is blank
 	.exitmacro
 .else
-	subpbi sp, .paramcount * 2
+	subpbi sp, ( .paramcount * num_bytes_1_pair )
 	multi_stpxi sp, 1, __multi_ldst_all_pairs
 .endif
 .endmac
@@ -702,7 +702,7 @@ spcpu_ca65_macro_pack_spinc = 3
 	.exitmacro
 .else
 	multi_ldpxi sp, 1, __multi_ldst_all_pairs
-	addpbi sp, .paramcount * 2
+	addpbi sp, ( .paramcount * num_bytes_1_pair )
 .endif
 .endmac
 

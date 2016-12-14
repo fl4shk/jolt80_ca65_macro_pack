@@ -106,7 +106,13 @@ start:
 	;call r2p
 	;calli other_file_test_subroutine
 	;cpypi r0p, 3
-	;cpypi 
+	;cpypi
+	
+	cpyi r3, 8
+	cmpi r3, 7
+	
+;branch_test:
+;	bhi branch_test
 	
 	
 	;cpyi r0, $89
