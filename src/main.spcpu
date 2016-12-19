@@ -6,110 +6,34 @@
 
 .segment "INIT"
 true_start:
-	jumpi start
-	;cpypi r0p, 3
-	;cpypi r2p, 3
-	;jumpi infin
+	;;jumpi start
+	;;cpypi r0p, 3
+	;cpypi r2p, $22bb
+	;cpyi r0, 9
+	;cpyp r4p, r2p
+	;;cpypi r2p, 3
+	jumpi maybe_infin
 
 
 .segment "ROM"
 
 
 
-;non_immediate_indexed_ldst_test:
-;	;;cpypi r2p, $33aa
-;	;;cpypi r4p, $99bb
-;	cpypi r8p, some_var
-;	cpypi lr, 0
-;	
-;	cpyi r0, $f8
-;	strx r0, r8p, lr
-;	;strx r0, r8p, lr
-;	
-;	
-;	addi r13, 1
-;	;addi r9, 1
-;	
-;	cpyi r0, $aa
-;	strx r0, r8p, lr
-;	
-;	
-;	subi r13, 1
-;	;subi r9, 1
-;	ldrx r1, r8p, lr
-;	
-;	addi r13, 1
-;	;addi r9, 1
-;	ldrx r2, r8p, lr
 
-
-;; ARM-style register saving
-;test_sr:
-;	; Allow lr to be used for local variables and stuffs
-;	push_pair lr
-;	
-;	
-;	; return
-;	;pop_pair pc
-;	pop_pair lr
-;	swp lr, pc
-;	
-;	
-;	;cpyp pc, lr
-;	
-;	;jump lr
-;	
-;
-;branch_test:
-;	;calli test_sr
-;	;bra branch_test
-;	cpyi r0, 4
-;	;cmpi r0, 3
-;	;bcs branch_test
-;	;bls branch_test
-;	;bhi branch_test
-
-;stack_test:
-;	push_pair lr
-;	
-;	cpyi r0, $99
-;	cpyi r1, $77
-;	cpyi r2, $66
-;	
-;	;multi_push_regs r0, r1, r2
-;	;multi_pop_regs r4, r5, r6
-;	push_reg r0
-;	push_reg r1
-;	
-;	pop_reg r1
-;	pop_reg r0
-;	
-;	
-;	pop_pair lr
-;	basic_jump lr 
-
-;.macro abs rA
-;	
-;.endmac
-
-;temp:
-;	;push_pair lr
-;	
-;	;pop_and_ret r0p
-;	
-;	basic_jump lr
-
+some_data:
+	.byt $9f
+	.byt $00
 
 start:
-	init_sp
-	;cpypi r2p, other_file_test_subroutine
-	;call r2p
-	;calli other_file_test_subroutine
-	;cpypi r0p, 3
-	;cpypi
-	
-	cpyi r3, 8
-	cmpi r3, 7
+	;init_sp
+	;;cpypi r2p, other_file_test_subroutine
+	;;call r2p
+	;;calli other_file_test_subroutine
+	;;cpypi r0p, 3
+	;;cpypi
+	;
+	;cpyi r3, 8
+	;cmpi r3, 7
 	
 ;branch_test:
 ;	bhi branch_test
@@ -119,31 +43,41 @@ start:
 	;cpyi r1, $73
 	;cpyi r2, $3b
 	;cpyi r3, $6a
-	cpypi r0p, $8973
-	cpypi r2p, $3b6a
+	;cpypi r0p, $8973
+	cpypi r0p, $a173
 	
-	;push_pair r0p
-	;push_pair r2p
+	;cpypi r2p, some_var
+	;;stp r0p, r2p
+	;str r0, r2p
+	;;strxi r1, r2p, 1
+	;
+	;;ldp r4p, r2p
+	;
+	;ldr r4, r2p
+	;;ldrxi r5, r2p, 1
+	;
+	;
+	;;jumpi end_simulation
 	
-	;pop_pair r4p
-	;pop_pair r6p
+	
+maybe_infin:
+	;bra maybe_infin
 	
 	
-	;multi_push_regs r0, r1, r2, r3
-	;multi_push_pairs r2p
-	multi_push_pairs r0p, r2p
+	cpypi r2p, some_data
+	ldr r0, r2p
 	
-	pop_reg r7
-	pop_reg r6
-	;pop_reg r5
-	;pop_reg r4
-	pop_pair r4p
 	
-	;;pop_pair r4p
-	;;multi_ldpxi 
-	;multi_pop_pairs r4p
+;	cpypi r2p, other_file_test_subroutine
+;	
+;test_call:
+;	;calli other_file_test_subroutine
+;	call r2p
 	
+	;bra maybe_infin
 	jumpi end_simulation
+	
+
 
 
 

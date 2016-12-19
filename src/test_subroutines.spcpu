@@ -27,4 +27,4 @@ end_simulation:
 	.repeat 4
 	addi r0, 0
 	.endrep
-	.asciiz "abcdef"
+	;.asciiz "abcdef"
