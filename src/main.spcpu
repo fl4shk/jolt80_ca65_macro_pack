@@ -6,13 +6,13 @@
 
 .segment "INIT"
 true_start:
-	;;jumpi start
+	jumpi start
 	;;cpypi r0p, 3
 	;cpypi r2p, $22bb
 	;cpyi r0, 9
 	;cpyp r4p, r2p
 	;;cpypi r2p, 3
-	jumpi maybe_infin
+	;jumpi maybe_infin
 
 
 .segment "ROM"
@@ -22,7 +22,7 @@ true_start:
 
 some_data:
 	.byt $9f
-	.byt $00
+	.byt $aa
 
 start:
 	;init_sp
@@ -64,8 +64,16 @@ maybe_infin:
 	;bra maybe_infin
 	
 	
-	cpypi r2p, some_data
-	ldr r0, r2p
+	;cpypi r2p, some_data
+	;;ldr r0, r2p
+	;ldp r0p, r2p
+	;cpypi r2p, some_var
+	;
+	;;addpi r0p, 20
+	;addpbi r0p, 1
+	;stp r0p, r2p
+	;
+	;ldp r4p, r2p
 	
 	
 ;	cpypi r2p, other_file_test_subroutine
@@ -74,8 +82,8 @@ maybe_infin:
 ;	;calli other_file_test_subroutine
 ;	call r2p
 	
-	;bra maybe_infin
-	jumpi end_simulation
+	bra maybe_infin
+	;jumpi end_simulation
 	
 
 
