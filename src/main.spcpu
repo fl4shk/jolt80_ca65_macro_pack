@@ -24,12 +24,29 @@ start:
 	init_sp
 	
 	
-	cpypi r0p, $0101
+	cpypi r0p, $0901
 	cpypi r2p, $2233
 	
-	push_reg r0
-	push_reg r1
+	;;push_reg r0
+	;;push_reg r1
+	;push_reg r2
+	;pop_reg r4
+	;cpy r5, r4
+	;addi r5, 2
 	
+	
+	push_flags
+	;addi r0, $fe
+	cpyi r0, $03
+	cpytof r0
+	pop_flags
+	
+	;;cpyfrf r1
+	;
+	;;cpytof r0
+	;;andi r1, $fe
+	;orri r1, $01
+	;cpytof r1
 	
 	
 maybe_infin:
@@ -38,8 +55,8 @@ maybe_infin:
 	;cpypi r2p, some_data
 	;ldp r0p, r2p
 	
-	pop_reg r4
-	pop_reg r5
+	;pop_reg r4
+	;pop_reg r5
 	
 	
 ;	;cpypi r2p, other_file_test_subroutine
@@ -47,6 +64,7 @@ maybe_infin:
 ;test_call:
 ;	calli other_file_test_subroutine
 ;	;call r2p
+	backup_restore_lr_calli other_file_test_subroutine
 	
 	;bra maybe_infin
 	jumpi end_simulation

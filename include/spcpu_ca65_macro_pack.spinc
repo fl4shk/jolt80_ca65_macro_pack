@@ -726,6 +726,21 @@ spcpu_ca65_macro_pack_spinc = 3
 	cpypi pc, label
 .endmac
 
+
+.macro backup_restore_lr_call rAp
+	push_pair lr
+	call rAp
+	pop_pair lr
+.endmac
+
+.macro backup_restore_lr_calli label
+	push_pair lr
+	calli label
+	pop_pair lr
+.endmac
+
+
+
 ;.macro pop_and_ret rAp
 ;	pop_pair rAp
 ;	basic_jump rAp
@@ -747,6 +762,13 @@ spcpu_ca65_macro_pack_spinc = 3
 	;addpbi sp, num_bytes_1_reg
 	;ldr rA, sp
 	ldrab rA, sp
+.endmac
+
+.macro push_flags
+	stfsa sp
+.endmac
+.macro pop_flags
+	ldfab sp
 .endmac
 
 
