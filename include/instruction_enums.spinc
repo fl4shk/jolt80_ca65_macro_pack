@@ -129,6 +129,11 @@ instruction_enums_spinc = 3
 	; (CoPY from reg Pair rAp to reg Pair rBp)
 	instr_g2_op_cpyp
 	
+	; (Clear reg rA, then CoPY FRom Flags to reg rA)
+	instr_g2_op_cpyfrf
+	; (CoPY TO Flags from reg rA)
+	instr_g2_op_cpytof
+	
 	
 	; Swap instructions:
 	; (SWap register Pair, also can be used as a combined "call",
@@ -152,6 +157,33 @@ instruction_enums_spinc = 3
 	
 	; (STore Register rA contents to memory at address in rBp)
 	instr_g2_op_str 
+	
+	
+	; 8-bit Push/pop style instructions:
+	
+	; (Add 1 the reg pair rBp, then LoaD contents into Register rA from
+	; memory at address contained in reg pair rBp)
+	instr_g2_op_ldrab
+	
+	; (STore reg rA to memory at address contained in reg pair rBp, then
+	; Add 1 the reg pair rBp)
+	instr_g2_op_strsa
+	
+	; (Add 1 to the reg pair rBp, then LoaD a byte containing processor
+	; Flags (other bits cleared) into the processor flags)
+	instr_g2_op_ldfab
+	
+	; (STore a byte containing the current processor flags (other bits
+	; cleared) to memory at address contained in reg pair rBp, then Add 1
+	; the reg pair rBp)
+	instr_g2_op_stfsa
+	
+	
+	; Interrupt instructions (these ignore BOTH rA and rB):
+	; (ENable Interrupts)
+	instr_g2_op_eni
+	; (DIsable Interrupts)
+	instr_g2_op_dii
 	
 .endenum
 

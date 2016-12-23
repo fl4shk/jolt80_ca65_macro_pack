@@ -182,6 +182,18 @@ spcpu_ca65_macro_pack_spinc = 3
 		| encode_ig2_rB{.ident(reg_pair_hi{rBp})}
 .endmac
 
+.macro gen_grp_2_instr_rBp ig2_op, rBp
+	error_if_bad_reg_pair_name rBp, ig2_op
+	
+	.dbyt encode_ig2_id{instr_g2_id} | encode_ig2_op{ig2_op} \
+		| encode_ig2_rB{.ident(reg_pair_hi{rBp})}
+.endmac
+.macro gen_grp_2_instr_no_args ig2_op
+	
+	.dbyt encode_ig2_id{instr_g2_id} | encode_ig2_op{ig2_op}
+.endmac
+
+
 ; Instruction Group 3 generation macros
 ; Encoding:  1100 ooaa aabb bccc
 .define encode_ig3_id( ig3_id ) lshift_masked_bits{ig3_id}, \
@@ -444,6 +456,14 @@ spcpu_ca65_macro_pack_spinc = 3
 .macro cpyp rAp, rBp
 	gen_grp_2_instr_rAp_rBp instr_grp_2_oper::instr_g2_op_cpyp, rAp, rBp
 .endmac
+	; (Clear reg rA, then CoPY FRom Flags to reg rA)
+.macro cpyfrf rA
+	gen_grp_2_instr_rA instr_grp_2_oper::instr_g2_op_cpyfrf, rA
+.endmac
+	; (CoPY TO Flags from reg rA)
+.macro cpytof rA
+	gen_grp_2_instr_rA instr_grp_2_oper::instr_g2_op_cpytof, rA
+.endmac
 
 
 	; Swap instructions:
@@ -473,6 +493,46 @@ spcpu_ca65_macro_pack_spinc = 3
 .macro str rA, rBp
 	gen_grp_2_instr_rA_rBp instr_grp_2_oper::instr_g2_op_str, rA, rBp
 .endmac
+
+	; 8-bit Push/pop style instructions:
+	
+	; (Add 1 the reg pair rBp, then LoaD contents into Register rA from
+	; memory at address contained in reg pair rBp)
+.macro ldrab rA, rBp
+	gen_grp_2_instr_rA_rBp instr_grp_2_oper::instr_g2_op_ldrab, rA, rBp
+.endmac
+	
+	; (STore reg rA to memory at address contained in reg pair rBp, then
+	; Add 1 the reg pair rBp)
+.macro strsa rA, rBp
+	gen_grp_2_instr_rA_rBp instr_grp_2_oper::instr_g2_op_strsa, rA, rBp
+.endmac
+	
+	; (Add 1 to the reg pair rBp, then LoaD a byte containing processor
+	; Flags (other bits cleared) into the processor flags)
+.macro ldfab rBp
+	gen_grp_2_instr_rBp instr_grp_2_oper::instr_g2_op_ldfab, rBp
+.endmac
+	
+	; (STore a byte containing the current processor flags (other bits
+	; cleared) to memory at address contained in reg pair rBp, then Add 1
+	; the reg pair rBp)
+.macro stfsa rBp
+	gen_grp_2_instr_rBp instr_grp_2_oper::instr_g2_op_stfsa, rBp
+.endmac
+	
+	
+	; Interrupt instructions (these ignore BOTH rA and rB):
+	; (ENable Interrupts)
+.macro eni
+	gen_grp_2_instr_no_args instr_grp_2_oper::instr_g2_op_eni
+.endmac
+	; (DIsable Interrupts)
+.macro dii
+	gen_grp_2_instr_no_args instr_grp_2_oper::instr_g2_op_dii
+.endmac
+
+
 
 
 
@@ -666,10 +726,10 @@ spcpu_ca65_macro_pack_spinc = 3
 	cpypi pc, label
 .endmac
 
-.macro pop_and_ret rAp
-	pop_pair rAp
-	basic_jump rAp
-.endmac
+;.macro pop_and_ret rAp
+;	pop_pair rAp
+;	basic_jump rAp
+;.endmac
 
 
 .include "multi_ldr_str_macros.spinc"
@@ -679,76 +739,82 @@ spcpu_ca65_macro_pack_spinc = 3
 
 
 .macro push_reg rA
-	str rA, sp
-	subpbi sp, num_bytes_1_reg
+	;str rA, sp
+	;subpbi sp, num_bytes_1_reg
+	strsa rA, sp
 .endmac
 .macro pop_reg rA
-	addpbi sp, num_bytes_1_reg
-	ldr rA, sp
+	;addpbi sp, num_bytes_1_reg
+	;ldr rA, sp
+	ldrab rA, sp
 .endmac
 
 
-.macro multi_push_regs __multi_ldst_all_regs
-.if ( .blank(some_reg_0) )
-	; Required parameter is blank
-	.exitmacro
-.else
-	subpbi sp, ( .paramcount * num_bytes_1_reg )
-	multi_strxi sp, 1, __multi_ldst_all_regs
-.endif
-.endmac
-
-.macro multi_pop_regs __multi_ldst_all_regs
-.if ( .blank(some_reg_0) )
-	; Required parameter is blank
-	.exitmacro
-.else
-	multi_ldrxi sp, 1, __multi_ldst_all_regs
-	addpbi sp, ( .paramcount * num_bytes_1_reg )
-.endif
-.endmac
-
-
-
-
-;.macro push_pair rAp
-;	stp rAp, sp
-;	subpbi sp, num_bytes_1_pair
+;.macro multi_push_regs __multi_ldst_all_regs
+;.if ( .blank(some_reg_0) )
+;	; Required parameter is blank
+;	.exitmacro
+;.else
+;	subpbi sp, ( .paramcount * num_bytes_1_reg )
+;	multi_strxi sp, 1, __multi_ldst_all_regs
+;.endif
 ;.endmac
 ;
-;.macro pop_pair rAp
-;	;ldp rAp, sp
-;	ldpxi rAp, sp, 1
-;	addpbi sp, num_bytes_1_pair
+;.macro multi_pop_regs __multi_ldst_all_regs
+;.if ( .blank(some_reg_0) )
+;	; Required parameter is blank
+;	.exitmacro
+;.else
+;	multi_ldrxi sp, 1, __multi_ldst_all_regs
+;	addpbi sp, ( .paramcount * num_bytes_1_reg )
+;.endif
 ;.endmac
+;
+;
+;
+;
+;;.macro push_pair rAp
+;;	stp rAp, sp
+;;	subpbi sp, num_bytes_1_pair
+;;.endmac
+;;
+;;.macro pop_pair rAp
+;;	;ldp rAp, sp
+;;	ldpxi rAp, sp, 1
+;;	addpbi sp, num_bytes_1_pair
+;;.endmac
 .macro push_pair rAp
-	multi_push_regs convert_pair_to_two_regs{rAp}
+	;multi_push_regs convert_pair_to_two_regs{rAp}
+	push_reg reg_pair_hi{rAp}
+	push_reg reg_pair_lo{rAp}
 .endmac
 
 .macro pop_pair rAp
-	multi_pop_regs convert_pair_to_two_regs{rAp}
+	;multi_pop_regs convert_pair_to_two_regs{rAp}
+	pop_reg reg_pair_hi{rAp}
+	pop_reg reg_pair_lo{rAp}
 .endmac
 
 
-.macro multi_push_pairs __multi_ldst_all_pairs
-.if ( .blank(some_pair_0) )
-	; Required parameter is blank
-	.exitmacro
-.else
-	subpbi sp, ( .paramcount * num_bytes_1_pair )
-	multi_stpxi sp, 1, __multi_ldst_all_pairs
-.endif
-.endmac
-
-.macro multi_pop_pairs __multi_ldst_all_pairs
-.if ( .blank(some_pair_0) )
-	; Required parameter is blank
-	.exitmacro
-.else
-	multi_ldpxi sp, 1, __multi_ldst_all_pairs
-	addpbi sp, ( .paramcount * num_bytes_1_pair )
-.endif
-.endmac
+;.macro multi_push_pairs __multi_ldst_all_pairs
+;.if ( .blank(some_pair_0) )
+;	; Required parameter is blank
+;	.exitmacro
+;.else
+;	subpbi sp, ( .paramcount * num_bytes_1_pair )
+;	multi_stpxi sp, 1, __multi_ldst_all_pairs
+;.endif
+;.endmac
+;
+;.macro multi_pop_pairs __multi_ldst_all_pairs
+;.if ( .blank(some_pair_0) )
+;	; Required parameter is blank
+;	.exitmacro
+;.else
+;	multi_ldpxi sp, 1, __multi_ldst_all_pairs
+;	addpbi sp, ( .paramcount * num_bytes_1_pair )
+;.endif
+;.endmac
 
 
 

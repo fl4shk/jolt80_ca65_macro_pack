@@ -12,8 +12,6 @@ other_file_test_subroutine:
 	;;;push_pair lr
 	;;multi_push_pairs r0p, r2p
 	push_pair r2p
-	;subpbi sp, 2
-	;stpxi r2p, sp, 1
 	
 	
 	;cpypi r0p, 2016
@@ -23,8 +21,10 @@ other_file_test_subroutine:
 	cpypi r2p, 9
 	subp r0p, r2p
 	
-	;;multi_pop_pairs r0p, r2p
-	;
+	
+	
+	
+	
 	pop_pair r2p
 	;;pop_and_ret lr
 	;addpbi sp, 2

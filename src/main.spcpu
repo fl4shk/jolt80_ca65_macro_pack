@@ -16,58 +16,30 @@ true_start:
 
 
 
-;some_data:
-;	.byt $9f
-;	.byt $aa
+some_data:
+	.byt $9f
+	.byt $aa
 
 start:
 	init_sp
-	;;cpypi r2p, other_file_test_subroutine
-	;;call r2p
-	;;calli other_file_test_subroutine
-	;;cpypi r0p, 3
-	;;cpypi
-	;
-	;cpyi r3, 8
-	;cmpi r3, 7
-	
-;branch_test:
-;	bhi branch_test
 	
 	
-	;;cpyi r0, $89
-	;;cpyi r1, $73
-	;;cpyi r2, $3b
-	;;cpyi r3, $6a
-	;;cpypi r0p, $8973
 	cpypi r0p, $0101
 	cpypi r2p, $2233
-	;addpb r2p, r0
-	;addp r0p, r2p
-	;;addpbi r2p, 9
-	;addp r2p, r0p
 	
-	;cmpp r0p, r2p
-	;cmpp r2p, r0p
-	addpb r2p, r0
-	addpbi pc, 0
-	subpi r2p, 1
+	push_reg r0
+	push_reg r1
+	
 	
 	
 maybe_infin:
 	;bra maybe_infin
 	
 	;cpypi r2p, some_data
-	;;ldr r0, r2p
 	;ldp r0p, r2p
-	;cpypi r2p, some_var
-	;
-	;;addpi r0p, 20
-	;addpbi r0p, 1
-	;stp r0p, r2p
-	;
-	;ldp r4p, r2p
 	
+	pop_reg r4
+	pop_reg r5
 	
 	
 ;	;cpypi r2p, other_file_test_subroutine
