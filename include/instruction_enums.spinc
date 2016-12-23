@@ -34,6 +34,10 @@ instruction_enums_spinc = 3
 	instr_g1_op_subpbi
 	instr_g1_op_cmpi
 	
+	; Bitwise instructions with two operands:
+	instr_g1_op_andi
+	instr_g1_op_orri
+	
 	;Copy instructions:
 	
 	; (CoPY Immediate)
@@ -47,11 +51,24 @@ instruction_enums_spinc = 3
 	; Arithmetic instructions:
 	instr_g2_op_add
 	instr_g2_op_adc
+	; (ADD register rB to reg Pair rAp)
+	instr_g2_op_addpb
+	; ([16-bit] ADD reg Pair rBp to reg Pair rAp)
+	instr_g2_op_addp
+	
+	
 	
 	instr_g2_op_sub
 	instr_g2_op_sbc
+	; (SuBtract 8-bit register rB from reg Pair rAp)
+	instr_g2_op_subpb
+	; ([16-bit] SuBtract reg Pair rBp from reg Pair rAp)
+	instr_g2_op_subp
+	
 	
 	instr_g2_op_cmp
+	; (16-bit comparison of rAp and rBp)
+	instr_g2_op_cmpp
 	
 	; Bitwise instructions with two register operands:
 	instr_g2_op_and

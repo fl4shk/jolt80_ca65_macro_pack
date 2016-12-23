@@ -6,12 +6,8 @@
 
 .segment "INIT"
 true_start:
+	;cpypi r0p, $a0ff
 	jumpi start
-	;;cpypi r0p, 3
-	;cpypi r2p, $22bb
-	;cpyi r0, 9
-	;cpyp r4p, r2p
-	;;cpypi r2p, 3
 	;jumpi maybe_infin
 
 
@@ -20,9 +16,9 @@ true_start:
 
 
 
-some_data:
-	.byt $9f
-	.byt $aa
+;some_data:
+;	.byt $9f
+;	.byt $aa
 
 start:
 	;init_sp
@@ -39,30 +35,21 @@ start:
 ;	bhi branch_test
 	
 	
-	;cpyi r0, $89
-	;cpyi r1, $73
-	;cpyi r2, $3b
-	;cpyi r3, $6a
-	;cpypi r0p, $8973
-	cpypi r0p, $a173
-	
-	;cpypi r2p, some_var
-	;;stp r0p, r2p
-	;str r0, r2p
-	;;strxi r1, r2p, 1
-	;
-	;;ldp r4p, r2p
-	;
-	;ldr r4, r2p
-	;;ldrxi r5, r2p, 1
-	;
-	;
-	;;jumpi end_simulation
+	;;cpyi r0, $89
+	;;cpyi r1, $73
+	;;cpyi r2, $3b
+	;;cpyi r3, $6a
+	;;cpypi r0p, $8973
+	cpypi r0p, $0101
+	cpypi r2p, $2233
+	;addpb r2p, r0
+	;addp r0p, r2p
+	;;addpbi r2p, 9
+	addp r2p, r0p
 	
 	
 maybe_infin:
 	;bra maybe_infin
-	
 	
 	;cpypi r2p, some_data
 	;;ldr r0, r2p
@@ -82,8 +69,8 @@ maybe_infin:
 ;	;calli other_file_test_subroutine
 ;	call r2p
 	
-	bra maybe_infin
-	;jumpi end_simulation
+	;bra maybe_infin
+	jumpi end_simulation
 	
 
 

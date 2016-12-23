@@ -136,6 +136,12 @@ spcpu_ca65_macro_pack_spinc = 3
 	.dbyt encode_ig2_id{instr_g2_id} | encode_ig2_op{ig2_op} \
 		| encode_ig2_rA{.ident(rA)} | encode_ig2_rB{.ident(rB)}
 .endmac
+.macro gen_grp_2_instr_rA ig2_op, rA
+	error_if_bad_reg_name rA, ig2_op
+	
+	.dbyt encode_ig2_id{instr_g2_id} | encode_ig2_op{ig2_op} \
+		| encode_ig2_rA{.ident(rA)}
+.endmac
 .macro gen_grp_2_instr_rAp ig2_op, rAp
 	error_if_bad_reg_pair_name rAp, ig2_op
 	
@@ -270,6 +276,14 @@ spcpu_ca65_macro_pack_spinc = 3
 .endmac
 
 
+; Bitwise instructions with two operands:
+.macro andi rA, imm_value_8
+	gen_grp_1_instr_rA instr_grp_1_oper::instr_g1_op_andi, rA, imm_value_8
+.endmac
+.macro orri rA, imm_value_8
+	gen_grp_1_instr_rA instr_grp_1_oper::instr_g1_op_orri, rA, imm_value_8
+.endmac
+
 
 	;Copy instructions:
 	; (CoPY Immediate)
@@ -291,16 +305,35 @@ spcpu_ca65_macro_pack_spinc = 3
 .macro adc rA, rB
 	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_adc, rA, rB
 .endmac
+
+
+.macro addpb rAp, rB
+	gen_grp_2_instr_rAp_rB instr_grp_2_oper::instr_g2_op_addpb, rAp, rB
+.endmac
+.macro addp rAp, rBp
+	gen_grp_2_instr_rAp_rBp instr_grp_2_oper::instr_g2_op_addp, rAp, rBp
+.endmac
+
+
 .macro sub rA, rB
 	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_sub, rA, rB
 .endmac
 .macro sbc rA, rB
 	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_sbc, rA, rB
 .endmac
+.macro subpb rAp, rB
+	gen_grp_2_instr_rAp_rB instr_grp_2_oper::instr_g2_op_subpb, rAp, rB
+.endmac
+.macro subp rAp, rBp
+	gen_grp_2_instr_rAp_rBp instr_grp_2_oper::instr_g2_op_subp, rAp, rBp
+.endmac
+
 .macro cmp rA, rB
 	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_cmp, rA, rB
 .endmac
-	
+.macro cmpp rAp, rBp
+	gen_grp_2_instr_rAp_rBp instr_grp_2_oper::instr_g2_op_cmpp, rAp, rBp
+.endmac
 	
 
 
@@ -319,7 +352,7 @@ spcpu_ca65_macro_pack_spinc = 3
 	; Complement instructions with one register operand (rB ignored):
 	; (one's complement of rA)
 .macro inv rA
-	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_inv, rA, 0
+	gen_grp_2_instr_rA instr_grp_2_oper::instr_g2_op_inv, rA
 .endmac
 	; (one's complement of rAp)
 .macro invp rAp
@@ -327,7 +360,7 @@ spcpu_ca65_macro_pack_spinc = 3
 .endmac
 	; (two's complement of rA)
 .macro neg rA
-	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_neg, rA, 0
+	gen_grp_2_instr_rA instr_grp_2_oper::instr_g2_op_neg, rA
 .endmac
 	; (two's complement of rAp)
 .macro negp rAp
@@ -560,18 +593,18 @@ spcpu_ca65_macro_pack_spinc = 3
 .endmac
 
 
-.macro addp rAp, rBp
-	error_if_bad_reg_pair_name rAp, add16
-	error_if_bad_reg_pair_name rBp, add16
-	add reg_pair_lo{rAp}, reg_pair_lo{rBp}
-	adc reg_pair_hi{rAp}, reg_pair_hi{rBp}
-.endmac
-.macro subp rAp, rBp
-	error_if_bad_reg_pair_name rAp, sub16
-	error_if_bad_reg_pair_name rBp, sub16
-	sub reg_pair_lo{rAp}, reg_pair_lo{rBp}
-	sbc reg_pair_hi{rAp}, reg_pair_hi{rBp}
-.endmac
+;.macro addp rAp, rBp
+;	error_if_bad_reg_pair_name rAp, add16
+;	error_if_bad_reg_pair_name rBp, add16
+;	add reg_pair_lo{rAp}, reg_pair_lo{rBp}
+;	adc reg_pair_hi{rAp}, reg_pair_hi{rBp}
+;.endmac
+;.macro subp rAp, rBp
+;	error_if_bad_reg_pair_name rAp, sub16
+;	error_if_bad_reg_pair_name rBp, sub16
+;	sub reg_pair_lo{rAp}, reg_pair_lo{rBp}
+;	sbc reg_pair_hi{rAp}, reg_pair_hi{rBp}
+;.endmac
 
 
 

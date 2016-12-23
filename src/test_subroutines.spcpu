@@ -9,15 +9,15 @@
 
 
 other_file_test_subroutine:
-	;;push_pair lr
-	;
-	;
-	;cpypi r0p, 2016
-	;subpi r0p, 2004
-	;
-	;
-	;;pop_and_ret lr
-	basic_jump lr
+	;;;push_pair lr
+	;;
+	;;
+	;;cpypi r0p, 2016
+	;;subpi r0p, 2004
+	;;
+	;;
+	;;;pop_and_ret lr
+	;basic_jump lr
 
 
 ; End RTL Simulation of the CPU by using a special instruction sequence of
