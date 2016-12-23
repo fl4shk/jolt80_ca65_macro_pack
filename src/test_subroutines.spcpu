@@ -9,27 +9,27 @@
 
 
 other_file_test_subroutine:
-	;;;push_pair lr
-	;;multi_push_pairs r0p, r2p
-	push_pair r2p
-	
-	
+	;;;;push_pair lr
+	;;;multi_push_pairs r0p, r2p
+	;push_pair r2p
+	;
+	;
+	;;cpypi r0p, 2016
+	;;subpi r0p, 2004
 	;cpypi r0p, 2016
-	;subpi r0p, 2004
-	cpypi r0p, 2016
-	;cpypi r2p, 2004
-	cpypi r2p, 9
-	subp r0p, r2p
-	
-	
-	
-	
-	
-	
-	pop_pair r2p
-	;;pop_and_ret lr
-	;addpbi sp, 2
-	;ldpxi r2p, sp, -2
+	;;cpypi r2p, 2004
+	;cpypi r2p, 9
+	;subp r0p, r2p
+	;
+	;
+	;
+	;
+	;
+	;
+	;pop_pair r2p
+	;;;pop_and_ret lr
+	;;addpbi sp, 2
+	;;ldpxi r2p, sp, -2
 	basic_jump lr
 
 

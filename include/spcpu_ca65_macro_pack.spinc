@@ -807,8 +807,8 @@ spcpu_ca65_macro_pack_spinc = 3
 ;;.endmac
 .macro push_pair rAp
 	;multi_push_regs convert_pair_to_two_regs{rAp}
-	push_reg reg_pair_hi{rAp}
 	push_reg reg_pair_lo{rAp}
+	push_reg reg_pair_hi{rAp}
 .endmac
 
 .macro pop_pair rAp

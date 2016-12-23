@@ -64,6 +64,11 @@ maybe_infin:
 ;test_call:
 ;	calli other_file_test_subroutine
 ;	;call r2p
+	
+	cpypi lr, $9001
+	;push_pair lr
+	;calli other_file_test_subroutine
+	;pop_pair lr
 	backup_restore_lr_calli other_file_test_subroutine
 	
 	;bra maybe_infin
