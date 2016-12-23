@@ -74,6 +74,15 @@ spcpu_ca65_macro_pack_spinc = 3
 	.endif
 .endmac
 
+.macro warn_if_reg_pair_is_sp rAp, instr
+	.if ( .xmatch( rAp, r10p ) \
+		.or .xmatch( rAp, sp ) )
+		.warning .concat( "CAUTION CAUTION CAUTION!!  Use of sp in the ", \
+			.string(instr), " instruction NEEDS CAUTION" )
+	.endif
+.endmac
+
+
 ;.macro error_if_too_large_imm_value_8 imm_value_8, instr
 ;	.if imm_value_8 >= $100
 ;		.error .concat( "Invalid immediate value for the ", \
@@ -575,7 +584,8 @@ spcpu_ca65_macro_pack_spinc = 3
 
 	; Pseudo instructions
 .macro addpi rAp, imm_value_16
-	error_if_bad_reg_pair_name rAp, addi16
+	error_if_bad_reg_pair_name rAp, addpi
+	warn_if_reg_pair_is_sp rAp, addpi
 	addi reg_pair_lo{rAp}, <(imm_value_16)
 	adci reg_pair_hi{rAp}, >(imm_value_16)
 .endmac
@@ -587,7 +597,8 @@ spcpu_ca65_macro_pack_spinc = 3
 
 ; There is no sbci
 .macro subpi rAp, imm_value_16
-	error_if_bad_reg_pair_name rAp, subi16
+	error_if_bad_reg_pair_name rAp, subpi
+	warn_if_reg_pair_is_sp rAp, subpi
 	addi reg_pair_lo{rAp}, <(-(imm_value_16))
 	adci reg_pair_hi{rAp}, >(-(imm_value_16))
 .endmac

@@ -21,7 +21,7 @@ true_start:
 ;	.byt $aa
 
 start:
-	;init_sp
+	init_sp
 	;;cpypi r2p, other_file_test_subroutine
 	;;call r2p
 	;;calli other_file_test_subroutine
@@ -45,7 +45,13 @@ start:
 	;addpb r2p, r0
 	;addp r0p, r2p
 	;;addpbi r2p, 9
-	addp r2p, r0p
+	;addp r2p, r0p
+	
+	;cmpp r0p, r2p
+	;cmpp r2p, r0p
+	addpb r2p, r0
+	addpbi pc, 0
+	subpi r2p, 1
 	
 	
 maybe_infin:
@@ -63,11 +69,12 @@ maybe_infin:
 	;ldp r4p, r2p
 	
 	
-;	cpypi r2p, other_file_test_subroutine
+	
+;	;cpypi r2p, other_file_test_subroutine
 ;	
 ;test_call:
-;	;calli other_file_test_subroutine
-;	call r2p
+;	calli other_file_test_subroutine
+;	;call r2p
 	
 	;bra maybe_infin
 	jumpi end_simulation
