@@ -28,8 +28,8 @@ start:
 	
 	;cpypi r0p, $0901
 	cpypi r0p, $2233
-	;cpypi r2p, $0001
-	cpypi r2p, some_arr_size - 200
+	cpypi r2p, $0001
+	;cpypi r2p, some_arr_size - 200
 	
 	
 	stpx_pure r0p, r4p, r2p
