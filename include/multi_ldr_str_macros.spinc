@@ -76,6 +76,8 @@ multi_ldr_str_macros_spinc = 3
 
 
 
+
+
 ; Immediate indexed psuedo block move (load-reg version)
 .macro multi_ldrxi base_pair, index, __multi_ldst_all_regs
 .if ( .blank(base_pair) .or .blank(some_reg_0) )

@@ -15,6 +15,49 @@ multi_ldp_stp_macros_spinc = 3
 
 
 
+; NON-Immediate Indexed Load Reg Pair
+.macro ldpx_raw rAp, rBp, rCp
+	ldrx reg_pair_hi{rAp}, rBp, rCp
+	addpbi rCp, $01
+	ldrx reg_pair_lo{rAp}, rBp, rCp
+.endmac
+
+.macro ldpx_save_rcp rAp, rBp, rCp
+	ldpx_raw rAp, rBp, rCp
+	subpbi rCp, $01
+.endmac
+
+; Pure ldpx, which preserves flags AND rCp
+.macro ldpx_pure rAp, rBp, rCp
+	push_flags
+	ldpx_save_rcp rAp, rBp, rCp
+	pop_flags
+.endmac
+
+
+; NON-Immediate Indexed Store Reg Pair
+.macro stpx_raw rAp, rBp, rCp
+	strx reg_pair_hi{rAp}, rBp, rCp
+	addpbi rCp, $01
+	strx reg_pair_lo{rAp}, rBp, rCp
+.endmac
+
+.macro stpx_save_rcp rAp, rBp, rCp
+	stpx_raw rAp, rBp, rCp
+	subpbi rCp, $01
+.endmac
+
+; Pure stpx, which preserves flags AND rCp
+.macro stpx_pure rAp, rBp, rCp
+	push_flags
+	stpx_save_rcp rAp, rBp, rCp
+	pop_flags
+.endmac
+
+
+
+
+
 ; Immediate Indexed Load/Store Reg Pair
 .macro ldpxi rAp, rBp, imm_value_16
 	multi_ldrxi rBp, imm_value_16, convert_pair_to_two_regs{rAp}

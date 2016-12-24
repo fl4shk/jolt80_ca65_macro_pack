@@ -24,22 +24,27 @@ start:
 	init_sp
 	
 	
-	cpypi r0p, $0901
-	cpypi r2p, $2233
+	cpypi r4p, some_arr
 	
-	;;push_reg r0
-	;;push_reg r1
-	;push_reg r2
-	;pop_reg r4
-	;cpy r5, r4
-	;addi r5, 2
+	;cpypi r0p, $0901
+	cpypi r0p, $2233
+	;cpypi r2p, $0001
+	cpypi r2p, some_arr_size - 200
 	
 	
-	push_flags
-	;addi r0, $fe
-	cpyi r0, $03
-	cpytof r0
-	pop_flags
+	stpx_pure r0p, r4p, r2p
+	ldpx_pure r6p, r4p, r2p
+	
+	;stpxi r0p, r4p, 9
+	;ldpxi r6p, r4p, 9
+	
+	
+	
+	;push_flags
+	;;addi r0, $fe
+	;cpyi r0, $03
+	;cpytof r0
+	;pop_flags
 	
 	;;cpyfrf r1
 	;
@@ -65,11 +70,11 @@ maybe_infin:
 ;	calli other_file_test_subroutine
 ;	;call r2p
 	
-	cpypi lr, $9001
-	;push_pair lr
-	;calli other_file_test_subroutine
-	;pop_pair lr
-	backup_restore_lr_calli other_file_test_subroutine
+	;cpypi lr, $9001
+	;;push_pair lr
+	;;calli other_file_test_subroutine
+	;;pop_pair lr
+	;backup_restore_lr_calli other_file_test_subroutine
 	
 	;bra maybe_infin
 	jumpi end_simulation
