@@ -4,36 +4,79 @@
 
 
 
-.segment "INIT"
-true_start:
-	;cpypi r0p, $a0ff
-	jumpi start
-	;jumpi maybe_infin
+.segment "VECTORS"
+reset_vec_addr:
+	.dbyt reset
+interrupt_vec_addr:
+	.dbyt isr_main
+
 
 
 .segment "ROM"
 
 
+;fake_start:
+;	;cpyi r0, $22
+;	;cpyi r0, $11
+;	;addi r0, $01
+;	;addpbi r0p, $01
+;	
+;	;addpi r2p, $0001
+;	;adcpi r0p, $0000
+;	
+;	;addpbi r0p, $01
+;	addpbi r2p, $0001
+;	adci r0, $00
+;	
+;	
+;	;addi r0, 1
+;	;addi r1, 1
+;	;adci r0, 1
+;	;add r0, r1
+;	;addi r1, 1
+;	;addi r1, 
+;	;adci r0, 1
+;	;addpbi r0p, 1
+;	
+;	bra fake_start
+;	
+;maybe_infin_2:
+;	;cpyi r0, $a1
+;	addpi 
+;	
+;	bra maybe_infin_2
+
+isr_main:
+	;push_flags
+	;push_pair lr
+	;cpyi r0, 8
+	;swpira r0p
+	cpypira r0p
+	
+	;pop_pair lr
+	;pop_flags
+	reti
 
 
-some_data:
-	.byt $9f
-	.byt $aa
-
-start:
+reset:
 	init_sp
-	
-	
+	jumpi main
+
+main:
 	cpypi r4p, some_arr
 	
 	;cpypi r0p, $0901
-	cpypi r0p, $2233
+	cpypi r6p, $cc33
 	cpypi r2p, $0001
 	;cpypi r2p, some_arr_size - 200
 	
 	
-	stpx_pure r0p, r4p, r2p
-	ldpx_pure r6p, r4p, r2p
+	;stpx_save_rcp r6p, r4p, r2p
+	;ldpx_save_rcp r0p, r4p, r2p
+	stpx_pure r6p, r4p, r2p
+	ldpx_pure r0p, r4p, r2p
+	;strx r6, r4p, r2p
+	;ldrx r0, r4p, r2p
 	
 	;stpxi r0p, r4p, 9
 	;ldpxi r6p, r4p, 9
@@ -64,7 +107,7 @@ maybe_infin:
 	;pop_reg r5
 	
 	
-;	;cpypi r2p, other_file_test_subroutine
+;;	;cpypi r2p, other_file_test_subroutine
 ;	
 ;test_call:
 ;	calli other_file_test_subroutine

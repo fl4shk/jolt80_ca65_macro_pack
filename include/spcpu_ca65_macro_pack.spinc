@@ -503,7 +503,7 @@ spcpu_ca65_macro_pack_spinc = 3
 .endmac
 	
 	; (STore reg rA to memory at address contained in reg pair rBp, then
-	; Add 1 the reg pair rBp)
+	; Subtract 1 from the reg pair rBp)
 .macro strsa rA, rBp
 	gen_grp_2_instr_rA_rBp instr_grp_2_oper::instr_g2_op_strsa, rA, rBp
 .endmac
@@ -531,8 +531,21 @@ spcpu_ca65_macro_pack_spinc = 3
 .macro dii
 	gen_grp_2_instr_no_args instr_grp_2_oper::instr_g2_op_dii
 .endmac
+	; (Set the PC to interrupt RETurn address and enable Interrupts)
+.macro reti 
+	gen_grp_2_instr_no_args instr_grp_2_oper::instr_g2_op_reti
+.endmac
 
+	; Extra Interrupt Instructions
+	; (Swap the Interrupt Return Address and rAp)
+.macro swpira rAp
+	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_swpira, rAp
+.endmac
 
+	; (CoPY the Interrupt Return Address to rAp)
+.macro cpypira rAp
+	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_cpypira, rAp
+.endmac
 
 
 
@@ -650,6 +663,15 @@ spcpu_ca65_macro_pack_spinc = 3
 	adci reg_pair_hi{rAp}, >(imm_value_16)
 .endmac
 
+.macro adcpi rAp, imm_value_16
+	error_if_bad_reg_pair_name rAp, adcpi
+	warn_if_reg_pair_is_sp rAp, adcpi
+	adci reg_pair_lo{rAp}, <(imm_value_16)
+	adci reg_pair_hi{rAp}, >(imm_value_16)
+.endmac
+
+
+
 .macro subi rA, imm_value_8
 	error_if_bad_reg_name rA, subi
 	addi rA, -imm_value_8
@@ -708,18 +730,18 @@ spcpu_ca65_macro_pack_spinc = 3
 
 
 ; Jump/call pseudo instructions
-.macro basic_jump rAp
-	cpyp pc, rAp
-.endmac
-.macro basic_jumpi imm_value_16
-	cpypi pc, imm_value_16
-.endmac
-
-.macro rpair_chng_jump rAp
-	;subpbi rAp, num_bytes_instr_16
-	subpbi rAp, num_bytes_instr_32
-	cpyp pc, rAp
-.endmac
+;.macro basic_jump rAp
+;	cpyp pc, rAp
+;.endmac
+;.macro basic_jumpi imm_value_16
+;	cpypi pc, imm_value_16
+;.endmac
+;
+;;.macro rpair_chng_jump rAp
+;;	;subpbi rAp, num_bytes_instr_16
+;;	subpbi rAp, num_bytes_instr_32
+;;	cpyp pc, rAp
+;;.endmac
 .macro jumpi label
 	;cpypi pc, ( label - num_bytes_instr_32 )
 	;cpypi pc, ( label - num_bytes_instr_16 )

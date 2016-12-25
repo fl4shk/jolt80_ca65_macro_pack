@@ -166,7 +166,7 @@ instruction_enums_spinc = 3
 	instr_g2_op_ldrab
 	
 	; (STore reg rA to memory at address contained in reg pair rBp, then
-	; Add 1 the reg pair rBp)
+	; Subtract 1 from the reg pair rBp)
 	instr_g2_op_strsa
 	
 	; (Add 1 to the reg pair rBp, then LoaD a byte containing processor
@@ -184,7 +184,15 @@ instruction_enums_spinc = 3
 	instr_g2_op_eni
 	; (DIsable Interrupts)
 	instr_g2_op_dii
+	; (Set the PC to interrupt RETurn address and enable Interrupts)
+	instr_g2_op_reti 
 	
+	; Extra Interrupt Instructions
+	; (Swap the Interrupt Return Address and rAp)
+	instr_g2_op_swpira 
+	
+	; (CoPY the Interrupt Return Address to rAp)
+	instr_g2_op_cpypira 
 .endenum
 
 

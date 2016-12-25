@@ -33,6 +33,7 @@ multi_ldr_str_macros_spinc = 3
 		__innards_multi_ldst_continue_ldst_regs
 .endmac
 
+
 ; Macro used by internally multi_str, multi_strxi, etc.
 .macro _store_multi_regs_innards base_pair, index, \
 	__multi_ldst_continue_regs

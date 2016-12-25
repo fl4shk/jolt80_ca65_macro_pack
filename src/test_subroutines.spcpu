@@ -30,7 +30,7 @@ other_file_test_subroutine:
 	;;;pop_and_ret lr
 	;;addpbi sp, 2
 	;;ldpxi r2p, sp, -2
-	basic_jump lr
+	;basic_jump lr
 
 
 ; End RTL Simulation of the CPU by using a special instruction sequence of
