@@ -719,11 +719,11 @@ spcpu_ca65_macro_pack_spinc = 3
 
 	; 8-bit Load/store instructions:
 	; (LoaD contents into Register rA from memory at address in rBp)
-.macro ldr rAp, rBp
+.macro ldr rA, rBp
 	gen_grp_2_instr_rA_rBp instr_grp_2_oper::instr_g2_op_ldr, rA, rBp
 .endmac
 	; (STore Register rA contents to memory at address in rBp)
-.macro str rAp, rBp
+.macro str rA, rBp
 	gen_grp_2_instr_rA_rBp instr_grp_2_oper::instr_g2_op_str, rA, rBp
 .endmac
 
@@ -731,12 +731,12 @@ spcpu_ca65_macro_pack_spinc = 3
 
 	; (Add 1 the reg pair rBp, then LoaD contents into Register rA from
 	; memory at address contained in reg pair rBp)
-.macro ldrab rAp, rBp
+.macro ldrab rA, rBp
 	gen_grp_2_instr_rA_rBp instr_grp_2_oper::instr_g2_op_ldrab, rA, rBp
 .endmac
 	; (STore reg rA to memory at address contained in reg pair rBp, then
 	; Subtract 1 from the reg pair rBp)
-.macro strsa rAp, rBp
+.macro strsa rA, rBp
 	gen_grp_2_instr_rA_rBp instr_grp_2_oper::instr_g2_op_strsa, rA, rBp
 .endmac
 

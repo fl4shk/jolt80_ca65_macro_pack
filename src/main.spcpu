@@ -48,11 +48,12 @@ interrupt_vec_addr:
 
 isr_main:
 	push_flags
-	cpypira r0p
 	
+	cpypira r0p
+	calli other_file_test_subroutine
 	
 	pop_flags
-	;jump r0p
+	jump r0p
 	reti
 
 
@@ -68,13 +69,14 @@ reset:
 	jump r0p
 
 main:
-	cpypira r2p
 	;addi r14, $00
-	;cpypi r0p, $09
 	cpyi r0, $09
-	calli other_file_test_subroutine
+	;calli other_file_test_subroutine
 	;cpypi lr, other_file_test_subroutine
 	;call lr
+	
+	
+	
 	
 	eni
 	
@@ -82,9 +84,8 @@ maybe_infin:
 	;addi r14, $00
 	;addi r14, $01
 	
-	;cmpi r0, $80
-	;bne maybe_infin
-	bra maybe_infin
+	cmpi r0, $80
+	bne maybe_infin
 	
 	
 	;dii

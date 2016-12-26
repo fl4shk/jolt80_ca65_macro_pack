@@ -7,35 +7,26 @@
 
 .segment "ROM"
 
+test_sr_2:
+	cpyi r1, $88
+	
+	jump lr
+
 
 other_file_test_subroutine:
-	;;;;push_pair lr
-	;;;multi_push_pairs r0p, r2p
-	;push_pair r2p
+	push_pair lr
+	;cpypi r2p, $ffaa
 	;
-	;
-	;;cpypi r0p, 2016
-	;;subpi r0p, 2004
-	;cpypi r0p, 2016
-	;;cpypi r2p, 2004
-	;cpypi r2p, 9
-	;subp r0p, r2p
-	;
-	;
-	;
-	;
-	;
-	;
-	;pop_pair r2p
-	;;;pop_and_ret lr
-	;;addpbi sp, 2
-	;;ldpxi r2p, sp, -2
-	;basic_jump lr
+	;addp r0p, r2p
 	
-	;addpbi lr, 2
-	;basic_jump lr
-	;rpair_chng_jump lr
+	pop_pair lr
+	
+	;push_reg reg_pair_hi{lr}
+	;strsa reg_pair_hi{lr}, sp
+	;push_reg r0
 	jump lr
+
+
 
 
 ; End RTL Simulation of the CPU by using a special instruction sequence of
