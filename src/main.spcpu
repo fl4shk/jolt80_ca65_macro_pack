@@ -52,16 +52,17 @@ isr_main:
 	
 	
 	pop_flags
-	jump r0p
+	;jump r0p
+	reti
+
+
+
 
 
 reset:
 	init_sp
-	push_flags
-	cpypira r0p
 	
 	
-	pop_flags
 	cpypi r0p, main
 	;jumpi main
 	jump r0p
@@ -81,8 +82,9 @@ maybe_infin:
 	;addi r14, $00
 	;addi r14, $01
 	
-	cmpi r0, $80
-	bne maybe_infin
+	;cmpi r0, $80
+	;bne maybe_infin
+	bra maybe_infin
 	
 	
 	;dii
