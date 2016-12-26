@@ -14,12 +14,13 @@ test_sr_2:
 
 
 other_file_test_subroutine:
-	push_pair lr
-	;cpypi r2p, $ffaa
-	;
+	push_pair r2p
+	cpypi r2p, $ffaa
+	
 	;addp r0p, r2p
 	
-	pop_pair lr
+	pop_pair r2p
+	
 	
 	;push_reg reg_pair_hi{lr}
 	;strsa reg_pair_hi{lr}, sp
