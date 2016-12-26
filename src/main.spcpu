@@ -47,68 +47,48 @@ interrupt_vec_addr:
 ;	bra maybe_infin_2
 
 isr_main:
-	;push_flags
-	;push_pair lr
-	;cpyi r0, 8
-	;swpira r0p
+	push_flags
 	cpypira r0p
 	
-	;pop_pair lr
-	;pop_flags
-	reti
+	
+	pop_flags
+	jump r0p
 
 
 reset:
 	init_sp
-	jumpi main
+	push_flags
+	cpypira r0p
+	
+	
+	pop_flags
+	cpypi r0p, main
+	;jumpi main
+	jump r0p
 
 main:
-	cpypi r4p, some_arr
+	cpypira r2p
+	;addi r14, $00
+	;cpypi r0p, $09
+	cpyi r0, $09
+	calli other_file_test_subroutine
+	;cpypi lr, other_file_test_subroutine
+	;call lr
 	
-	;cpypi r0p, $0901
-	cpypi r6p, $cc33
-	cpypi r2p, $0001
-	
-	;add r2, r3
-	;orr r2, r3
-	orr r14, r2
-	;cpypi r2p, some_arr_size - 200
-	
-	
-	;;stpx_save_rcp r6p, r4p, r2p
-	;;ldpx_save_rcp r0p, r4p, r2p
-	;stpx_pure r6p, r4p, r2p
-	;ldpx_pure r0p, r4p, r2p
-	;;strx r6, r4p, r2p
-	;;ldrx r0, r4p, r2p
-	
-	;stpxi r0p, r4p, 9
-	;ldpxi r6p, r4p, 9
-	
-	
-	
-	;push_flags
-	;;addi r0, $fe
-	;cpyi r0, $03
-	;cpytof r0
-	;pop_flags
-	
-	;;cpyfrf r1
-	;
-	;;cpytof r0
-	;;andi r1, $fe
-	;orri r1, $01
-	;cpytof r1
-	
+	eni
 	
 maybe_infin:
+	;addi r14, $00
+	;addi r14, $01
+	
+	cmpi r0, $80
+	bne maybe_infin
+	
+	
+	;dii
+	
 	;bra maybe_infin
 	
-	;cpypi r2p, some_data
-	;ldp r0p, r2p
-	
-	;pop_reg r4
-	;pop_reg r5
 	
 	
 ;;	;cpypi r2p, other_file_test_subroutine
