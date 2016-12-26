@@ -48,47 +48,20 @@ instruction_enums_spinc = 3
 ; Instruction group 2 has 6 opcode bits
 ; Encoding:  10oo oooo aaaa bbbb
 .enum instr_grp_2_oper
+	
+	; -- rA, rB --
+	
 	; Arithmetic instructions:
 	instr_g2_op_add
 	instr_g2_op_adc
-	; (ADD register rB to reg Pair rAp)
-	instr_g2_op_addpb
-	; ([16-bit] ADD reg Pair rBp to reg Pair rAp)
-	instr_g2_op_addp
-	
-	
-	
 	instr_g2_op_sub
 	instr_g2_op_sbc
-	; (SuBtract 8-bit register rB from reg Pair rAp)
-	instr_g2_op_subpb
-	; ([16-bit] SuBtract reg Pair rBp from reg Pair rAp)
-	instr_g2_op_subp
-	
-	
 	instr_g2_op_cmp
-	; (16-bit comparison of rAp and rBp)
-	instr_g2_op_cmpp
 	
 	; Bitwise instructions with two register operands:
 	instr_g2_op_and
 	instr_g2_op_orr
 	instr_g2_op_xor
-	
-	; Complement instructions with one register operand (rB ignored):
-	
-	; (one's complement of rA)
-	instr_g2_op_inv
-	
-	; (one's complement of rAp)
-	instr_g2_op_invp
-	
-	; (two's complement of rA)
-	instr_g2_op_neg
-	
-	; (two's complement of rAp)
-	instr_g2_op_negp
-	
 	
 	; Bitshifting (and rotating) instructions that use the value of rB
 	; as the number of bits to shift by:
@@ -98,12 +71,67 @@ instruction_enums_spinc = 3
 	instr_g2_op_rol
 	instr_g2_op_ror
 	
-	
 	; Bit rotating instructions that use carry as bit 8 for a 9-bit
 	; rotate of { carry, rA } by one bit:
 	instr_g2_op_rolc
 	instr_g2_op_rorc
 	
+	; Copy instructions:
+	; (CoPY from reg rB to reg rA)
+	instr_g2_op_cpy
+	
+	
+	
+	
+	; -- rA --
+	
+	; Complement instructions with one register operand (rB ignored):
+	; (one's complement of rA)
+	instr_g2_op_inv
+	; (two's complement of rA)
+	instr_g2_op_neg
+	; (Clear reg rA, then CoPY FRom Flags to reg rA)
+	instr_g2_op_cpyfrf
+	; (CoPY TO Flags from reg rA)
+	instr_g2_op_cpytof
+	
+	
+	
+	
+	; -- rAp --
+	
+	; Complement instructions with one register operand (rB ignored):
+	; (one's complement of rAp)
+	instr_g2_op_invp
+	
+	; (two's complement of rA)
+	instr_g2_op_negp
+	
+	; Bit rotating instructions that use carry as bit 16 for a 17-bit
+	; rotate of { carry, rAp } by one bit:
+	instr_g2_op_rolcp
+	instr_g2_op_rorcp
+	
+	; Call instruction (Description:  sets the link register to the
+	; return address, then sets the program counter to the address
+	; contained in the reg pair rAp):
+	; (CALL subroutine at address in reg pair rAp)
+	instr_g2_op_call
+	
+	; Extra Interrupt Instructions
+	; (Swap the Interrupt Return Address and rAp)
+	instr_g2_op_swpira
+	; (CoPY the Interrupt Return Address to rAp)
+	instr_g2_op_cpypira
+	
+	
+	
+	
+	; -- rAp, rB --
+	
+	; Arithmetic instructions:
+	instr_g2_op_addpb
+	instr_g2_op_subpb
 	
 	; Bitshifting (and rotating) instructions that do a 16-bit shift
 	; or rotate on the reg pair rAp, using rB as the number of bits to
@@ -115,26 +143,37 @@ instruction_enums_spinc = 3
 	instr_g2_op_rorp
 	
 	
-	; Bit rotating instructions that use carry as bit 16 for a 17-bit
-	; rotate of { carry, rAp } by one bit:
-	instr_g2_op_rolcp
-	instr_g2_op_rorcp
 	
 	
-	; Copy instructions:
+	; -- rA, rBp --
 	
-	; (CoPY from one register to another register)
-	instr_g2_op_cpy
+	; 8-bit Load/store instructions:
+	; (LoaD contents into Register rA from memory at address in rBp)
+	instr_g2_op_ldr
+	; (STore Register rA contents to memory at address in rBp)
+	instr_g2_op_str
 	
-	; (CoPY from reg Pair rAp to reg Pair rBp)
+	; 8-bit Push/pop style instructions:
+	
+	; (Add 1 the reg pair rBp, then LoaD contents into Register rA from
+	; memory at address contained in reg pair rBp)
+	instr_g2_op_ldrab
+	; (STore reg rA to memory at address contained in reg pair rBp, then
+	; Subtract 1 from the reg pair rBp)
+	instr_g2_op_strsa
+	
+	
+	
+	
+	; -- rAp, rBp --
+	
+	; Arithmetic instructions:
+	instr_g2_op_addp
+	instr_g2_op_subp
+	instr_g2_op_cmpp
+	
+	; (CoPY from reg Pair rBp to reg Pair rAp)
 	instr_g2_op_cpyp
-	
-	; (Clear reg rA, then CoPY FRom Flags to reg rA)
-	instr_g2_op_cpyfrf
-	; (CoPY TO Flags from reg rA)
-	instr_g2_op_cpytof
-	
-	
 	; Swap instructions:
 	; (SWap register Pair, also can be used as a combined "call",
 	; "jump", and "return" instruction by swapping some other register
@@ -142,57 +181,31 @@ instruction_enums_spinc = 3
 	instr_g2_op_swp
 	
 	
-	; Call instruction (Description:  sets the link register to the
-	; return address, then sets the program counter to the address
-	; contained in the reg pair rAp):
-	
-	; (CALL subroutine at address in reg pair rAp)
-	instr_g2_op_call
 	
 	
-	; 8-bit Load/store instructions:
-	
-	; (LoaD contents into Register rA from memory at address in rBp)
-	instr_g2_op_ldr
-	
-	; (STore Register rA contents to memory at address in rBp)
-	instr_g2_op_str 
-	
-	
-	; 8-bit Push/pop style instructions:
-	
-	; (Add 1 the reg pair rBp, then LoaD contents into Register rA from
-	; memory at address contained in reg pair rBp)
-	instr_g2_op_ldrab
-	
-	; (STore reg rA to memory at address contained in reg pair rBp, then
-	; Subtract 1 from the reg pair rBp)
-	instr_g2_op_strsa
+	; -- rBp --
 	
 	; (Add 1 to the reg pair rBp, then LoaD a byte containing processor
 	; Flags (other bits cleared) into the processor flags)
 	instr_g2_op_ldfab
-	
 	; (STore a byte containing the current processor flags (other bits
 	; cleared) to memory at address contained in reg pair rBp, then Add 1
 	; the reg pair rBp)
 	instr_g2_op_stfsa
 	
 	
+	
+	
+	; -- no args --
 	; Interrupt instructions (these ignore BOTH rA and rB):
 	; (ENable Interrupts)
 	instr_g2_op_eni
 	; (DIsable Interrupts)
 	instr_g2_op_dii
 	; (Set the PC to interrupt RETurn address and enable Interrupts)
-	instr_g2_op_reti 
+	instr_g2_op_reti
 	
-	; Extra Interrupt Instructions
-	; (Swap the Interrupt Return Address and rAp)
-	instr_g2_op_swpira 
 	
-	; (CoPY the Interrupt Return Address to rAp)
-	instr_g2_op_cpypira 
 .endenum
 
 

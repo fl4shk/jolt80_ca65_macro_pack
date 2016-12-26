@@ -68,15 +68,19 @@ main:
 	;cpypi r0p, $0901
 	cpypi r6p, $cc33
 	cpypi r2p, $0001
+	
+	;add r2, r3
+	;orr r2, r3
+	orr r14, r2
 	;cpypi r2p, some_arr_size - 200
 	
 	
-	;stpx_save_rcp r6p, r4p, r2p
-	;ldpx_save_rcp r0p, r4p, r2p
-	stpx_pure r6p, r4p, r2p
-	ldpx_pure r0p, r4p, r2p
-	;strx r6, r4p, r2p
-	;ldrx r0, r4p, r2p
+	;;stpx_save_rcp r6p, r4p, r2p
+	;;ldpx_save_rcp r0p, r4p, r2p
+	;stpx_pure r6p, r4p, r2p
+	;ldpx_pure r0p, r4p, r2p
+	;;strx r6, r4p, r2p
+	;;ldrx r0, r4p, r2p
 	
 	;stpxi r0p, r4p, 9
 	;ldpxi r6p, r4p, 9

@@ -319,6 +319,238 @@ spcpu_ca65_macro_pack_spinc = 3
 ; Group 2 Instructions
 ; Encoding:  10oo oooo aaaa bbbb
 
+;;	; Arithmetic instructions:
+;;.macro add rA, rB
+;;	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_add, rA, rB
+;;.endmac
+;;.macro adc rA, rB
+;;	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_adc, rA, rB
+;;.endmac
+;;
+;;
+;;.macro addpb rAp, rB
+;;	gen_grp_2_instr_rAp_rB instr_grp_2_oper::instr_g2_op_addpb, rAp, rB
+;;.endmac
+;;.macro addp rAp, rBp
+;;	gen_grp_2_instr_rAp_rBp instr_grp_2_oper::instr_g2_op_addp, rAp, rBp
+;;.endmac
+;;
+;;
+;;.macro sub rA, rB
+;;	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_sub, rA, rB
+;;.endmac
+;;.macro sbc rA, rB
+;;	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_sbc, rA, rB
+;;.endmac
+;;.macro subpb rAp, rB
+;;	gen_grp_2_instr_rAp_rB instr_grp_2_oper::instr_g2_op_subpb, rAp, rB
+;;.endmac
+;;.macro subp rAp, rBp
+;;	gen_grp_2_instr_rAp_rBp instr_grp_2_oper::instr_g2_op_subp, rAp, rBp
+;;.endmac
+;;
+;;.macro cmp rA, rB
+;;	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_cmp, rA, rB
+;;.endmac
+;;.macro cmpp rAp, rBp
+;;	gen_grp_2_instr_rAp_rBp instr_grp_2_oper::instr_g2_op_cmpp, rAp, rBp
+;;.endmac
+;;	
+;;
+;;
+;;	; Bitwise instructions with two register operands:
+;;.macro and rA, rB
+;;	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_and, rA, rB
+;;.endmac
+;;.macro orr rA, rB
+;;	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_orr, rA, rB
+;;.endmac
+;;.macro xor rA, rB
+;;	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_xor, rA, rB
+;;.endmac
+;;
+;;
+;;	; Complement instructions with one register operand (rB ignored):
+;;	; (one's complement of rA)
+;;.macro inv rA
+;;	gen_grp_2_instr_rA instr_grp_2_oper::instr_g2_op_inv, rA
+;;.endmac
+;;	; (one's complement of rAp)
+;;.macro invp rAp
+;;	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_invp, rAp
+;;.endmac
+;;	; (two's complement of rA)
+;;.macro neg rA
+;;	gen_grp_2_instr_rA instr_grp_2_oper::instr_g2_op_neg, rA
+;;.endmac
+;;	; (two's complement of rAp)
+;;.macro negp rAp
+;;	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_negp, rAp
+;;.endmac
+;;
+;;
+;;	; Bitshifting (and rotating) instructions that use the value of rB
+;;	; as the number of bits to shift by:
+;;.macro lsl rA, rB
+;;	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_lsl, rA, rB
+;;.endmac
+;;.macro lsr rA, rB
+;;	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_lsr, rA, rB
+;;.endmac
+;;.macro asr rA, rB
+;;	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_asr, rA, rB
+;;.endmac
+;;.macro rol rA, rB
+;;	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_rol, rA, rB
+;;.endmac
+;;.macro ror rA, rB
+;;	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_ror, rA, rB
+;;.endmac
+;;
+;;	; Bit rotating instructions that use carry as bit 8 for a 9-bit
+;;	; rotate of { carry, rA } by one bit:
+;;.macro rolc rA
+;;	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_rolc, rA, r0
+;;.endmac
+;;.macro rorc rA
+;;	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_rorc, rA, r0
+;;.endmac
+;;
+;;
+;;	; Bitshifting (and rotating) instructions that do a 16-bit shift
+;;	; or rotate on the reg pair rAp, using rB as the number of bits to
+;;	; shift by:
+;;.macro lslp rAp, rB
+;;	gen_grp_2_instr_rAp_rB instr_grp_2_oper::instr_g2_op_lslp, rAp, rB
+;;.endmac
+;;.macro lsrp rAp, rB
+;;	gen_grp_2_instr_rAp_rB instr_grp_2_oper::instr_g2_op_lsrp, rAp, rB
+;;.endmac
+;;.macro asrp rAp, rB
+;;	gen_grp_2_instr_rAp_rB instr_grp_2_oper::instr_g2_op_asrp, rAp, rB
+;;.endmac
+;;.macro rolp rAp, rB
+;;	gen_grp_2_instr_rAp_rB instr_grp_2_oper::instr_g2_op_rolp, rAp, rB
+;;.endmac
+;;.macro rorp rAp, rB
+;;	gen_grp_2_instr_rAp_rB instr_grp_2_oper::instr_g2_op_rorp, rAp, rB
+;;.endmac
+;;
+;;
+;;	; Bit rotating instructions that use carry as bit 16 for a 17-bit
+;;	; rotate of { carry, rAp } by one bit:
+;;.macro rolcp rAp
+;;	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_rolcp, rAp
+;;.endmac
+;;.macro rorcp rAp
+;;	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_rorcp, rAp
+;;.endmac
+;;
+;;
+;;	; Copy instructions:
+;;	; (CoPY from reg rB to reg rA)
+;;.macro cpy rA, rB
+;;	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_cpy, rA, rB
+;;.endmac
+;;	; (CoPY from reg Pair rBp to reg Pair rAp)
+;;.macro cpyp rAp, rBp
+;;	gen_grp_2_instr_rAp_rBp instr_grp_2_oper::instr_g2_op_cpyp, rAp, rBp
+;;.endmac
+;;	; (Clear reg rA, then CoPY FRom Flags to reg rA)
+;;.macro cpyfrf rA
+;;	gen_grp_2_instr_rA instr_grp_2_oper::instr_g2_op_cpyfrf, rA
+;;.endmac
+;;	; (CoPY TO Flags from reg rA)
+;;.macro cpytof rA
+;;	gen_grp_2_instr_rA instr_grp_2_oper::instr_g2_op_cpytof, rA
+;;.endmac
+;;
+;;
+;;	; Swap instructions:
+;;	; (SWap register Pair, also can be used as a combined "call",
+;;	; "jump", and "return" instruction by swapping some other register
+;;	; pair with the "pc" [r14p] register pair)
+;;.macro swp rAp, rBp
+;;	gen_grp_2_instr_rAp_rBp instr_grp_2_oper::instr_g2_op_swp, rAp, rBp
+;;.endmac
+;;
+;;
+;;	; Call instruction (Description:  sets the link register to the
+;;	; return address, then sets the program counter to the address
+;;	; contained in the reg pair rAp):
+;;	; (CALL subroutine at address in reg pair rAp)
+;;.macro call rAp
+;;	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_call, rAp
+;;.endmac
+;;
+;;
+;;	; 8-bit Load/store instructions:
+;;	; (LoaD contents into Register rA from memory at address in rBp)
+;;.macro ldr rA, rBp
+;;	gen_grp_2_instr_rA_rBp instr_grp_2_oper::instr_g2_op_ldr, rA, rBp
+;;.endmac
+;;	; (STore Register rA contents to memory at address in rBp)
+;;.macro str rA, rBp
+;;	gen_grp_2_instr_rA_rBp instr_grp_2_oper::instr_g2_op_str, rA, rBp
+;;.endmac
+;;
+;;	; 8-bit Push/pop style instructions:
+;;	
+;;	; (Add 1 the reg pair rBp, then LoaD contents into Register rA from
+;;	; memory at address contained in reg pair rBp)
+;;.macro ldrab rA, rBp
+;;	gen_grp_2_instr_rA_rBp instr_grp_2_oper::instr_g2_op_ldrab, rA, rBp
+;;.endmac
+;;	
+;;	; (STore reg rA to memory at address contained in reg pair rBp, then
+;;	; Subtract 1 from the reg pair rBp)
+;;.macro strsa rA, rBp
+;;	gen_grp_2_instr_rA_rBp instr_grp_2_oper::instr_g2_op_strsa, rA, rBp
+;;.endmac
+;;	
+;;	; (Add 1 to the reg pair rBp, then LoaD a byte containing processor
+;;	; Flags (other bits cleared) into the processor flags)
+;;.macro ldfab rBp
+;;	gen_grp_2_instr_rBp instr_grp_2_oper::instr_g2_op_ldfab, rBp
+;;.endmac
+;;	
+;;	; (STore a byte containing the current processor flags (other bits
+;;	; cleared) to memory at address contained in reg pair rBp, then Add 1
+;;	; the reg pair rBp)
+;;.macro stfsa rBp
+;;	gen_grp_2_instr_rBp instr_grp_2_oper::instr_g2_op_stfsa, rBp
+;;.endmac
+;;	
+;;	
+;;	; Interrupt instructions (these ignore BOTH rA and rB):
+;;	; (ENable Interrupts)
+;;.macro eni
+;;	gen_grp_2_instr_no_args instr_grp_2_oper::instr_g2_op_eni
+;;.endmac
+;;	; (DIsable Interrupts)
+;;.macro dii
+;;	gen_grp_2_instr_no_args instr_grp_2_oper::instr_g2_op_dii
+;;.endmac
+;;	; (Set the PC to interrupt RETurn address and enable Interrupts)
+;;.macro reti 
+;;	gen_grp_2_instr_no_args instr_grp_2_oper::instr_g2_op_reti
+;;.endmac
+;;
+;;	; Extra Interrupt Instructions
+;;	; (Swap the Interrupt Return Address and rAp)
+;;.macro swpira rAp
+;;	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_swpira, rAp
+;;.endmac
+;;
+;;	; (CoPY the Interrupt Return Address to rAp)
+;;.macro cpypira rAp
+;;	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_cpypira, rAp
+;;.endmac
+
+
+
+	; -- rA, rB --
+
 	; Arithmetic instructions:
 .macro add rA, rB
 	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_add, rA, rB
@@ -326,37 +558,15 @@ spcpu_ca65_macro_pack_spinc = 3
 .macro adc rA, rB
 	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_adc, rA, rB
 .endmac
-
-
-.macro addpb rAp, rB
-	gen_grp_2_instr_rAp_rB instr_grp_2_oper::instr_g2_op_addpb, rAp, rB
-.endmac
-.macro addp rAp, rBp
-	gen_grp_2_instr_rAp_rBp instr_grp_2_oper::instr_g2_op_addp, rAp, rBp
-.endmac
-
-
 .macro sub rA, rB
 	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_sub, rA, rB
 .endmac
 .macro sbc rA, rB
 	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_sbc, rA, rB
 .endmac
-.macro subpb rAp, rB
-	gen_grp_2_instr_rAp_rB instr_grp_2_oper::instr_g2_op_subpb, rAp, rB
-.endmac
-.macro subp rAp, rBp
-	gen_grp_2_instr_rAp_rBp instr_grp_2_oper::instr_g2_op_subp, rAp, rBp
-.endmac
-
 .macro cmp rA, rB
 	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_cmp, rA, rB
 .endmac
-.macro cmpp rAp, rBp
-	gen_grp_2_instr_rAp_rBp instr_grp_2_oper::instr_g2_op_cmpp, rAp, rBp
-.endmac
-	
-
 
 	; Bitwise instructions with two register operands:
 .macro and rA, rB
@@ -368,26 +578,6 @@ spcpu_ca65_macro_pack_spinc = 3
 .macro xor rA, rB
 	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_xor, rA, rB
 .endmac
-
-
-	; Complement instructions with one register operand (rB ignored):
-	; (one's complement of rA)
-.macro inv rA
-	gen_grp_2_instr_rA instr_grp_2_oper::instr_g2_op_inv, rA
-.endmac
-	; (one's complement of rAp)
-.macro invp rAp
-	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_invp, rAp
-.endmac
-	; (two's complement of rA)
-.macro neg rA
-	gen_grp_2_instr_rA instr_grp_2_oper::instr_g2_op_neg, rA
-.endmac
-	; (two's complement of rAp)
-.macro negp rAp
-	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_negp, rAp
-.endmac
-
 
 	; Bitshifting (and rotating) instructions that use the value of rB
 	; as the number of bits to shift by:
@@ -409,13 +599,99 @@ spcpu_ca65_macro_pack_spinc = 3
 
 	; Bit rotating instructions that use carry as bit 8 for a 9-bit
 	; rotate of { carry, rA } by one bit:
-.macro rolc rA
-	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_rolc, rA, r0
+.macro rolc rA, rB
+	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_rolc, rA, rB
 .endmac
-.macro rorc rA
-	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_rorc, rA, r0
+.macro rorc rA, rB
+	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_rorc, rA, rB
 .endmac
 
+	; Copy instructions:
+	; (CoPY from reg rB to reg rA)
+.macro cpy rA, rB
+	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_cpy, rA, rB
+.endmac
+
+
+
+
+
+	; -- rA --
+
+	; Complement instructions with one register operand (rB ignored):
+	; (one's complement of rA)
+.macro inv rA
+	gen_grp_2_instr_rA instr_grp_2_oper::instr_g2_op_inv, rA
+.endmac
+	; (two's complement of rA)
+.macro neg rA
+	gen_grp_2_instr_rA instr_grp_2_oper::instr_g2_op_neg, rA
+.endmac
+	; (Clear reg rA, then CoPY FRom Flags to reg rA)
+.macro cpyfrf rA
+	gen_grp_2_instr_rA instr_grp_2_oper::instr_g2_op_cpyfrf, rA
+.endmac
+	; (CoPY TO Flags from reg rA)
+.macro cpytof rA
+	gen_grp_2_instr_rA instr_grp_2_oper::instr_g2_op_cpytof, rA
+.endmac
+
+
+
+
+	; -- rAp --
+
+	; Complement instructions with one register operand (rB ignored):
+	; (one's complement of rAp)
+.macro invp rAp
+	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_invp, rAp
+.endmac
+
+	; (two's complement of rA)
+.macro negp rAp
+	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_negp, rAp
+.endmac
+
+	; Bit rotating instructions that use carry as bit 16 for a 17-bit
+	; rotate of { carry, rAp } by one bit:
+.macro rolcp rAp
+	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_rolcp, rAp
+.endmac
+.macro rorcp rAp
+	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_rorcp, rAp
+.endmac
+
+	; Call instruction (Description:  sets the link register to the
+	; return address, then sets the program counter to the address
+	; contained in the reg pair rAp):
+	; (CALL subroutine at address in reg pair rAp)
+.macro call rAp
+	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_call, rAp
+.endmac
+
+	; Extra Interrupt Instructions
+	; (Swap the Interrupt Return Address and rAp)
+.macro swpira rAp
+	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_swpira, rAp
+.endmac
+	; (CoPY the Interrupt Return Address to rAp)
+.macro cpypira rAp
+	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_cpypira, rAp
+.endmac
+
+
+
+
+
+	; -- rAp, rB --
+
+	; Arithmetic instructions:
+.macro addpb rAp, rB
+	gen_grp_2_instr_rAp_rB instr_grp_2_oper::instr_g2_op_addpb, rAp, rB
+.endmac
+.macro subpb rAp, rB
+	gen_grp_2_instr_rAp_rB instr_grp_2_oper::instr_g2_op_subpb, rAp, rB
+.endmac
 
 	; Bitshifting (and rotating) instructions that do a 16-bit shift
 	; or rotate on the reg pair rAp, using rB as the number of bits to
@@ -437,35 +713,53 @@ spcpu_ca65_macro_pack_spinc = 3
 .endmac
 
 
-	; Bit rotating instructions that use carry as bit 16 for a 17-bit
-	; rotate of { carry, rAp } by one bit:
-.macro rolcp rAp
-	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_rolcp, rAp
+
+
+	; -- rA, rBp --
+
+	; 8-bit Load/store instructions:
+	; (LoaD contents into Register rA from memory at address in rBp)
+.macro ldr rAp, rBp
+	gen_grp_2_instr_rA_rBp instr_grp_2_oper::instr_g2_op_ldr, rA, rBp
 .endmac
-.macro rorcp rAp
-	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_rorcp, rAp
+	; (STore Register rA contents to memory at address in rBp)
+.macro str rAp, rBp
+	gen_grp_2_instr_rA_rBp instr_grp_2_oper::instr_g2_op_str, rA, rBp
+.endmac
+
+	; 8-bit Push/pop style instructions:
+
+	; (Add 1 the reg pair rBp, then LoaD contents into Register rA from
+	; memory at address contained in reg pair rBp)
+.macro ldrab rAp, rBp
+	gen_grp_2_instr_rA_rBp instr_grp_2_oper::instr_g2_op_ldrab, rA, rBp
+.endmac
+	; (STore reg rA to memory at address contained in reg pair rBp, then
+	; Subtract 1 from the reg pair rBp)
+.macro strsa rAp, rBp
+	gen_grp_2_instr_rA_rBp instr_grp_2_oper::instr_g2_op_strsa, rA, rBp
 .endmac
 
 
-	; Copy instructions:
-	; (CoPY from reg rB to reg rA)
-.macro cpy rA, rB
-	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_cpy, rA, rB
+
+
+	; -- rAp, rBp --
+
+	; Arithmetic instructions:
+.macro addp rAp, rBp
+	gen_grp_2_instr_rAp_rBp instr_grp_2_oper::instr_g2_op_addp, rAp, rBp
 .endmac
+.macro subp rAp, rBp
+	gen_grp_2_instr_rAp_rBp instr_grp_2_oper::instr_g2_op_subp, rAp, rBp
+.endmac
+.macro cmpp rAp, rBp
+	gen_grp_2_instr_rAp_rBp instr_grp_2_oper::instr_g2_op_cmpp, rAp, rBp
+.endmac
+
 	; (CoPY from reg Pair rBp to reg Pair rAp)
 .macro cpyp rAp, rBp
 	gen_grp_2_instr_rAp_rBp instr_grp_2_oper::instr_g2_op_cpyp, rAp, rBp
 .endmac
-	; (Clear reg rA, then CoPY FRom Flags to reg rA)
-.macro cpyfrf rA
-	gen_grp_2_instr_rA instr_grp_2_oper::instr_g2_op_cpyfrf, rA
-.endmac
-	; (CoPY TO Flags from reg rA)
-.macro cpytof rA
-	gen_grp_2_instr_rA instr_grp_2_oper::instr_g2_op_cpytof, rA
-.endmac
-
-
 	; Swap instructions:
 	; (SWap register Pair, also can be used as a combined "call",
 	; "jump", and "return" instruction by swapping some other register
@@ -475,53 +769,26 @@ spcpu_ca65_macro_pack_spinc = 3
 .endmac
 
 
-	; Call instruction (Description:  sets the link register to the
-	; return address, then sets the program counter to the address
-	; contained in the reg pair rAp):
-	; (CALL subroutine at address in reg pair rAp)
-.macro call rAp
-	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_call, rAp
-.endmac
 
 
-	; 8-bit Load/store instructions:
-	; (LoaD contents into Register rA from memory at address in rBp)
-.macro ldr rA, rBp
-	gen_grp_2_instr_rA_rBp instr_grp_2_oper::instr_g2_op_ldr, rA, rBp
-.endmac
-	; (STore Register rA contents to memory at address in rBp)
-.macro str rA, rBp
-	gen_grp_2_instr_rA_rBp instr_grp_2_oper::instr_g2_op_str, rA, rBp
-.endmac
+	; -- rBp --
 
-	; 8-bit Push/pop style instructions:
-	
-	; (Add 1 the reg pair rBp, then LoaD contents into Register rA from
-	; memory at address contained in reg pair rBp)
-.macro ldrab rA, rBp
-	gen_grp_2_instr_rA_rBp instr_grp_2_oper::instr_g2_op_ldrab, rA, rBp
-.endmac
-	
-	; (STore reg rA to memory at address contained in reg pair rBp, then
-	; Subtract 1 from the reg pair rBp)
-.macro strsa rA, rBp
-	gen_grp_2_instr_rA_rBp instr_grp_2_oper::instr_g2_op_strsa, rA, rBp
-.endmac
-	
 	; (Add 1 to the reg pair rBp, then LoaD a byte containing processor
 	; Flags (other bits cleared) into the processor flags)
 .macro ldfab rBp
 	gen_grp_2_instr_rBp instr_grp_2_oper::instr_g2_op_ldfab, rBp
 .endmac
-	
 	; (STore a byte containing the current processor flags (other bits
 	; cleared) to memory at address contained in reg pair rBp, then Add 1
 	; the reg pair rBp)
 .macro stfsa rBp
 	gen_grp_2_instr_rBp instr_grp_2_oper::instr_g2_op_stfsa, rBp
 .endmac
-	
-	
+
+
+
+
+	; -- no args --
 	; Interrupt instructions (these ignore BOTH rA and rB):
 	; (ENable Interrupts)
 .macro eni
@@ -532,20 +799,10 @@ spcpu_ca65_macro_pack_spinc = 3
 	gen_grp_2_instr_no_args instr_grp_2_oper::instr_g2_op_dii
 .endmac
 	; (Set the PC to interrupt RETurn address and enable Interrupts)
-.macro reti 
+.macro reti
 	gen_grp_2_instr_no_args instr_grp_2_oper::instr_g2_op_reti
 .endmac
 
-	; Extra Interrupt Instructions
-	; (Swap the Interrupt Return Address and rAp)
-.macro swpira rAp
-	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_swpira, rAp
-.endmac
-
-	; (CoPY the Interrupt Return Address to rAp)
-.macro cpypira rAp
-	gen_grp_2_instr_rAp instr_grp_2_oper::instr_g2_op_cpypira, rAp
-.endmac
 
 
 
