@@ -31,10 +31,10 @@ reset:
 
 
 test_ldst:
-	multi_push_regs r1, convert_pair_to_two_regs{r2p}, \
-		convert_pair_to_two_regs{r4p}, convert_pair_to_two_regs{r6p}, r8
-	
-	
+	;multi_push_regs convert_pair_to_two_regs{r2p}, \
+	;	convert_pair_to_two_regs{r4p}, r6
+	push_reg r6
+	multi_push_pairs r2p, r4p
 	
 	cpypi r2p, some_arr
 	cpypi r4p, $0002
@@ -44,21 +44,17 @@ test_ldst:
 	strx r0, r2p, r4p
 	
 	ldr r6, r2p
-	ldrxi r7, r2p, $0001
-	ldrx r8, r2p, r4p
-	
-	
-@test_r6:
 	cmp r6, r0
 	bne @bad
 	
-@test_r7:
-	cmp r7, r0
+	ldrxi r6, r2p, $0001
+	cmp r6, r0
 	bne @bad
 	
-@test_r8:
-	cmp r8, r0
+	ldrx r6, r2p, r4p
+	cmp r6, r0
 	bne @bad
+	
 	
 	
 @good:
@@ -69,8 +65,10 @@ test_ldst:
 	cpyi r0, $00
 	
 @done:
-	multi_pop_regs r1, convert_pair_to_two_regs{r2p}, \
-		convert_pair_to_two_regs{r4p}, convert_pair_to_two_regs{r6p}, r8
+	;multi_pop_regs convert_pair_to_two_regs{r2p}, \
+	;	convert_pair_to_two_regs{r4p}, r6
+	multi_pop_pairs r2p, r4p
+	pop_reg r6
 	
 	jump lr
 
@@ -78,6 +76,11 @@ test_ldst:
 
 main:
 	cpyi r0, $09
+	cpyi r2, $22
+	cpyi r3, $33
+	cpyi r4, $44
+	cpyi r5, $55
+	cpyi r6, $66
 	calli test_ldst
 	
 	

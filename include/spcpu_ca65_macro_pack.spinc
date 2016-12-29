@@ -1093,8 +1093,8 @@ spcpu_ca65_macro_pack_spinc = 3
 	; Required parameter is blank
 	.exitmacro
 .else
-	pop_reg some_reg_0
 	multi_pop_regs __multi_ldst_continue_regs
+	pop_reg some_reg_0
 .endif
 .endmac
 
@@ -1145,6 +1145,25 @@ spcpu_ca65_macro_pack_spinc = 3
 ;.endif
 ;.endmac
 
+.macro multi_push_pairs __multi_ldst_all_pairs
+.if ( .blank(some_pair_0) )
+	; Required parameter is blank
+	.exitmacro
+.else
+	push_pair some_pair_0
+	multi_push_pairs __multi_ldst_continue_pairs
+.endif
+.endmac
+
+.macro multi_pop_pairs __multi_ldst_all_pairs
+.if ( .blank(some_pair_0) )
+	; Required parameter is blank
+	.exitmacro
+.else
+	multi_pop_pairs __multi_ldst_continue_pairs
+	pop_pair some_pair_0
+.endif
+.endmac
 
 
 
