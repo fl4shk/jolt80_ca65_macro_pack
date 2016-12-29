@@ -1,0 +1,64 @@
+.include "../include/spcpu_ca65_macro_pack.spinc"
+.include "test_var_stuff.spinc"
+.include "misc_utility_macros.spinc"
+
+
+
+.export test_ldst
+.export test_ldst_and_push_pop
+
+.segment "ROM"
+
+test_ldst:
+	multi_push_regs convert_pair_to_two_regs{r2p}, \
+		convert_pair_to_two_regs{r4p}, r6
+	;push_reg r6
+	;multi_push_pairs r2p, r4p
+	
+	cpypi r2p, some_arr
+	cpypi r4p, $0002
+	
+	str r0, r2p
+	strxi r0, r2p, $0001
+	strx r0, r2p, r4p
+	
+	ldr r6, r2p
+	cmp r6, r0
+	bne @bad
+	
+	ldrxi r6, r2p, $0001
+	cmp r6, r0
+	bne @bad
+	
+	ldrx r6, r2p, r4p
+	cmp r6, r0
+	bne @bad
+	
+	
+	
+@good:
+	cpyi r0, $01
+	bra @done
+	
+@bad:
+	cpyi r0, $00
+	
+@done:
+	multi_pop_regs convert_pair_to_two_regs{r2p}, \
+		convert_pair_to_two_regs{r4p}, r6
+	;multi_pop_pairs r2p, r4p
+	;pop_reg r6
+	
+	jump lr
+
+
+test_ldst_and_push_pop:
+	
+	cpypi r2p, $2233
+	cpypi r4p, $4455
+	cpyi r6, $66
+	
+	; Tail call optimization
+	jumpi test_ldst
+
+

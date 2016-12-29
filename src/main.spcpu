@@ -30,58 +30,14 @@ reset:
 	jumpi main
 
 
-test_ldst:
-	;multi_push_regs convert_pair_to_two_regs{r2p}, \
-	;	convert_pair_to_two_regs{r4p}, r6
-	push_reg r6
-	multi_push_pairs r2p, r4p
-	
-	cpypi r2p, some_arr
-	cpypi r4p, $0002
-	
-	str r0, r2p
-	strxi r0, r2p, $0001
-	strx r0, r2p, r4p
-	
-	ldr r6, r2p
-	cmp r6, r0
-	bne @bad
-	
-	ldrxi r6, r2p, $0001
-	cmp r6, r0
-	bne @bad
-	
-	ldrx r6, r2p, r4p
-	cmp r6, r0
-	bne @bad
-	
-	
-	
-@good:
-	cpyi r0, $01
-	bra @done
-	
-@bad:
-	cpyi r0, $00
-	
-@done:
-	;multi_pop_regs convert_pair_to_two_regs{r2p}, \
-	;	convert_pair_to_two_regs{r4p}, r6
-	multi_pop_pairs r2p, r4p
-	pop_reg r6
-	
-	jump lr
 
 
 
 main:
 	cpyi r0, $09
-	cpyi r2, $22
-	cpyi r3, $33
-	cpyi r4, $44
-	cpyi r5, $55
-	cpyi r6, $66
-	calli test_ldst
+	
+	;calli test_ldst
+	;calli test_ldst_and_push_pop
 	
 	
 	jumpi end_simulation
