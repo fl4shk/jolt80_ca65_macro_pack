@@ -45,9 +45,16 @@ main:
 	
 	
 	;calli test_32_bit_add
-	calli test_32_bit_subtract
+	;calli test_32_bit_subtract
 	
 	
+	;calli test_32_bit_add_immediate
+	;calli test_32_bit_subtract_immediate
+	
+	
+	cpypi r0p, $ff88
+	subi r1, $01
+	sbci r0, $00
 	
 	
 	jumpi end_simulation

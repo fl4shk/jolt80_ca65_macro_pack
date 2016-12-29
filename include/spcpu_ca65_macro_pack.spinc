@@ -934,7 +934,11 @@ spcpu_ca65_macro_pack_spinc = 3
 	addi rA, -imm_value_8
 .endmac
 
-; There is no sbci
+.macro sbci rA, imm_value_8
+	error_if_bad_reg_name rA, sbci
+	adci rA, (~imm_value_8)
+.endmac
+
 .macro subpi rAp, imm_value_16
 	error_if_bad_reg_pair_name rAp, subpi
 	warn_if_reg_pair_is_sp rAp, subpi
@@ -1077,6 +1081,13 @@ spcpu_ca65_macro_pack_spinc = 3
 	cpyi rA, imm_value_8
 	push_reg rA
 .endmac
+
+;.macro pushpi rAp, imm_value_16
+;	cpypi rAp, imm_value_16
+;	push_pair rAp
+;.endmac
+
+
 
 ;.macro multi_push_regs __multi_ldst_all_regs
 ;.if ( .blank(some_reg_0) )
