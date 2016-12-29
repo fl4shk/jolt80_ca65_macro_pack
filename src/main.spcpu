@@ -15,16 +15,6 @@ interrupt_vec_addr:
 .segment "ROM"
 
 
-isr_main:
-	push_flags
-	
-	cpyi r0, $9a
-	;calli other_file_test_subroutine
-	
-	pop_flags
-	
-	cpypira pc
-	;reti
 
 
 
@@ -37,69 +27,74 @@ reset:
 	;cpypi r0p, main
 	;;jumpi main
 	;jump r0p
+	jumpi main
+
+
+test_ldst:
+	multi_push_regs r1, convert_pair_to_two_regs{r2p}, \
+		convert_pair_to_two_regs{r4p}, convert_pair_to_two_regs{r6p}, r8
+	
+	
+	
+	cpypi r2p, some_arr
+	cpypi r4p, $0002
+	
+	str r0, r2p
+	strxi r0, r2p, $0001
+	strx r0, r2p, r4p
+	
+	ldr r6, r2p
+	ldrxi r7, r2p, $0001
+	ldrx r8, r2p, r4p
+	
+	
+@test_r6:
+	cmp r6, r0
+	bne @bad
+	
+@test_r7:
+	cmp r7, r0
+	bne @bad
+	
+@test_r8:
+	cmp r8, r0
+	bne @bad
+	
+	
+@good:
+	cpyi r0, $01
+	bra @done
+	
+@bad:
+	cpyi r0, $00
+	
+@done:
+	multi_pop_regs r1, convert_pair_to_two_regs{r2p}, \
+		convert_pair_to_two_regs{r4p}, convert_pair_to_two_regs{r6p}, r8
+	
+	jump lr
+
+
 
 main:
-	;addi r14, $00
 	cpyi r0, $09
-	
-	;addp
-	
-	;addpbi sp, 
-	
-	;calli other_file_test_subroutine
-	;cpypi lr, other_file_test_subroutine
-	;call lr
-	
-	;cpypi r8p, $ffff
-	;addpbi r8p, 2
-	
-	;cpypi r2p, $0001
-	;subpbi r2p, 2
-	cpypi r2p, $0000
-	subpbi r2p, 1
+	calli test_ldst
 	
 	
-	
-	cpyi r1, $00
-	and r1, r1
-	
-	orri r1, 3
-	and r1, r1
-	xor r1, r1
-	
-	
-	
-	eni
-	
-maybe_infin:
-	;addi r14, $00
-	;addi r14, $01
-	
-	bra maybe_infin
-	
-	
-	;dii
-	
-	;bra maybe_infin
-	
-	
-	
-;;	;cpypi r2p, other_file_test_subroutine
-;	
-;test_call:
-;	calli other_file_test_subroutine
-;	;call r2p
-	
-	;cpypi lr, $9001
-	;;push_pair lr
-	;;calli other_file_test_subroutine
-	;;pop_pair lr
-	;backup_restore_lr_calli other_file_test_subroutine
-	
-	;bra maybe_infin
 	jumpi end_simulation
-	
 
+
+
+isr_main:
+	push_flags
+	
+	cpyi r0, $9a
+	;calli other_file_test_subroutine
+	
+	pop_flags
+	
+	cpypira pc
+	;reti
 
 
 

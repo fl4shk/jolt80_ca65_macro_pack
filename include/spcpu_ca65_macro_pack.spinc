@@ -1076,10 +1076,32 @@ spcpu_ca65_macro_pack_spinc = 3
 ;	addpbi sp, ( .paramcount * num_bytes_1_reg )
 ;.endif
 ;.endmac
-;
-;
-;
-;
+
+
+.macro multi_push_regs __multi_ldst_all_regs
+.if ( .blank(some_reg_0) )
+	; Required parameter is blank
+	.exitmacro
+.else
+	push_reg some_reg_0
+	multi_push_regs __multi_ldst_continue_regs
+.endif
+.endmac
+
+.macro multi_pop_regs __multi_ldst_all_regs
+.if ( .blank(some_reg_0) )
+	; Required parameter is blank
+	.exitmacro
+.else
+	pop_reg some_reg_0
+	multi_pop_regs __multi_ldst_continue_regs
+.endif
+.endmac
+
+
+
+
+
 ;;.macro push_pair rAp
 ;;	stp rAp, sp
 ;;	subpbi sp, num_bytes_1_pair
