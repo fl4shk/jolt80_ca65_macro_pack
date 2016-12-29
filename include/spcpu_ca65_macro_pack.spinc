@@ -944,18 +944,32 @@ spcpu_ca65_macro_pack_spinc = 3
 
 
 ;.macro addp rAp, rBp
-;	error_if_bad_reg_pair_name rAp, add16
-;	error_if_bad_reg_pair_name rBp, add16
+;	error_if_bad_reg_pair_name rAp, addp
+;	error_if_bad_reg_pair_name rBp, addp
 ;	add reg_pair_lo{rAp}, reg_pair_lo{rBp}
 ;	adc reg_pair_hi{rAp}, reg_pair_hi{rBp}
 ;.endmac
 ;.macro subp rAp, rBp
-;	error_if_bad_reg_pair_name rAp, sub16
-;	error_if_bad_reg_pair_name rBp, sub16
+;	error_if_bad_reg_pair_name rAp, subp
+;	error_if_bad_reg_pair_name rBp, subp
 ;	sub reg_pair_lo{rAp}, reg_pair_lo{rBp}
 ;	sbc reg_pair_hi{rAp}, reg_pair_hi{rBp}
 ;.endmac
 
+
+.macro adcp rAp, rBp
+	error_if_bad_reg_pair_name rAp, adcp
+	error_if_bad_reg_pair_name rBp, adcp
+	adc reg_pair_lo{rAp}, reg_pair_lo{rBp}
+	adc reg_pair_hi{rAp}, reg_pair_hi{rBp}
+.endmac
+
+.macro sbcp rAp, rBp
+	error_if_bad_reg_pair_name rAp, sbcp
+	error_if_bad_reg_pair_name rBp, sbcp
+	sbc reg_pair_lo{rAp}, reg_pair_lo{rBp}
+	sbc reg_pair_hi{rAp}, reg_pair_hi{rBp}
+.endmac
 
 
 
@@ -1024,6 +1038,9 @@ spcpu_ca65_macro_pack_spinc = 3
 	pop_pair lr
 .endmac
 
+.macro basic_ret
+	jump lr
+.endmac
 
 
 ;.macro pop_and_ret rAp
@@ -1056,6 +1073,10 @@ spcpu_ca65_macro_pack_spinc = 3
 	ldfab sp
 .endmac
 
+.macro pushi rA, imm_value_8
+	cpyi rA, imm_value_8
+	push_reg rA
+.endmac
 
 ;.macro multi_push_regs __multi_ldst_all_regs
 ;.if ( .blank(some_reg_0) )
@@ -1114,14 +1135,14 @@ spcpu_ca65_macro_pack_spinc = 3
 ;;.endmac
 .macro push_pair rAp
 	;multi_push_regs convert_pair_to_two_regs{rAp}
-	push_reg reg_pair_lo{rAp}
 	push_reg reg_pair_hi{rAp}
+	push_reg reg_pair_lo{rAp}
 .endmac
 
 .macro pop_pair rAp
 	;multi_pop_regs convert_pair_to_two_regs{rAp}
-	pop_reg reg_pair_hi{rAp}
 	pop_reg reg_pair_lo{rAp}
+	pop_reg reg_pair_hi{rAp}
 .endmac
 
 

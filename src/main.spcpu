@@ -34,10 +34,20 @@ reset:
 
 
 main:
-	cpyi r0, $09
 	
+	
+	;cpyi r0, $09
 	;calli test_ldst
 	;calli test_ldst_and_push_pop
+	
+	
+	
+	
+	
+	;calli test_32_bit_add
+	calli test_32_bit_subtract
+	
+	
 	
 	
 	jumpi end_simulation

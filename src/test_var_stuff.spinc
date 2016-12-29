@@ -7,4 +7,7 @@ some_arr_size = 20
 ;some_arr_size = $2000
 
 
+test_math_arr_size = 16
+
+
 .endif		; test_var_stuff_spinc

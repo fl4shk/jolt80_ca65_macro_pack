@@ -6,14 +6,15 @@
 
 .export test_ldst
 .export test_ldst_and_push_pop
+.export do_32_bit_add
+.export do_32_bit_subtract
+.export test_32_bit_add
+.export test_32_bit_subtract
 
 .segment "ROM"
 
 test_ldst:
-	multi_push_regs convert_pair_to_two_regs{r2p}, \
-		convert_pair_to_two_regs{r4p}, r6
-	;push_reg r6
-	;multi_push_pairs r2p, r4p
+	multi_push_regs convert_pair_to_two_regs{r4p}, r6
 	
 	cpypi r2p, some_arr
 	cpypi r4p, $0002
@@ -44,21 +45,88 @@ test_ldst:
 	cpyi r0, $00
 	
 @done:
-	multi_pop_regs convert_pair_to_two_regs{r2p}, \
-		convert_pair_to_two_regs{r4p}, r6
-	;multi_pop_pairs r2p, r4p
-	;pop_reg r6
+	multi_pop_regs convert_pair_to_two_regs{r4p}, r6
 	
-	jump lr
+	basic_ret
 
 
 test_ldst_and_push_pop:
-	
-	cpypi r2p, $2233
 	cpypi r4p, $4455
 	cpyi r6, $66
 	
 	; Tail call optimization
 	jumpi test_ldst
+
+
+
+do_32_bit_add:
+	multi_push_pairs r4p, r6p
+	
+	ldpxi r4p, sp, 1 + num_bytes_2_pair
+	ldpxi r6p, sp, 1 + num_bytes_2_pair + num_bytes_1_pair
+	
+	
+	addp r2p, r6p
+	adcp r0p, r4p
+	
+	multi_pop_pairs r4p, r6p
+	
+	basic_ret
+
+
+
+do_32_bit_subtract:
+	multi_push_pairs r4p, r6p
+	
+	ldpxi r4p, sp, 1 + num_bytes_2_pair
+	ldpxi r6p, sp, 1 + num_bytes_2_pair + num_bytes_1_pair
+	
+	
+	subp r2p, r6p
+	sbcp r0p, r4p
+	
+	multi_pop_pairs r4p, r6p
+	
+	basic_ret
+
+
+shared_test_32_bit_add_sub_prefix:
+	cpypi r0p, $ff88
+	cpypi r2p, $aabb
+	
+	
+	pushi r8, $01
+	pushi r8, $00
+	push_reg r8
+	push_reg r8
+	
+	
+	basic_ret
+
+shared_test_32_bit_add_sub_suffix:
+	addpbi sp, num_bytes_2_pair
+	basic_ret
+
+
+test_32_bit_add:
+	multi_push_regs r8, convert_pair_to_two_regs{lr}
+	
+	calli shared_test_32_bit_add_sub_prefix
+	calli do_32_bit_add
+	calli shared_test_32_bit_add_sub_suffix
+	
+	multi_pop_regs r8, convert_pair_to_two_regs{lr}
+	basic_ret
+
+
+test_32_bit_subtract:
+	multi_push_regs r8, convert_pair_to_two_regs{lr}
+	
+	calli shared_test_32_bit_add_sub_prefix
+	calli do_32_bit_subtract
+	calli shared_test_32_bit_add_sub_suffix
+	
+	multi_pop_regs r8, convert_pair_to_two_regs{lr}
+	basic_ret
 
 

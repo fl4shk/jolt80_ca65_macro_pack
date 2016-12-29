@@ -3,7 +3,7 @@
 
 .export some_var
 .export some_arr
-
+.export test_math_arr
 
 .segment "BSS"
 
@@ -13,3 +13,6 @@ some_var:
 
 some_arr:
 	.res some_arr_size
+
+test_math_arr:
+	.res test_math_arr_size

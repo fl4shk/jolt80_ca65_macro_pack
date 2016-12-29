@@ -10,7 +10,7 @@
 test_sr_2:
 	cpyi r1, $88
 	
-	jump lr
+	basic_ret
 
 
 other_file_test_subroutine:
@@ -25,7 +25,7 @@ other_file_test_subroutine:
 	;push_reg reg_pair_hi{lr}
 	;strsa reg_pair_hi{lr}, sp
 	;push_reg r0
-	jump lr
+	basic_ret
 
 
 
