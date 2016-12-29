@@ -53,8 +53,10 @@ main:
 	
 	
 	cpypi r0p, $ff88
-	subi r1, $01
-	sbci r0, $00
+	;cpypi r2p, $ff88
+	subpi r0p, $0101
+	;subpi
+	
 	
 	
 	jumpi end_simulation
