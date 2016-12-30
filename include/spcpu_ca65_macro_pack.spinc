@@ -74,11 +74,13 @@ spcpu_ca65_macro_pack_spinc = 3
 	.endif
 .endmac
 
-.macro warn_if_reg_pair_is_sp rAp, instr
+.macro warn_if_reg_pair_is_sp rAp, instr, better_option
 	.if ( .xmatch( rAp, r10p ) \
 		.or .xmatch( rAp, sp ) )
-		.warning .concat( "CAUTION CAUTION CAUTION!!  Use of sp in the ", \
-			.string(instr), " instruction NEEDS CAUTION" )
+		.warning .concat( "CAUTION CAUTION CAUTION!!  It is SUGGESTED ", \
+			"to use the ", .string(better_option), " instruction ", \
+			"instead of the ", .string(instr), " instruction when ", \
+			"using the stack pointer as an operand!" )
 	.endif
 .endmac
 
@@ -915,16 +917,28 @@ spcpu_ca65_macro_pack_spinc = 3
 	; Pseudo instructions
 .macro addpi rAp, imm_value_16
 	error_if_bad_reg_pair_name rAp, addpi
-	warn_if_reg_pair_is_sp rAp, addpi
+	warn_if_reg_pair_is_sp rAp, addpi, addpbi
 	addi reg_pair_lo{rAp}, <(imm_value_16)
 	adci reg_pair_hi{rAp}, >(imm_value_16)
 .endmac
 
 .macro adcpi rAp, imm_value_16
 	error_if_bad_reg_pair_name rAp, adcpi
-	warn_if_reg_pair_is_sp rAp, adcpi
+	;warn_if_reg_pair_is_sp rAp, adcpi
 	adci reg_pair_lo{rAp}, <(imm_value_16)
 	adci reg_pair_hi{rAp}, >(imm_value_16)
+.endmac
+
+
+	; Incrementing pseudo instructions
+.macro inc rA
+	error_if_bad_reg_name rA
+	addi rA, $01
+.endmac
+
+.macro incp rAp
+	error_if_bad_reg_pair_name rAp
+	addpbi rAp, $01
 .endmac
 
 
@@ -941,7 +955,7 @@ spcpu_ca65_macro_pack_spinc = 3
 
 .macro subpi rAp, imm_value_16
 	error_if_bad_reg_pair_name rAp, subpi
-	warn_if_reg_pair_is_sp rAp, subpi
+	warn_if_reg_pair_is_sp rAp, subpi, subpbi
 	;addi reg_pair_lo{rAp}, <(-(imm_value_16))
 	;adci reg_pair_hi{rAp}, >(-(imm_value_16))
 	subi reg_pair_lo{rAp}, <(imm_value_16)
@@ -950,10 +964,24 @@ spcpu_ca65_macro_pack_spinc = 3
 
 .macro sbcpi rAp, imm_value_16
 	error_if_bad_reg_pair_name rAp, sbcpi
-	warn_if_reg_pair_is_sp rAp, sbcpi
+	;warn_if_reg_pair_is_sp rAp, sbcpi
 	sbci reg_pair_lo{rAp}, <(imm_value_16)
 	sbci reg_pair_hi{rAp}, >(imm_value_16)
 .endmac
+
+
+	; Decrementing pseudo instructions
+.macro dec rA
+	error_if_bad_reg_name rA
+	subi rA, $01
+.endmac
+
+.macro decp rAp
+	error_if_bad_reg_pair_name rAp
+	subpbi rAp, $01
+.endmac
+
+
 
 
 ;.macro addp rAp, rBp
@@ -981,6 +1009,40 @@ spcpu_ca65_macro_pack_spinc = 3
 	error_if_bad_reg_pair_name rAp, sbcp
 	error_if_bad_reg_pair_name rBp, sbcp
 	sbc reg_pair_lo{rAp}, reg_pair_lo{rBp}
+	sbc reg_pair_hi{rAp}, reg_pair_hi{rBp}
+.endmac
+
+
+; This is just ridiculous
+.macro add32i rAp, rBp, imm_value_32
+	addpi rBp, .loword(imm_value_32)
+	adcpi rAp, .hiword(imm_value_32)
+.endmac
+
+.macro sub32i rAp, rBp, imm_value_32
+	subpi rBp, .loword(imm_value_32)
+	sbcpi rAp, .hiword(imm_value_32)
+.endmac
+
+.macro add32 rAp, rBp, rCp, rDp
+	addp rBp, rDp
+	adcp rAp, rCp
+.endmac
+
+.macro sub32 rAp, rBp, rCp, rDp
+	subp rBp, rDp
+	sbcp rAp, rCp
+.endmac
+
+
+
+.macro addp_type_2 rAp, rBp
+	add reg_pair_lo{rAp}, reg_pair_lo{rBp}
+	adc reg_pair_hi{rAp}, reg_pair_hi{rBp}
+.endmac
+
+.macro subp_type_2 rAp, rBp
+	sub reg_pair_lo{rAp}, reg_pair_lo{rBp}
 	sbc reg_pair_hi{rAp}, reg_pair_hi{rBp}
 .endmac
 
@@ -1013,21 +1075,45 @@ spcpu_ca65_macro_pack_spinc = 3
 .endmac
 
 
-;; Jump/call pseudo instructions
-;.macro basic_jump rAp
-;	cpyp pc, rAp
-;.endmac
-;.macro basic_jumpi imm_value_16
-;	cpypi pc, imm_value_16
-;.endmac
-;;
-;.macro rpair_chng_jump rAp
-;	;subpbi rAp, num_bytes_instr_16
-;	;subpbi rAp, num_bytes_instr_32
-;	addpbi rAp, num_bytes_instr_16
-;	cpyp pc, rAp
-;.endmac
 
+.macro branch_eq_16_imm rAp, imm_value_16, label
+	error_if_bad_reg_pair_name rAp
+	
+	.local @not_equal
+	cmpi reg_pair_hi{rAp}, >(imm_value_16)
+	bne @not_equal
+	
+	cmpi reg_pair_lo{rAp}, <(imm_value_16)
+	beq label
+@not_equal:
+	
+.endmac
+
+
+.macro branch_ne_16_imm rAp, imm_value_16, label
+	error_if_bad_reg_pair_name rAp
+	
+	cmpi reg_pair_hi{rAp}, >(imm_value_16)
+	bne label
+	
+	cmpi reg_pair_lo{rAp}, <(imm_value_16)
+	bne label
+.endmac
+
+
+.macro branch_ne_32_imm rAp, rBp, imm_value_32, \
+	label
+	error_if_bad_reg_pair_name rAp
+	error_if_bad_reg_pair_name rBp
+	
+	branch_ne_16_imm rAp, .hiword(imm_value_32), label
+	branch_ne_16_imm rBp, .loword(imm_value_32), label
+	
+.endmac
+
+
+
+;; Jump/call pseudo instructions
 .macro jump rAp
 	cpyp pc, rAp
 .endmac

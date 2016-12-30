@@ -4,14 +4,89 @@
 
 
 
+;.export do_32_bit_add
+;.export do_32_bit_subtract
+
 .export test_ldst
 .export test_ldst_and_push_pop
-.export do_32_bit_add
-.export do_32_bit_subtract
+
 .export test_32_bit_add
 .export test_32_bit_subtract
 
+.export test_32_bit_add_immediate
+.export test_32_bit_subtract_immediate
+
+
+
 .segment "ROM"
+
+
+
+
+do_32_bit_add_old:
+	multi_push_pairs r4p, r6p
+	
+	ldpxi r4p, sp, 1 + num_bytes_2_pair
+	ldpxi r6p, sp, 1 + num_bytes_2_pair + num_bytes_1_pair
+	add32 r0p, r2p, r4p, r6p
+	
+	multi_pop_pairs r4p, r6p
+	basic_ret
+
+do_32_bit_subtract_old:
+	multi_push_pairs r4p, r6p
+	
+	ldpxi r4p, sp, 1 + num_bytes_2_pair
+	ldpxi r6p, sp, 1 + num_bytes_2_pair + num_bytes_1_pair
+	sub32 r0p, r2p, r4p, r6p
+	
+	multi_pop_pairs r4p, r6p
+	basic_ret
+
+shared_test_32_bit_add_sub_prefix_old:
+	cpypi r0p, $ff88
+	cpypi r2p, $aabb
+	
+	
+	pushi r8, $01
+	pushi r8, $00
+	push_reg r8
+	push_reg r8
+	
+	
+	basic_ret
+
+shared_test_32_bit_add_sub_suffix_old:
+	addpbi sp, num_bytes_2_pair
+	basic_ret
+
+
+test_32_bit_add_old:
+	multi_push_regs r8, convert_pair_to_two_regs{lr}
+	
+	calli shared_test_32_bit_add_sub_prefix_old
+	calli do_32_bit_add_old
+	calli shared_test_32_bit_add_sub_suffix_old
+	
+	multi_pop_regs r8, convert_pair_to_two_regs{lr}
+	basic_ret
+
+
+test_32_bit_subtract_old:
+	multi_push_regs r8, convert_pair_to_two_regs{lr}
+	
+	calli shared_test_32_bit_add_sub_prefix_old
+	calli do_32_bit_subtract_old
+	calli shared_test_32_bit_add_sub_suffix_old
+	
+	multi_pop_regs r8, convert_pair_to_two_regs{lr}
+	basic_ret
+
+
+
+
+
+
 
 test_ldst:
 	multi_push_regs convert_pair_to_two_regs{r4p}, r6
@@ -59,74 +134,118 @@ test_ldst_and_push_pop:
 
 
 
-do_32_bit_add:
-	multi_push_pairs r4p, r6p
-	
-	ldpxi r4p, sp, 1 + num_bytes_2_pair
-	ldpxi r6p, sp, 1 + num_bytes_2_pair + num_bytes_1_pair
-	
-	
-	addp r2p, r6p
-	adcp r0p, r4p
-	
-	multi_pop_pairs r4p, r6p
-	
-	basic_ret
 
 
 
-do_32_bit_subtract:
-	multi_push_pairs r4p, r6p
-	
-	ldpxi r4p, sp, 1 + num_bytes_2_pair
-	ldpxi r6p, sp, 1 + num_bytes_2_pair + num_bytes_1_pair
-	
-	
-	subp r2p, r6p
-	sbcp r0p, r4p
-	
-	multi_pop_pairs r4p, r6p
-	
-	basic_ret
+test_math_val_a_0 = $ffbbaa33
+test_math_val_b_0 = $10fba3dc
+
+test_math_val_a_1 = $a98f1d23
+test_math_val_b_1 = test_math_val_a_1 + 30
+
+test_math_val_a_2 = test_math_val_b_0 + $12000000
+test_math_val_b_2 = test_math_val_b_1 + $30000000
+
+test_math_val_a_3 = $83abcdab
+test_math_val_b_3 = test_math_val_b_2 + $30000000
+
+test_math_val_a_4 = $85abcdab
+test_math_val_b_4 = test_math_val_b_3 + $56a80003
 
 
-shared_test_32_bit_add_sub_prefix:
-	cpypi r0p, $ff88
-	cpypi r2p, $aabb
-	
-	
-	pushi r8, $01
-	pushi r8, $00
-	push_reg r8
-	push_reg r8
-	
-	
-	basic_ret
 
-shared_test_32_bit_add_sub_suffix:
-	addpbi sp, num_bytes_2_pair
-	basic_ret
+add32_result_0 = test_math_val_a_0 + test_math_val_b_0
+add32_result_1 = test_math_val_a_1 + test_math_val_b_1
+add32_result_2 = test_math_val_a_2 + test_math_val_b_2
+add32_result_3 = test_math_val_a_3 + test_math_val_b_3
+
+sub32_result_0 = test_math_val_a_0 - test_math_val_b_0
+sub32_result_1 = test_math_val_a_1 - test_math_val_b_1
+sub32_result_2 = test_math_val_a_2 - test_math_val_b_2
+sub32_result_3 = test_math_val_a_3 - test_math_val_b_3
+
+
 
 
 test_32_bit_add:
-	multi_push_regs r8, convert_pair_to_two_regs{lr}
 	
-	calli shared_test_32_bit_add_sub_prefix
-	calli do_32_bit_add
-	calli shared_test_32_bit_add_sub_suffix
-	
-	multi_pop_regs r8, convert_pair_to_two_regs{lr}
 	basic_ret
-
 
 test_32_bit_subtract:
-	multi_push_regs r8, convert_pair_to_two_regs{lr}
 	
-	calli shared_test_32_bit_add_sub_prefix
-	calli do_32_bit_subtract
-	calli shared_test_32_bit_add_sub_suffix
-	
-	multi_pop_regs r8, convert_pair_to_two_regs{lr}
 	basic_ret
+
+
+.macro totally_immediate_add32 rAp, rBp, imm_value_32_a, imm_value_32_b
+	error_if_bad_reg_pair_name rAp
+	error_if_bad_reg_pair_name rBp
+	
+	cpypi rAp, .hiword(imm_value_32_a)
+	cpypi rBp, .loword(imm_value_32_a)
+	add32i rAp, rBp, imm_value_32_b
+	
+.endmac
+
+
+.macro totally_immediate_sub32 rAp, rBp, imm_value_32_a, imm_value_32_b
+	error_if_bad_reg_pair_name rAp
+	error_if_bad_reg_pair_name rBp
+	
+	cpypi rAp, .hiword(imm_value_32_a)
+	cpypi rBp, .loword(imm_value_32_a)
+	sub32i rAp, rBp, imm_value_32_b
+	
+.endmac
+
+
+test_32_bit_add_immediate:
+	totally_immediate_add32 r0p, r2p, test_math_val_a_0, test_math_val_b_0
+	branch_ne_32_imm r0p, r2p, add32_result_0, @bad
+	
+	totally_immediate_add32 r0p, r2p, test_math_val_a_1, test_math_val_b_1
+	branch_ne_32_imm r0p, r2p, add32_result_1, @bad
+	
+	totally_immediate_add32 r0p, r2p, test_math_val_a_2, test_math_val_b_2
+	branch_ne_32_imm r0p, r2p, add32_result_2, @bad
+	
+	totally_immediate_add32 r0p, r2p, test_math_val_a_3, test_math_val_b_3
+	branch_ne_32_imm r0p, r2p, add32_result_3, @bad
+	
+@good:
+	cpyi r0, $01
+	bra @done
+	
+@bad:
+	cpyi r0, $00
+	
+@done:
+	basic_ret
+
+
+
+
+test_32_bit_subtract_immediate:
+	totally_immediate_sub32 r0p, r2p, test_math_val_a_0, test_math_val_b_0
+	branch_ne_32_imm r0p, r2p, sub32_result_0, @bad
+	
+	totally_immediate_sub32 r0p, r2p, test_math_val_a_1, test_math_val_b_1
+	branch_ne_32_imm r0p, r2p, sub32_result_1, @bad
+	
+	totally_immediate_sub32 r0p, r2p, test_math_val_a_2, test_math_val_b_2
+	branch_ne_32_imm r0p, r2p, sub32_result_2, @bad
+	
+	totally_immediate_sub32 r0p, r2p, test_math_val_a_3, test_math_val_b_3
+	branch_ne_32_imm r0p, r2p, sub32_result_3, @bad
+	
+@good:
+	cpyi r0, $01
+	bra @done
+	
+@bad:
+	cpyi r0, $00
+	
+@done:
+	basic_ret
+
 
 
