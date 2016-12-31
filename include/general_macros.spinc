@@ -19,5 +19,11 @@ general_macros_spinc = 3
 	<< (bit_pos_lo) )
 
 
+;.macro dbyt32 imm_value_32
+;	.dbyt .hiword(imm_value_32)
+;	.dbyt .loword(imm_value_32)
+;.endmac
+.define convert_iv_32_to_words( imm_value_32 ) \
+	.hiword(imm_value_32), .loword(imm_value_32)
 
 .endif		; general_macros_spinc

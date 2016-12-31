@@ -1294,4 +1294,64 @@ spcpu_ca65_macro_pack_spinc = 3
 
 
 
+; Load a byte from an address, (ab)using a PC-relative store to avoid
+; needing to load an address into a reg pair first
+.macro ldr_abs rA, address
+	.local @distance, @base
+	@distance = (address) - @base - num_bytes_instr_16
+@base:
+	ldrxi rA, pc, @distance
+	
+.endmac
+
+; Store a byte to an address, (ab)using a PC-relative store to avoid
+; needing to load an address into a reg pair first
+.macro str_abs rA, address
+	.local @distance, @base
+	@distance = (address) - @base - num_bytes_instr_16
+@base:
+	strxi rA, pc, @distance
+	
+.endmac
+
+
+.macro ldrxi_abs rA, address, index
+	.local @distance, @base
+	@distance = (address) - @base - num_bytes_instr_16 + (index)
+@base:
+	ldrxi rA, pc, @distance
+	
+.endmac
+
+.macro strxi_abs rA, address, index
+	.local @distance, @base
+	@distance = (address) - @base - num_bytes_instr_16 + (index)
+@base:
+	strxi rA, pc, @distance
+	
+.endmac
+
+
+.macro ldp_abs rAp, address
+	error_if_bad_reg_pair_name rAp
+	ldrxi_abs reg_pair_hi{rAp}, address, $00
+	ldrxi_abs reg_pair_lo{rAp}, address, $01
+.endmac
+.macro stp_abs rAp, address
+	error_if_bad_reg_pair_name rAp
+	strxi_abs reg_pair_hi{rAp}, address, $00
+	strxi_abs reg_pair_lo{rAp}, address, $01
+.endmac
+
+.macro ldpxi_abs rAp, address, index
+	error_if_bad_reg_pair_name rAp
+	ldrxi_abs reg_pair_hi{rAp}, address, ( $00 + index )
+	ldrxi_abs reg_pair_lo{rAp}, address, ( $01 + index )
+.endmac
+.macro stpxi_abs rAp, address, index
+	error_if_bad_reg_pair_name rAp
+	strxi_abs reg_pair_hi{rAp}, address, ( $00 + index )
+	strxi_abs reg_pair_lo{rAp}, address, ( $01 + index )
+.endmac
+
 .endif		; spcpu_ca65_macro_pack_spinc
