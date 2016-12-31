@@ -45,7 +45,7 @@ main:
 	
 	
 	;calli test_32_bit_add
-	calli test_32_bit_subtract
+	;calli test_32_bit_subtract
 	
 	
 	;calli test_32_bit_add_immediate
