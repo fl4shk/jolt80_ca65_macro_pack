@@ -45,25 +45,11 @@ main:
 	
 	
 	;calli test_32_bit_add
-	;calli test_32_bit_subtract
+	calli test_32_bit_subtract
 	
 	
 	;calli test_32_bit_add_immediate
 	;calli test_32_bit_subtract_immediate
-	
-	;cpypi r2p, test_math_arr
-	;cpyi r0, $9f
-	cpypi r0p, $fabc
-	
-	stp_abs r0p, test_math_arr
-	ldp_abs r2p, test_math_arr
-	
-	;str_abs r0, test_math_arr
-	;addi r0, $01
-	;strxi_abs r0, test_math_arr, $01
-	;
-	;ldr_abs r1, test_math_arr
-	;ldrxi_abs r2, test_math_arr, $01
 	
 	
 	jumpi end_simulation

@@ -1101,8 +1101,7 @@ spcpu_ca65_macro_pack_spinc = 3
 .endmac
 
 
-.macro branch_ne_32_imm rAp, rBp, imm_value_32, \
-	label
+.macro branch_ne_32_imm rAp, rBp, imm_value_32, label
 	error_if_bad_reg_pair_name rAp
 	error_if_bad_reg_pair_name rBp
 	
@@ -1111,6 +1110,18 @@ spcpu_ca65_macro_pack_spinc = 3
 	
 .endmac
 
+.macro branch_ne_32 rAp, rBp, rCp, rDp, label
+	error_if_bad_reg_pair_name rAp
+	error_if_bad_reg_pair_name rBp
+	error_if_bad_reg_pair_name rCp
+	error_if_bad_reg_pair_name rDp
+	
+	cmpp rAp, rCp
+	bne label
+	
+	cmpp rBp, rDp
+	bne label
+.endmac
 
 
 ;; Jump/call pseudo instructions

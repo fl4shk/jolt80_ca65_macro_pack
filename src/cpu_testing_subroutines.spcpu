@@ -188,14 +188,36 @@ sub32_result_table:
 	.dbyt convert_iv_32_to_words{sub32_result_1}
 	.dbyt convert_iv_32_to_words{sub32_result_2}
 	.dbyt convert_iv_32_to_words{sub32_result_3}
+sub32_result_table_end:
+
+test_math_table_size = ( sub32_result_table_end - sub32_result_table )
+
 
 
 test_32_bit_add:
 	multi_push_pairs r4p, r6p, r8p
 	
-	;ldp r0p, test_math_val_a_table
+	; Clear the counter
+	cpypi r8p, $0000
 	
-	;ldr r0, test_math_val_a_table
+@loop:
+	ldpxi r0p, r8p, test_math_val_a_table
+	ldpxi r4p, r8p, test_math_val_b_table
+	
+	ldpxi r2p, r8p, test_math_val_a_table + num_bytes_1_pair
+	ldpxi r6p, r8p, test_math_val_b_table + num_bytes_1_pair
+	
+	
+	add32 r0p, r2p, r4p, r6p
+	
+	ldpxi r4p, r8p, add32_result_table
+	ldpxi r6p, r8p, add32_result_table + num_bytes_1_pair
+	
+	branch_ne_32 r0p, r2p, r4p, r6p, @bad
+	
+	; Continue the loop
+	addpbi r8p, num_bytes_2_pair
+	branch_ne_16_imm r8p, test_math_table_size, @loop
 	
 	
 @good:
@@ -212,7 +234,41 @@ test_32_bit_add:
 
 
 test_32_bit_subtract:
+	multi_push_pairs r4p, r6p, r8p
 	
+	; Clear the counter
+	cpypi r8p, $0000
+	
+@loop:
+	ldpxi r0p, r8p, test_math_val_a_table
+	ldpxi r4p, r8p, test_math_val_b_table
+	
+	ldpxi r2p, r8p, test_math_val_a_table + num_bytes_1_pair
+	ldpxi r6p, r8p, test_math_val_b_table + num_bytes_1_pair
+	
+	
+	sub32 r0p, r2p, r4p, r6p
+	
+	ldpxi r4p, r8p, sub32_result_table
+	ldpxi r6p, r8p, sub32_result_table + num_bytes_1_pair
+	
+	branch_ne_32 r0p, r2p, r4p, r6p, @bad
+	
+	; Continue the loop
+	addpbi r8p, num_bytes_2_pair
+	branch_ne_16_imm r8p, test_math_table_size, @loop
+	
+	
+@good:
+	cpyi r0, $01
+	bra @done
+	
+	
+@bad:
+	cpyi r0, $00
+	
+@done:
+	multi_pop_pairs r4p, r6p, r8p
 	basic_ret
 
 
