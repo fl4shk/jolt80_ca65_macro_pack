@@ -16,73 +16,23 @@
 .export test_32_bit_add_immediate
 .export test_32_bit_subtract_immediate
 
+.export test_addpb
+.export test_subpb
+.export test_and_orr_inv
 
 
 .segment "ROM"
 
 
 
-
-do_32_bit_add_old:
-	multi_push_pairs r4p, r6p
+.macro testing_good_and_bad
+@good:
+	cpyi r0, $01
+	bra @done
 	
-	ldpxi r4p, sp, 1 + num_bytes_2_pair
-	ldpxi r6p, sp, 1 + num_bytes_2_pair + num_bytes_1_pair
-	add32 r0p, r2p, r4p, r6p
-	
-	multi_pop_pairs r4p, r6p
-	basic_ret
-
-do_32_bit_subtract_old:
-	multi_push_pairs r4p, r6p
-	
-	ldpxi r4p, sp, 1 + num_bytes_2_pair
-	ldpxi r6p, sp, 1 + num_bytes_2_pair + num_bytes_1_pair
-	sub32 r0p, r2p, r4p, r6p
-	
-	multi_pop_pairs r4p, r6p
-	basic_ret
-
-shared_test_32_bit_add_sub_prefix_old:
-	cpypi r0p, $ff88
-	cpypi r2p, $aabb
-	
-	
-	pushi r8, $01
-	pushi r8, $00
-	push_reg r8
-	push_reg r8
-	
-	
-	basic_ret
-
-shared_test_32_bit_add_sub_suffix_old:
-	addpbi sp, num_bytes_2_pair
-	basic_ret
-
-
-test_32_bit_add_old:
-	multi_push_regs r8, convert_pair_to_two_regs{lr}
-	
-	calli shared_test_32_bit_add_sub_prefix_old
-	calli do_32_bit_add_old
-	calli shared_test_32_bit_add_sub_suffix_old
-	
-	multi_pop_regs r8, convert_pair_to_two_regs{lr}
-	basic_ret
-
-
-test_32_bit_subtract_old:
-	multi_push_regs r8, convert_pair_to_two_regs{lr}
-	
-	calli shared_test_32_bit_add_sub_prefix_old
-	calli do_32_bit_subtract_old
-	calli shared_test_32_bit_add_sub_suffix_old
-	
-	multi_pop_regs r8, convert_pair_to_two_regs{lr}
-	basic_ret
-
-
+@bad:
+	cpyi r0, $00
+.endmac
 
 
 
@@ -112,12 +62,7 @@ test_ldst:
 	
 	
 	
-@good:
-	cpyi r0, $01
-	bra @done
-	
-@bad:
-	cpyi r0, $00
+testing_good_and_bad
 	
 @done:
 	multi_pop_regs convert_pair_to_two_regs{r4p}, r6
@@ -220,13 +165,7 @@ test_32_bit_add:
 	branch_ne_16_imm r8p, test_math_table_size, @loop
 	
 	
-@good:
-	cpyi r0, $01
-	bra @done
-	
-	
-@bad:
-	cpyi r0, $00
+testing_good_and_bad
 	
 @done:
 	multi_pop_pairs r4p, r6p, r8p
@@ -259,13 +198,7 @@ test_32_bit_subtract:
 	branch_ne_16_imm r8p, test_math_table_size, @loop
 	
 	
-@good:
-	cpyi r0, $01
-	bra @done
-	
-	
-@bad:
-	cpyi r0, $00
+testing_good_and_bad
 	
 @done:
 	multi_pop_pairs r4p, r6p, r8p
@@ -309,12 +242,7 @@ test_32_bit_add_immediate:
 	totally_immediate_add32 r0p, r2p, test_math_val_a_3, test_math_val_b_3
 	branch_ne_32_imm r0p, r2p, add32_result_3, @bad
 	
-@good:
-	cpyi r0, $01
-	bra @done
-	
-@bad:
-	cpyi r0, $00
+testing_good_and_bad
 	
 @done:
 	basic_ret
@@ -335,15 +263,139 @@ test_32_bit_subtract_immediate:
 	totally_immediate_sub32 r0p, r2p, test_math_val_a_3, test_math_val_b_3
 	branch_ne_32_imm r0p, r2p, sub32_result_3, @bad
 	
-@good:
-	cpyi r0, $01
-	bra @done
-	
-@bad:
-	cpyi r0, $00
+testing_good_and_bad
 	
 @done:
 	basic_ret
+
+
+
+
+
+
+
+test_addpb:
+	
+	; Use r2p as outer loop counter
+	.define i r2p
+	; Use r4 as inner loop counter
+	.define j r4
+	
+	;multi_push_pairs r4p, r6p
+	multi_push_regs r4, convert_pair_to_two_regs{r6p}
+	
+	
+	
+;for ( int i=0; i<0x10000; ++i )
+	cpypi i, $0000
+@outer_loop:
+	
+	
+	;	for ( int j=0; j<0x100; ++j )
+	cpyi j, $00
+	@inner_loop:
+		
+		cpyp r0p, i
+		addpb r0p, j
+		
+		cpyi r6, $00
+		cpy r7, j
+		
+		
+		push_pair i
+		addp i, r6p
+		cmpp r0p, i
+		pop_pair i
+		
+		bne @bad
+		
+		inc j
+		bcc @inner_loop
+	
+	
+	incp i
+	bcc @outer_loop
+	
+testing_good_and_bad
+	
+@done:
+	;multi_pop_pairs r4p, r6p
+	multi_pop_regs r4, convert_pair_to_two_regs{r6p}
+	basic_ret
+	
+	.undef i
+	.undef j
+
+
+test_subpb:
+	
+	; Use r2p as outer loop counter
+	.define i r2p
+	; Use r4 as inner loop counter
+	.define j r4
+	
+	;multi_push_pairs r4p, r6p
+	multi_push_regs r4, convert_pair_to_two_regs{r6p}
+	
+	
+	
+;for ( int i=0; i<0x10000; ++i )
+	cpypi i, $0000
+@outer_loop:
+	
+	
+	;	for ( int j=0; j<0x100; ++j )
+	cpyi j, $00
+	@inner_loop:
+		
+		cpyp r0p, i
+		subpb r0p, j
+		
+		cpyi r6, $00
+		cpy r7, j
+		
+		
+		push_pair i
+		subp i, r6p
+		cmpp r0p, i
+		pop_pair i
+		
+		bne @bad
+		
+		inc j
+		bcc @inner_loop
+	
+	
+	incp i
+	bcc @outer_loop
+	
+testing_good_and_bad
+	
+@done:
+	;multi_pop_pairs r4p, r6p
+	multi_pop_regs r4, convert_pair_to_two_regs{r6p}
+	basic_ret
+	
+	.undef i
+	.undef j
+
+
+
+test_and_orr_inv:
+	
+	.define i r1
+	.define j r2
+	
+	
+	
+	
+testing_good_and_bad
+	
+@done:
+	basic_ret
+	
+	.undef i
+	.undef j
 
 
 

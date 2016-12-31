@@ -45,13 +45,36 @@ main:
 	
 	
 	;calli test_32_bit_add
+	;cmpi r0, $00
+	;beq @testing_done
+	;
 	;calli test_32_bit_subtract
-	
-	
+	;cmpi r0, $00
+	;beq @testing_done
+	;
+	;
 	;calli test_32_bit_add_immediate
+	;cmpi r0, $00
+	;beq @testing_done
+	;
 	;calli test_32_bit_subtract_immediate
+	;cmpi r0, $00
+	;beq @testing_done
+	;
+	;
+	;calli test_addpb
+	;cmpi r0, $00
+	;beq @testing_done
+	;
+	;calli test_subpb
+	;cmpi r0, $00
+	;beq @testing_done
 	
+	calli test_and_orr_inv
+	cmpi r0, $00
+	beq @testing_done
 	
+@testing_done:
 	jumpi end_simulation
 
 
@@ -59,7 +82,7 @@ main:
 isr_main:
 	push_flags
 	
-	cpyi r0, $9a
+	;cpyi r0, $9a
 	;calli other_file_test_subroutine
 	
 	pop_flags
