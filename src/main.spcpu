@@ -40,9 +40,9 @@ main:
 	cpyi r2, 30
 	
 	;calli slow_umod_16_by_8
-	calli long_udiv_16_by_8
+	;calli long_udiv_16_by_8
 	
-	;calli do_tests
+	calli do_tests
 	
 	jumpi end_simulation
 
@@ -50,57 +50,57 @@ main:
 do_tests:
 	push_pair lr
 	
-	cpyi r0, $09
-	calli test_ldst
-	;calli test_ldst_and_push_pop
-	cmpi r0, $00
-	cpyi r0, ( $02 | $80 )
-	beq @testing_failed
-	
-	
-	
-	calli test_32_bit_add
-	cmpi r0, $00
-	cpyi r0, ( $03 | $80 )
-	beq @testing_failed
-	
-	calli test_32_bit_subtract
-	cmpi r0, $00
-	cpyi r0, ( $04 | $80 )
-	beq @testing_failed
-	
-	
-	calli test_32_bit_add_immediate
-	cmpi r0, $00
-	cpyi r0, ( $05 | $80 )
-	beq @testing_failed
-	
-	calli test_32_bit_subtract_immediate
-	cmpi r0, $00
-	cpyi r0, ( $06 | $80 )
-	beq @testing_failed
-	
-	
-	calli test_addpb
-	cmpi r0, $00
-	cpyi r0, ( $07 | $80 )
-	beq @testing_failed
-	
-	calli test_subpb
-	cmpi r0, $00
-	cpyi r0, ( $08 | $80 )
-	beq @testing_failed
-	
-	calli test_and_orr_inv_invp
-	cmpi r0, $00
-	cpyi r0, ( $09 | $80 )
-	beq @testing_failed
-	
-	
-	calli test_xor
-	cmpi r0, $00
-	cpyi r0, ( $0a | $80 )
-	beq @testing_failed
+	;cpyi r0, $09
+	;calli test_ldst
+	;;calli test_ldst_and_push_pop
+	;cmpi r0, $00
+	;cpyi r0, ( $02 | $80 )
+	;beq @testing_failed
+	;
+	;
+	;
+	;calli test_32_bit_add
+	;cmpi r0, $00
+	;cpyi r0, ( $03 | $80 )
+	;beq @testing_failed
+	;
+	;calli test_32_bit_subtract
+	;cmpi r0, $00
+	;cpyi r0, ( $04 | $80 )
+	;beq @testing_failed
+	;
+	;
+	;calli test_32_bit_add_immediate
+	;cmpi r0, $00
+	;cpyi r0, ( $05 | $80 )
+	;beq @testing_failed
+	;
+	;calli test_32_bit_subtract_immediate
+	;cmpi r0, $00
+	;cpyi r0, ( $06 | $80 )
+	;beq @testing_failed
+	;
+	;
+	;calli test_addpb
+	;cmpi r0, $00
+	;cpyi r0, ( $07 | $80 )
+	;beq @testing_failed
+	;
+	;calli test_subpb
+	;cmpi r0, $00
+	;cpyi r0, ( $08 | $80 )
+	;beq @testing_failed
+	;
+	;calli test_and_orr_inv_invp
+	;cmpi r0, $00
+	;cpyi r0, ( $09 | $80 )
+	;beq @testing_failed
+	;
+	;
+	;calli test_xor
+	;cmpi r0, $00
+	;cpyi r0, ( $0a | $80 )
+	;beq @testing_failed
 	
 	
 	calli test_long_udiv

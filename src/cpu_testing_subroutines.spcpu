@@ -288,7 +288,7 @@ test_addpb:
 	.define j r4
 	
 	;multi_push_pairs r4p, r6p
-	multi_push_regs r4, convert_pair_to_two_regs{r6p}, \
+	multi_push_regs j, convert_pair_to_two_regs{r6p}, \
 		convert_pair_to_two_regs{r8p}
 	
 	
@@ -325,7 +325,7 @@ testing_good_and_bad
 	
 @done:
 	;multi_pop_pairs r4p, r6p
-	multi_pop_regs r4, convert_pair_to_two_regs{r6p}, \
+	multi_pop_regs j, convert_pair_to_two_regs{r6p}, \
 		convert_pair_to_two_regs{r8p}
 	basic_ret
 	
@@ -341,7 +341,7 @@ test_subpb:
 	.define j r4
 	
 	;multi_push_pairs r4p, r6p
-	multi_push_regs r4, convert_pair_to_two_regs{r6p}, \
+	multi_push_regs j, convert_pair_to_two_regs{r6p}, \
 		convert_pair_to_two_regs{r8p}
 	
 	
@@ -378,7 +378,7 @@ testing_good_and_bad
 	
 @done:
 	;multi_pop_pairs r4p, r6p
-	multi_pop_regs r4, convert_pair_to_two_regs{r6p}, \
+	multi_pop_regs j, convert_pair_to_two_regs{r6p}, \
 		convert_pair_to_two_regs{r8p}
 	basic_ret
 	
@@ -521,7 +521,7 @@ long_udiv_16_by_8:
 	.define temp_pair r8p
 	.define temp_0 reg_pair_hi{temp_pair}
 	.define temp_1 reg_pair_lo{temp_pair}
-	.define temp_pair_2
+	.define temp_pair_2 lr
 	.define temp_2 r12
 	.define i r13
 	
@@ -614,11 +614,9 @@ long_udiv_16_by_8:
 	
 	
 	
-	
-	
 @decrement_i:
 	dec i
-	bhs @loop
+	bcs @loop
 	
 	
 @done:
@@ -645,8 +643,27 @@ long_udiv_16_by_8:
 
 test_long_udiv:
 	
+	.define i r0p
+	.define j r2
 	
-;@loop:
+	
+;for ( int i=0; i<0x10000; ++i )
+	cpypi i, $0000
+@outer_loop:
+	
+	;	for ( int j=0; j<0x100; ++j )
+	cpyi j, $00
+	@inner_loop:
+		
+		multi_push_regs convert_pair_to_two_regs{i}, j
+		calli long_udiv_16_by_8
+		multi_pop_regs convert_pair_to_two_regs{i}, j
+		
+		inc j
+		bcc @inner_loop
+	
+	incp i
+	bcc @outer_loop
 	
 	
 	
@@ -654,5 +671,8 @@ testing_good_and_bad
 	
 @done:
 	basic_ret
+	
+	.undef i
+	.undef j
 
 
