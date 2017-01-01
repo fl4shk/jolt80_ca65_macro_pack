@@ -38,41 +38,67 @@ main:
 	
 	;cpyi r0, $09
 	;calli test_ldst
-	;calli test_ldst_and_push_pop
+	;cmpi r0, $00
+	;beq @testing_failed
+	;;calli test_ldst_and_push_pop
 	
 	
 	
 	
 	
-	;calli test_32_bit_add
-	;cmpi r0, $00
-	;beq @testing_done
-	;
-	;calli test_32_bit_subtract
-	;cmpi r0, $00
-	;beq @testing_done
-	;
-	;
-	;calli test_32_bit_add_immediate
-	;cmpi r0, $00
-	;beq @testing_done
-	;
-	;calli test_32_bit_subtract_immediate
-	;cmpi r0, $00
-	;beq @testing_done
-	;
-	;
-	;calli test_addpb
-	;cmpi r0, $00
-	;beq @testing_done
-	;
-	;calli test_subpb
-	;cmpi r0, $00
-	;beq @testing_done
-	
-	calli test_and_orr_inv
+	;cpypi r2p, 
+	;ldr_abs r0, test_math_val_a_table
+	calli test_32_bit_add
 	cmpi r0, $00
-	beq @testing_done
+	cpyi r0, ( $02 | $80 )
+	beq @testing_failed
+	
+	calli test_32_bit_subtract
+	cmpi r0, $00
+	cpyi r0, ( $03 | $80 )
+	beq @testing_failed
+	
+	
+	calli test_32_bit_add_immediate
+	cmpi r0, $00
+	cpyi r0, ( $04 | $80 )
+	beq @testing_failed
+	
+	calli test_32_bit_subtract_immediate
+	cmpi r0, $00
+	cpyi r0, ( $05 | $80 )
+	beq @testing_failed
+	
+	
+	calli test_addpb
+	cmpi r0, $00
+	cpyi r0, ( $06 | $80 )
+	beq @testing_failed
+	
+	calli test_subpb
+	cmpi r0, $00
+	cpyi r0, ( $07 | $80 )
+	beq @testing_failed
+	
+	calli test_and_orr_inv_invp
+	cmpi r0, $00
+	cpyi r0, ( $08 | $80 )
+	beq @testing_failed
+	
+	
+	calli test_xor
+	cmpi r0, $00
+	cpyi r0, ( $09 | $80 )
+	beq @testing_failed
+	
+	
+	
+@testing_succeeded:
+	;cpyi r0, $01
+	;bra @testing_done
+	
+@testing_failed:
+	;cpyi r0, $00
 	
 @testing_done:
 	jumpi end_simulation
