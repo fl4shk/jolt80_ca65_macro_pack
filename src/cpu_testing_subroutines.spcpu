@@ -525,6 +525,10 @@ long_udiv_16_by_8:
 	.define temp_2 r12
 	.define i r13
 	
+	cmpi r2, 0
+	beq @done
+	
+	
 	multi_push_pairs quot, rem, temp_pair, temp_pair_2
 	
 	
