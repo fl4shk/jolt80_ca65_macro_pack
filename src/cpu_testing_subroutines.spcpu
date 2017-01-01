@@ -25,10 +25,21 @@
 .export test_and_orr_inv_invp
 .export test_xor
 
+.export slow_umod_16_by_8
+.export long_udiv_16_by_8
+.export test_long_udiv
 
 .segment "ROM"
 
 
+.macro testing_good_and_bad
+@good:
+	cpyi r0, $01
+	bra @done
+	
+@bad:
+	cpyi r0, $00
+.endmac
 
 
 
@@ -58,12 +69,7 @@ test_ldst:
 	bne @bad
 	
 	
-@good:
-	cpyi r0, $01
-	bra @done
-	
-@bad:
-	cpyi r0, $00
+testing_good_and_bad
 	
 @done:
 	;multi_pop_regs convert_pair_to_two_regs{r4p}, r6, r7, r8
@@ -165,12 +171,7 @@ test_32_bit_add:
 	branch_ne_16_imm r8p, test_math_table_size, @loop
 	
 	
-@good:
-	cpyi r0, $01
-	bra @done
-	
-@bad:
-	cpyi r0, $00
+testing_good_and_bad
 	
 @done:
 	multi_pop_pairs r4p, r6p, r8p
@@ -203,12 +204,7 @@ test_32_bit_subtract:
 	branch_ne_16_imm r8p, test_math_table_size, @loop
 	
 	
-@good:
-	cpyi r0, $01
-	bra @done
-	
-@bad:
-	cpyi r0, $00
+testing_good_and_bad
 	
 @done:
 	multi_pop_pairs r4p, r6p, r8p
@@ -252,12 +248,7 @@ test_32_bit_add_immediate:
 	totally_immediate_add32 r0p, r2p, test_math_val_a_3, test_math_val_b_3
 	branch_ne_32_imm r0p, r2p, add32_result_3, @bad
 	
-@good:
-	cpyi r0, $01
-	bra @done
-	
-@bad:
-	cpyi r0, $00
+testing_good_and_bad
 	
 @done:
 	basic_ret
@@ -278,12 +269,7 @@ test_32_bit_subtract_immediate:
 	totally_immediate_sub32 r0p, r2p, test_math_val_a_3, test_math_val_b_3
 	branch_ne_32_imm r0p, r2p, sub32_result_3, @bad
 	
-@good:
-	cpyi r0, $01
-	bra @done
-	
-@bad:
-	cpyi r0, $00
+testing_good_and_bad
 	
 @done:
 	basic_ret
@@ -335,12 +321,7 @@ test_addpb:
 	incp i
 	bcc @outer_loop
 	
-@good:
-	cpyi r0, $01
-	bra @done
-	
-@bad:
-	cpyi r0, $00
+testing_good_and_bad
 	
 @done:
 	;multi_pop_pairs r4p, r6p
@@ -393,12 +374,7 @@ test_subpb:
 	incp i
 	bcc @outer_loop
 	
-@good:
-	cpyi r0, $01
-	bra @done
-	
-@bad:
-	cpyi r0, $00
+testing_good_and_bad
 	
 @done:
 	;multi_pop_pairs r4p, r6p
@@ -449,12 +425,7 @@ test_and_orr_inv_invp:
 	bcc @outer_loop
 	
 	
-@good:
-	cpyi r0, $01
-	bra @done
-	
-@bad:
-	cpyi r0, $00
+testing_good_and_bad
 	
 @done:
 	pop_pair r4p
@@ -508,12 +479,7 @@ test_xor:
 	bcc @outer_loop
 	
 	
-@good:
-	cpyi r0, $01
-	bra @done
-	
-@bad:
-	cpyi r0, $00
+testing_good_and_bad
 	
 @done:
 	pop_pair r4p
@@ -523,5 +489,170 @@ test_xor:
 	.undef i
 	.undef j
 
+
+slow_umod_16_by_8:
+	cpy r3, r2
+	cpyi r2, $00
+	
+	
+	; if r0p < r2p, then skip the loop
+	cmpp r0p, r2p
+	blo @done
+	
+@loop:
+	;subp r0p, r2p
+	subpb r0p, r3
+	cmpp r0p, r2p
+	bhs @loop
+	
+@done:
+	basic_ret
+
+
+; Numerator in r0p, Denominator in r2
+long_udiv_16_by_8:
+	
+	.define num r0p
+	.define den_in r2
+	.define denp r2p
+	
+	.define quot r4p
+	.define rem r6p
+	.define temp_pair r8p
+	.define temp_0 reg_pair_hi{temp_pair}
+	.define temp_1 reg_pair_lo{temp_pair}
+	.define temp_pair_2
+	.define temp_2 r12
+	.define i r13
+	
+	multi_push_pairs quot, rem, temp_pair, temp_pair_2
+	
+	
+	cpy reg_pair_lo{denp}, den_in
+	cpyi den_in, 0
+	
+	
+	; quot = 0
+	; rem = 0
+	cpypi quot, 0
+	cpyp rem, quot
+	
+	; The numerator is 16-bit, and 16 - 1 is 15
+	
+	; for ( i = 15; i >= 0; --i )
+	cpyi i, 15
+@loop:
+	
+	; Left-shift rem by one bit
+	addp rem, rem
+	
+	
+	
+	
+	
+	; temp_0 = i & 7
+	cpy temp_0, i
+	andi temp_0, 7
+	
+	
+	; Use temp_1 in the "and" instruction to access specific bits of the
+	; numerator and the quotient
+	; temp_1 = ( 1 << temp_0 )
+	; temp_1 = ( 1 << ( i & 7 ) )
+	cpyi temp_1, 1
+	lsl temp_1, temp_0
+	
+	
+	; Determine whether to use the high byte or low byte of the numerator
+	cmpi i, 8
+	blo @i_lt_8_part_1
+	
+	
+@i_ge_8_part_1:
+	cpy temp_2, reg_pair_hi{num}
+	bra @before_assigning_rem_bit
+	
+@i_lt_8_part_1:
+	cpy temp_2, reg_pair_lo{num}
+	
+	
+@before_assigning_rem_bit:
+	; temp_2 = numerator bit i
+	and temp_2, temp_1
+	lsr temp_2, temp_0
+	
+	; rem(0) = numerator bit i
+	orr reg_pair_lo{rem}, temp_2
+	
+	
+	; if rem >= den, then do another section of code before checking
+	; whether to continue the loop
+	cmpp rem, denp
+	blo @decrement_i
+	
+	; rem = rem - denp
+	subp rem, denp
+	
+	
+	
+	
+	; Determine whether to use the high byte or low byte of the quotient
+	cmpi i, 8
+	blo @i_lt_8_part_2
+	
+	
+@i_ge_8_part_2:
+	; quot bit i = 1
+	orr reg_pair_hi{quot}, temp_1
+	
+	bra @decrement_i
+	
+	
+@i_lt_8_part_2:
+	; quot bit i = 1
+	orr reg_pair_lo{quot}, temp_1
+	
+	
+	
+	
+	
+@decrement_i:
+	dec i
+	bhs @loop
+	
+	
+@done:
+	cpyp r0p, quot
+	cpyp r2p, rem
+	
+	multi_pop_pairs quot, rem, temp_pair, temp_pair_2
+	basic_ret
+	
+	.undef num
+	.undef den_in
+	.undef denp
+	
+	.undef quot
+	.undef rem
+	.undef temp_pair
+	.undef temp_0
+	.undef temp_1
+	.undef temp_pair_2
+	.undef temp_2
+	.undef i
+
+
+
+test_long_udiv:
+	
+	
+;@loop:
+	
+	
+	
+testing_good_and_bad
+	
+@done:
+	basic_ret
 
 

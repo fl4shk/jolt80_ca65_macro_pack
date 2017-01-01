@@ -844,11 +844,11 @@ spcpu_ca65_macro_pack_spinc = 3
 .macro beq offset
 	gen_grp_4_instr instr_grp_4_oper::instr_g4_op_beq, offset
 .endmac
-	; (branch when C == 0 [unsigned greater than or equal])
+	; (branch when C == 0 [unsigned less than])
 .macro bcc offset
 	gen_grp_4_instr instr_grp_4_oper::instr_g4_op_bcc, offset
 .endmac
-	; (branch when C == 1 [unsigned less than])
+	; (branch when C == 1 [unsigned greater than or equal])
 .macro bcs offset
 	gen_grp_4_instr instr_grp_4_oper::instr_g4_op_bcs, offset
 .endmac
@@ -1067,12 +1067,12 @@ spcpu_ca65_macro_pack_spinc = 3
 	beq offset
 .endmac
 
-	; (branch when C == 0 [unsigned greater than or equal])
-.macro bhs offset
+	; (branch when C == 0 [unsigned less than])
+.macro blo offset
 	bcc offset
 .endmac
-	; (branch when C == 1 [unsigned less than])
-.macro blo offset
+	; (branch when C == 1 [unsigned greater than or equal])
+.macro bhs offset
 	bcs offset
 .endmac
 
