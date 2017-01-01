@@ -672,7 +672,8 @@ test_long_udiv:
 	
 	
 	
-testing_good_and_bad
+;testing_good_and_bad
+	cpyi r0, $05
 	
 @done:
 	pop_pair lr

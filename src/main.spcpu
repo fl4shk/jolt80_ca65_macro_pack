@@ -42,7 +42,8 @@ main:
 	;calli slow_umod_16_by_8
 	;calli long_udiv_16_by_8
 	
-	calli do_tests
+	;calli do_tests
+	calli test_long_udiv
 	
 	jumpi end_simulation
 
@@ -103,10 +104,10 @@ do_tests:
 	;beq @testing_failed
 	
 	
-	calli test_long_udiv
-	cmpi r0, $00
-	cpyi r0, ( $0b | $80 )
-	beq @testing_failed
+	;calli test_long_udiv
+	;cmpi r0, $00
+	;cpyi r0, ( $0b | $80 )
+	;beq @testing_failed
 	
 	
 @testing_succeeded:
