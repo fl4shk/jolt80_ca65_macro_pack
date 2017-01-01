@@ -114,7 +114,7 @@ do_tests:
 	bra @testing_done
 	
 @testing_failed:
-	;cpyi r0, $00
+	cpyi r0, $00
 	
 @testing_done:
 	pop_pair lr

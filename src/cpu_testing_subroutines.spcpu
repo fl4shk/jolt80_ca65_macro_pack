@@ -650,6 +650,7 @@ test_long_udiv:
 	.define i r0p
 	.define j r2
 	
+	push_pair lr
 	
 ;for ( int i=0; i<0x10000; ++i )
 	cpypi i, $0000
@@ -674,6 +675,7 @@ test_long_udiv:
 testing_good_and_bad
 	
 @done:
+	pop_pair lr
 	basic_ret
 	
 	.undef i
