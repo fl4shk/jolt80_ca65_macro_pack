@@ -526,10 +526,11 @@ long_udiv_16_by_8:
 	.define i r13
 	
 	cmpi r2, 0
-	beq @done
+	beq @done_skip_pop
 	
 	
-	multi_push_pairs quot, rem, temp_pair, temp_pair_2
+	;multi_push_pairs quot, rem, temp_pair, temp_pair_2, lr
+	multi_push_pairs quot, rem, temp_pair, temp_pair_2, lr
 	
 	
 	cpy reg_pair_lo{denp}, den_in
@@ -627,7 +628,9 @@ long_udiv_16_by_8:
 	cpyp r0p, quot
 	cpyp r2p, rem
 	
-	multi_pop_pairs quot, rem, temp_pair, temp_pair_2
+	multi_pop_pairs quot, rem, temp_pair, temp_pair_2, lr
+	
+@done_skip_pop:
 	basic_ret
 	
 	.undef num
@@ -662,6 +665,7 @@ test_long_udiv:
 		
 		multi_push_regs convert_pair_to_two_regs{i}, j
 		calli long_udiv_16_by_8
+		;cpyi r0, $0a
 		multi_pop_regs convert_pair_to_two_regs{i}, j
 		
 		inc j

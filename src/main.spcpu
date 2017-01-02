@@ -36,8 +36,9 @@ reset:
 main:
 	
 	
-	cpypi r0p, 2000
-	cpyi r2, 30
+	;cpypi r0p, 2000
+	;cpyi r2, 30
+	;cpyi r2, 2
 	
 	;calli slow_umod_16_by_8
 	;calli long_udiv_16_by_8
