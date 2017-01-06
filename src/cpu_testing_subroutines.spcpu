@@ -20,14 +20,25 @@
 .export test_32_bit_add_immediate
 .export test_32_bit_subtract_immediate
 
-.export test_addpb
-.export test_subpb
+;.export test_addpb
+;.export test_subpb
 .export test_and_orr_inv_invp
 .export test_xor
 
 .export slow_umod_16_by_8
-.export long_udiv_16_by_8
-.export test_long_udiv
+;.export long_udiv_16_by_8
+;.export test_long_udiv
+
+
+;.export test_inv_and_neg
+;
+;
+;.export test_asrp
+;.export test_rolp
+;.export test_rorp
+;.export test_rolcp
+;.export test_rorcp
+;.export test_invp_and_negp
 
 .segment "ROM"
 
@@ -280,110 +291,110 @@ testing_good_and_bad
 
 
 
-test_addpb:
-	
-	; Use r2p as outer loop counter
-	.define i r2p
-	; Use r4 as inner loop counter
-	.define j r4
-	
-	;multi_push_pairs r4p, r6p
-	multi_push_regs j, convert_pair_to_two_regs{r6p}, \
-		convert_pair_to_two_regs{r8p}
-	
-	
-	
-;for ( int i=0; i<0x10000; ++i )
-	cpypi i, $0000
-@outer_loop:
-	
-	
-	;	for ( int j=0; j<0x100; ++j )
-	cpyi j, $00
-	@inner_loop:
-		
-		cpyp r0p, i
-		addpb r0p, j
-		
-		cpyi r6, $00
-		cpy r7, j
-		
-		cpyp r8p, i
-		addp r8p, r6p
-		cmpp r0p, r8p
-		
-		bne @bad
-		
-		inc j
-		bcc @inner_loop
-	
-	
-	incp i
-	bcc @outer_loop
-	
-testing_good_and_bad
-	
-@done:
-	;multi_pop_pairs r4p, r6p
-	multi_pop_regs j, convert_pair_to_two_regs{r6p}, \
-		convert_pair_to_two_regs{r8p}
-	basic_ret
-	
-	.undef i
-	.undef j
-
-
-test_subpb:
-	
-	; Use r2p as outer loop counter
-	.define i r2p
-	; Use r4 as inner loop counter
-	.define j r4
-	
-	;multi_push_pairs r4p, r6p
-	multi_push_regs j, convert_pair_to_two_regs{r6p}, \
-		convert_pair_to_two_regs{r8p}
-	
-	
-	
-;for ( int i=0; i<0x10000; ++i )
-	cpypi i, $0000
-@outer_loop:
-	
-	
-	;	for ( int j=0; j<0x100; ++j )
-	cpyi j, $00
-	@inner_loop:
-		
-		cpyp r0p, i
-		subpb r0p, j
-		
-		cpyi r6, $00
-		cpy r7, j
-		
-		cpyp r8p, i
-		subp r8p, r6p
-		cmpp r0p, r8p
-		
-		bne @bad
-		
-		inc j
-		bcc @inner_loop
-	
-	
-	incp i
-	bcc @outer_loop
-	
-testing_good_and_bad
-	
-@done:
-	;multi_pop_pairs r4p, r6p
-	multi_pop_regs j, convert_pair_to_two_regs{r6p}, \
-		convert_pair_to_two_regs{r8p}
-	basic_ret
-	
-	.undef i
-	.undef j
+;test_addpb:
+;	
+;	; Use r2p as outer loop counter
+;	.define i r2p
+;	; Use r4 as inner loop counter
+;	.define j r4
+;	
+;	;multi_push_pairs r4p, r6p
+;	multi_push_regs j, convert_pair_to_two_regs{r6p}, \
+;		convert_pair_to_two_regs{r8p}
+;	
+;	
+;	
+;;for ( int i=0; i<0x10000; ++i )
+;	cpypi i, $0000
+;@outer_loop:
+;	
+;	
+;	;	for ( int j=0; j<0x100; ++j )
+;	cpyi j, $00
+;	@inner_loop:
+;		
+;		cpyp r0p, i
+;		addpb r0p, j
+;		
+;		cpyi r6, $00
+;		cpy r7, j
+;		
+;		cpyp r8p, i
+;		addp r8p, r6p
+;		cmpp r0p, r8p
+;		
+;		bne @bad
+;		
+;		inc j
+;		bcc @inner_loop
+;	
+;	
+;	incp i
+;	bcc @outer_loop
+;	
+;testing_good_and_bad
+;	
+;@done:
+;	;multi_pop_pairs r4p, r6p
+;	multi_pop_regs j, convert_pair_to_two_regs{r6p}, \
+;		convert_pair_to_two_regs{r8p}
+;	basic_ret
+;	
+;	.undef i
+;	.undef j
+;
+;
+;test_subpb:
+;	
+;	; Use r2p as outer loop counter
+;	.define i r2p
+;	; Use r4 as inner loop counter
+;	.define j r4
+;	
+;	;multi_push_pairs r4p, r6p
+;	multi_push_regs j, convert_pair_to_two_regs{r6p}, \
+;		convert_pair_to_two_regs{r8p}
+;	
+;	
+;	
+;;for ( int i=0; i<0x10000; ++i )
+;	cpypi i, $0000
+;@outer_loop:
+;	
+;	
+;	;	for ( int j=0; j<0x100; ++j )
+;	cpyi j, $00
+;	@inner_loop:
+;		
+;		cpyp r0p, i
+;		subpb r0p, j
+;		
+;		cpyi r6, $00
+;		cpy r7, j
+;		
+;		cpyp r8p, i
+;		subp r8p, r6p
+;		cmpp r0p, r8p
+;		
+;		bne @bad
+;		
+;		inc j
+;		bcc @inner_loop
+;	
+;	
+;	incp i
+;	bcc @outer_loop
+;	
+;testing_good_and_bad
+;	
+;@done:
+;	;multi_pop_pairs r4p, r6p
+;	multi_pop_regs j, convert_pair_to_two_regs{r6p}, \
+;		convert_pair_to_two_regs{r8p}
+;	basic_ret
+;	
+;	.undef i
+;	.undef j
 
 
 
@@ -500,8 +511,8 @@ slow_umod_16_by_8:
 	blo @done
 	
 @loop:
-	;subp r0p, r2p
-	subpb r0p, r3
+	subp r0p, r2p
+	;subpb r0p, r3
 	cmpp r0p, r2p
 	bhs @loop
 	
@@ -509,181 +520,264 @@ slow_umod_16_by_8:
 	basic_ret
 
 
-; Numerator in r0p, Denominator in r2
-long_udiv_16_by_8:
-	
-	.define num r0p
-	.define den_in r2
-	.define denp r2p
-	
-	.define quot r4p
-	.define rem r6p
-	.define temp_pair r8p
-	.define temp_0 reg_pair_hi{temp_pair}
-	.define temp_1 reg_pair_lo{temp_pair}
-	.define temp_pair_2 lr
-	.define temp_2 r12
-	.define i r13
-	
-	cmpi r2, 0
-	beq @done_skip_pop
-	
-	
-	;multi_push_pairs quot, rem, temp_pair, temp_pair_2, lr
-	multi_push_pairs quot, rem, temp_pair, temp_pair_2, lr
-	
-	
-	cpy reg_pair_lo{denp}, den_in
-	cpyi den_in, 0
-	
-	
-	; quot = 0
-	; rem = 0
-	cpypi quot, 0
-	cpyp rem, quot
-	
-	; The numerator is 16-bit, and 16 - 1 is 15
-	
-	; for ( i = 15; i >= 0; --i )
-	cpyi i, 15
-@loop:
-	
-	; Left-shift rem by one bit
-	addp rem, rem
-	
-	
-	
-	
-	
-	; temp_0 = i & 7
-	cpy temp_0, i
-	andi temp_0, 7
-	
-	
-	; Use temp_1 in the "and" instruction to access specific bits of the
-	; numerator and the quotient
-	; temp_1 = ( 1 << temp_0 )
-	; temp_1 = ( 1 << ( i & 7 ) )
-	cpyi temp_1, 1
-	lsl temp_1, temp_0
-	
-	
-	; Determine whether to use the high byte or low byte of the numerator
-	cmpi i, 8
-	blo @i_lt_8_part_1
-	
-	
-@i_ge_8_part_1:
-	cpy temp_2, reg_pair_hi{num}
-	bra @before_assigning_rem_bit
-	
-@i_lt_8_part_1:
-	cpy temp_2, reg_pair_lo{num}
-	
-	
-@before_assigning_rem_bit:
-	; temp_2 = numerator bit i
-	and temp_2, temp_1
-	lsr temp_2, temp_0
-	
-	; rem(0) = numerator bit i
-	orr reg_pair_lo{rem}, temp_2
-	
-	
-	; if rem >= den, then do another section of code before checking
-	; whether to continue the loop
-	cmpp rem, denp
-	blo @decrement_i
-	
-	; rem = rem - denp
-	subp rem, denp
-	
-	
-	
-	
-	; Determine whether to use the high byte or low byte of the quotient
-	cmpi i, 8
-	blo @i_lt_8_part_2
-	
-	
-@i_ge_8_part_2:
-	; quot bit i = 1
-	orr reg_pair_hi{quot}, temp_1
-	
-	bra @decrement_i
-	
-	
-@i_lt_8_part_2:
-	; quot bit i = 1
-	orr reg_pair_lo{quot}, temp_1
-	
-	
-	
-@decrement_i:
-	dec i
-	bcs @loop
-	
-	
-@done:
-	cpyp r0p, quot
-	cpyp r2p, rem
-	
-	multi_pop_pairs quot, rem, temp_pair, temp_pair_2, lr
-	
-@done_skip_pop:
-	basic_ret
-	
-	.undef num
-	.undef den_in
-	.undef denp
-	
-	.undef quot
-	.undef rem
-	.undef temp_pair
-	.undef temp_0
-	.undef temp_1
-	.undef temp_pair_2
-	.undef temp_2
-	.undef i
+;; Numerator in r0p, Denominator in r2
+;long_udiv_16_by_8:
+;	
+;	.define num r0p
+;	.define den_in r2
+;	.define denp r2p
+;	
+;	.define quot r4p
+;	.define rem r6p
+;	.define temp_pair r8p
+;	.define temp_0 reg_pair_hi{temp_pair}
+;	.define temp_1 reg_pair_lo{temp_pair}
+;	.define temp_pair_2 lr
+;	.define temp_2 r12
+;	.define i r13
+;	
+;	cmpi r2, 0
+;	beq @done_skip_pop
+;	
+;	
+;	;multi_push_pairs quot, rem, temp_pair, temp_pair_2, lr
+;	multi_push_pairs quot, rem, temp_pair, temp_pair_2, lr
+;	
+;	
+;	cpy reg_pair_lo{denp}, den_in
+;	cpyi den_in, 0
+;	
+;	
+;	; quot = 0
+;	; rem = 0
+;	cpypi quot, 0
+;	cpyp rem, quot
+;	
+;	; The numerator is 16-bit, and 16 - 1 is 15
+;	
+;	; for ( i = 15; i >= 0; --i )
+;	cpyi i, 15
+;@loop:
+;	
+;	; Left-shift rem by one bit
+;	addp rem, rem
+;	
+;	
+;	; temp_0 = i & 7
+;	cpy temp_0, i
+;	andi temp_0, 7
+;	
+;	
+;	; Use temp_1 in the "and" instruction to access specific bits of the
+;	; numerator and the quotient
+;	; temp_1 = ( 1 << temp_0 )
+;	; temp_1 = ( 1 << ( i & 7 ) )
+;	cpyi temp_1, 1
+;	lsl temp_1, temp_0
+;	
+;	
+;	; Determine whether to use the high byte or low byte of the numerator
+;	cmpi i, 8
+;	blo @i_lt_8_part_1
+;	
+;	
+;@i_ge_8_part_1:
+;	cpy temp_2, reg_pair_hi{num}
+;	bra @before_assigning_rem_bit
+;	
+;@i_lt_8_part_1:
+;	cpy temp_2, reg_pair_lo{num}
+;	
+;	
+;@before_assigning_rem_bit:
+;	; temp_2 = numerator bit i
+;	and temp_2, temp_1
+;	lsr temp_2, temp_0
+;	
+;	; rem(0) = numerator bit i
+;	orr reg_pair_lo{rem}, temp_2
+;	
+;	
+;	; if rem >= den, then do another section of code before checking
+;	; whether to continue the loop
+;	cmpp rem, denp
+;	blo @decrement_i
+;	
+;	; rem = rem - denp
+;	subp rem, denp
+;	
+;	
+;	; Determine whether to use the high byte or low byte of the quotient
+;	cmpi i, 8
+;	blo @i_lt_8_part_2
+;	
+;	
+;@i_ge_8_part_2:
+;	; quot bit i = 1
+;	orr reg_pair_hi{quot}, temp_1
+;	
+;	bra @decrement_i
+;	
+;	
+;@i_lt_8_part_2:
+;	; quot bit i = 1
+;	orr reg_pair_lo{quot}, temp_1
+;	
+;	
+;	
+;@decrement_i:
+;	dec i
+;	bcs @loop
+;	
+;	
+;@done:
+;	cpyp r0p, quot
+;	cpyp r2p, rem
+;	
+;	multi_pop_pairs quot, rem, temp_pair, temp_pair_2, lr
+;	
+;@done_skip_pop:
+;	basic_ret
+;	
+;	.undef num
+;	.undef den_in
+;	.undef denp
+;	
+;	.undef quot
+;	.undef rem
+;	.undef temp_pair
+;	.undef temp_0
+;	.undef temp_1
+;	.undef temp_pair_2
+;	.undef temp_2
+;	.undef i
+;
+;
+;
+;test_long_udiv:
+;	
+;	.define i r0p
+;	.define j r2
+;	
+;	push_pair lr
+;	
+;;for ( int i=0; i<0x10000; ++i )
+;	cpypi i, $0000
+;@outer_loop:
+;	
+;	;	for ( int j=0; j<0x100; ++j )
+;	cpyi j, $00
+;	@inner_loop:
+;		
+;		multi_push_regs convert_pair_to_two_regs{i}, j
+;		calli long_udiv_16_by_8
+;		;cpyi r0, $0a
+;		multi_pop_regs convert_pair_to_two_regs{i}, j
+;		
+;		inc j
+;		bcc @inner_loop
+;	
+;	incp i
+;	bcc @outer_loop
+;	
+;	
+;	
+;;testing_good_and_bad
+;	cpyi r0, $05
+;	
+;@done:
+;	pop_pair lr
+;	basic_ret
+;	
+;	.undef i
+;	.undef j
 
 
 
-test_long_udiv:
-	
-	.define i r0p
-	.define j r2
-	
-	push_pair lr
-	
-;for ( int i=0; i<0x10000; ++i )
-	cpypi i, $0000
-@outer_loop:
-	
-	;	for ( int j=0; j<0x100; ++j )
-	cpyi j, $00
-	@inner_loop:
-		
-		multi_push_regs convert_pair_to_two_regs{i}, j
-		calli long_udiv_16_by_8
-		;cpyi r0, $0a
-		multi_pop_regs convert_pair_to_two_regs{i}, j
-		
-		inc j
-		bcc @inner_loop
-	
-	incp i
-	bcc @outer_loop
-	
-	
-	
+
+;test_asr:
+;	
+;	.define i r0
+;	.define j r1
+;	
+;	;multi_push_pairs r4p, lr
+;	
+;	
+;; Test positive numbers
+;	cpyi i, $00
+;@outer_loop_pos:
+;	
+;	cpyi j, $00
+;	@inner_loop_pos:
+;		
+;		cpy r2, i
+;		asr r2, j
+;		
+;		cpy r3, i
+;		lsr r3, j
+;		
+;		cmp r2, r3
+;		bne @bad
+;		
+;		inc j
+;		bcc @inner_loop_pos
+;	
+;	inc i
+;	cmpi i, $80
+;	blo @outer_loop_pos
+;	
+;	
+;	
+;	
+;	;cpyi i, $80
+;; Test negative numbers
+;@outer_loop_neg:
+;	
+;	
+;	cpyi j, $00
+;	@inner_loop_neg:
+;		
+;		cpy r2, i
+;		asr r2, j
+;		neg r2
+;		
+;		
+;		cpy r3, i
+;		lsr r3, j
+;		
+;		
+;		cmp r2, r3
+;		bne @bad
+;		
+;		
+;		inc j
+;		bcc @inner_loop_neg
+;	
+;	inc i
+;	bcc @outer_loop_neg
+;	
 ;testing_good_and_bad
-	cpyi r0, $05
-	
-@done:
-	pop_pair lr
-	basic_ret
-	
-	.undef i
-	.undef j
+;	
+;@done:
+;	;multi_pop_pairs r4p, lr
+;	basic_ret
+;	
+;	.undef i
+;	.undef j
+
+;test_rol:
+;	
+;	.define i r0
+;	.define j r1
+;	
+;	
+;testing_good_and_bad
+;	
+;	
+;@done:
+;	basic_ret
+;	
+;	.undef i
+;	.undef j
 
 

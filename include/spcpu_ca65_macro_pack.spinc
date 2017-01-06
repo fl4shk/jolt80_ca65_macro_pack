@@ -581,32 +581,32 @@ spcpu_ca65_macro_pack_spinc = 3
 	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_xor, rA, rB
 .endmac
 
-	; Bitshifting (and rotating) instructions that use the value of rB
-	; as the number of bits to shift by:
-.macro lsl rA, rB
-	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_lsl, rA, rB
-.endmac
-.macro lsr rA, rB
-	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_lsr, rA, rB
-.endmac
-.macro asr rA, rB
-	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_asr, rA, rB
-.endmac
-.macro rol rA, rB
-	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_rol, rA, rB
-.endmac
-.macro ror rA, rB
-	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_ror, rA, rB
-.endmac
-
-	; Bit rotating instructions that use carry as bit 8 for a 9-bit
-	; rotate of { carry, rA } by one bit:
-.macro rolc rA, rB
-	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_rolc, rA, rB
-.endmac
-.macro rorc rA, rB
-	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_rorc, rA, rB
-.endmac
+;	; Bitshifting (and rotating) instructions that use the value of rB
+;	; as the number of bits to shift by:
+;.macro lsl rA, rB
+;	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_lsl, rA, rB
+;.endmac
+;.macro lsr rA, rB
+;	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_lsr, rA, rB
+;.endmac
+;.macro asr rA, rB
+;	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_asr, rA, rB
+;.endmac
+;.macro rol rA, rB
+;	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_rol, rA, rB
+;.endmac
+;.macro ror rA, rB
+;	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_ror, rA, rB
+;.endmac
+;
+;	; Bit rotating instructions that use carry as bit 8 for a 9-bit
+;	; rotate of { carry, rA } by one bit:
+;.macro rolc rA, rB
+;	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_rolc, rA, rB
+;.endmac
+;.macro rorc rA, rB
+;	gen_grp_2_instr_rA_rB instr_grp_2_oper::instr_g2_op_rorc, rA, rB
+;.endmac
 
 	; Copy instructions:
 	; (CoPY from reg rB to reg rA)
@@ -687,13 +687,13 @@ spcpu_ca65_macro_pack_spinc = 3
 
 	; -- rAp, rB --
 
-	; Arithmetic instructions:
-.macro addpb rAp, rB
-	gen_grp_2_instr_rAp_rB instr_grp_2_oper::instr_g2_op_addpb, rAp, rB
-.endmac
-.macro subpb rAp, rB
-	gen_grp_2_instr_rAp_rB instr_grp_2_oper::instr_g2_op_subpb, rAp, rB
-.endmac
+;	; Arithmetic instructions:
+;.macro addpb rAp, rB
+;	gen_grp_2_instr_rAp_rB instr_grp_2_oper::instr_g2_op_addpb, rAp, rB
+;.endmac
+;.macro subpb rAp, rB
+;	gen_grp_2_instr_rAp_rB instr_grp_2_oper::instr_g2_op_subpb, rAp, rB
+;.endmac
 
 	; Bitshifting (and rotating) instructions that do a 16-bit shift
 	; or rotate on the reg pair rAp, using rB as the number of bits to

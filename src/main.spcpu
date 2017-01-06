@@ -43,8 +43,19 @@ main:
 	;calli slow_umod_16_by_8
 	;calli long_udiv_16_by_8
 	
+	;calli test_long_udiv
+	
 	;calli do_tests
-	calli test_long_udiv
+	
+	;cpyi r0, $09
+	;;cpyi r1, $09
+	;cpyi r1, $01
+	;;rol r0, r1
+	;ror r0, r1
+	cpypi r0p, $09
+	cpyi r2, $01
+	rolp r0p, r2
+	;rorp r0p, r2
 	
 	jumpi end_simulation
 
@@ -103,11 +114,17 @@ do_tests:
 	;cmpi r0, $00
 	;cpyi r0, ( $0a | $80 )
 	;beq @testing_failed
-	
-	
-	;calli test_long_udiv
+	;
+	;
+	;calli test_asr
 	;cmpi r0, $00
 	;cpyi r0, ( $0b | $80 )
+	;beq @testing_failed
+	;
+	;
+	;calli test_rol
+	;cmpi r0, $00
+	;cpyi r0, ( $0c | $80 )
 	;beq @testing_failed
 	
 	
@@ -116,7 +133,7 @@ do_tests:
 	bra @testing_done
 	
 @testing_failed:
-	cpyi r0, $00
+	;cpyi r0, $00
 	
 @testing_done:
 	pop_pair lr
