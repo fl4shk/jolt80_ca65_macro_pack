@@ -36,17 +36,34 @@ reset:
 
 
 .macro do_test_blo_bhs r0_imm, r1_imm, store_index
-	cpypi r0p, ( ( .lobyte(r0_imm) << 8 ) | ( .lobyte(r1_imm) ) )
+	;cpypi r0p, ( ( .lobyte(r0_imm) << 8 ) | ( .lobyte(r1_imm) ) )
+	cpyi r0, r0_imm
+	cpyi r1, r1_imm
 	calli test_blo_bhs
 	strxi_abs r0, branch_test_result_arr, store_index
 .endmac
 
 .macro do_test_bls_bhi r0_imm, r1_imm, store_index
-	cpypi r0p, ( ( .lobyte(r0_imm) << 8 ) | ( .lobyte(r1_imm) ) )
+	;cpypi r0p, ( ( .lobyte(r0_imm) << 8 ) | ( .lobyte(r1_imm) ) )
+	cpyi r0, r0_imm
+	cpyi r1, r1_imm
 	calli test_bls_bhi
 	strxi_abs r0, branch_test_result_arr, store_index
 .endmac
 
+.macro do_test_blt_bge r0_imm, r1_imm, store_index
+	cpyi r0, r0_imm
+	cpyi r1, r1_imm
+	calli test_blt_bge
+	strxi_abs r0, branch_test_result_arr, store_index
+.endmac
+
+.macro do_test_ble_bgt r0_imm, r1_imm, store_index
+	cpyi r0, r0_imm
+	cpyi r1, r1_imm
+	calli test_ble_bgt
+	strxi_abs r0, branch_test_result_arr, store_index
+.endmac
 
 main:
 	;cpyi r0, $ff
@@ -56,13 +73,13 @@ main:
 	;bhs @greater_than_or_equal
 	
 	
-	do_test_blo_bhs $ff, $80, 0
-	do_test_blo_bhs $88, $99, 1
-	do_test_blo_bhs $99, $8f, 2
-	do_test_blo_bhs $aa, $aa, 3
-	do_test_blo_bhs $ba, $bb, 4
-	do_test_blo_bhs $bb, $bb, 5
-	do_test_blo_bhs $bc, $bb, 6
+	;do_test_blo_bhs $ff, $80, 0
+	;do_test_blo_bhs $88, $99, 1
+	;do_test_blo_bhs $99, $8f, 2
+	;do_test_blo_bhs $aa, $aa, 3
+	;do_test_blo_bhs $ba, $bb, 4
+	;do_test_blo_bhs $bb, $bb, 5
+	;do_test_blo_bhs $bc, $bb, 6
 	
 	;do_test_bls_bhi $ff, $80, 0
 	;do_test_bls_bhi $88, $99, 1
@@ -73,6 +90,22 @@ main:
 	;do_test_bls_bhi $bc, $bb, 6
 	
 	
+	do_test_blt_bge -57, -58, 0
+	do_test_blt_bge -59, -59, 1
+	do_test_blt_bge -59, -57, 2
+	do_test_blt_bge -8, -9, 3
+	do_test_blt_bge -9, -9, 4
+	do_test_blt_bge -10, -9, 5
+	do_test_blt_bge 5, 7, 6
+	
+	;do_test_ble_bgt $ff, $80, 0
+	;do_test_ble_bgt $88, $99, 1
+	;do_test_ble_bgt $99, $8f, 2
+	;do_test_ble_bgt $aa, $aa, 3
+	;do_test_ble_bgt $ba, $bb, 4
+	;do_test_ble_bgt $bb, $bb, 5
+	;do_test_ble_bgt $bc, $bb, 6
+	
 	ldrxi_abs r0, branch_test_result_arr, 0
 	ldrxi_abs r1, branch_test_result_arr, 1
 	ldrxi_abs r2, branch_test_result_arr, 2
@@ -82,6 +115,7 @@ main:
 	ldrxi_abs r6, branch_test_result_arr, 6
 	
 	
+@done:
 	jumpi end_simulation
 
 
@@ -125,6 +159,49 @@ test_bls_bhi:
 	
 @done:
 	basic_ret
+
+
+test_blt_bge:
+	cmp r0, r1
+	blt @less_than
+	bge @greater_than_or_equal
+	
+@neither:
+	cpyi r0, $ff
+	bra @done
+	
+@less_than:
+	cpyi r0, $04
+	bra @done
+	
+@greater_than_or_equal:
+	cpyi r0, $05
+	;bra @done
+	
+@done:
+	basic_ret
+	
+
+test_ble_bgt:
+	cmp r0, r1
+	ble @less_than_or_equal
+	bgt @greater_than
+	
+@neither:
+	cpyi r0, $ff
+	bra @done
+	
+@less_than_or_equal:
+	cpyi r0, $06
+	bra @done
+	
+@greater_than:
+	cpyi r0, $07
+	;bra @done
+	
+@done:
+	basic_ret
+
 
 
 
