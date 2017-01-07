@@ -33,46 +33,108 @@ reset:
 
 
 
-
-
-.macro do_test_blo_bhs r0_imm, r1_imm, store_index
-	;cpypi r0p, ( ( .lobyte(r0_imm) << 8 ) | ( .lobyte(r1_imm) ) )
-	cpyi r0, r0_imm
-	cpyi r1, r1_imm
-	calli test_blo_bhs
-	strxi_abs r0, branch_test_result_arr, store_index
+.macro gen_branch_test_subroutine subroutine_name, \
+	branch_type_0_str, branch_type_1_str, ret_val_0, ret_val_1, \
+	compare_type_str, reg_or_pair_0, reg_or_pair_1
+	
+subroutine_name:
+	;cmp r0, r1
+	.ident(compare_type_str) reg_or_pair_0, reg_or_pair_1
+	.ident(branch_type_0_str) @label_0
+	.ident(branch_type_1_str) @label_1
+	
+	
+@neither:
+	cpyi r0, $ff
+	bra @done
+	
+@label_0:
+	cpyi r0, ret_val_0
+	bra @done
+	
+@label_1:
+	cpyi r0, ret_val_1
+	;bra @done
+	
+@done:
+	basic_ret
 .endmac
 
-.macro do_test_bls_bhi r0_imm, r1_imm, store_index
-	;cpypi r0p, ( ( .lobyte(r0_imm) << 8 ) | ( .lobyte(r1_imm) ) )
-	cpyi r0, r0_imm
-	cpyi r1, r1_imm
-	calli test_bls_bhi
-	strxi_abs r0, branch_test_result_arr, store_index
+
+
+
+gen_branch_test_subroutine test_blo_bhs, "blo", "bhs", $22, $aa, \
+	"cmp", r0, r1
+gen_branch_test_subroutine test_bls_bhi, "bls", "bhi", $22, $aa, \
+	"cmp", r0, r1
+gen_branch_test_subroutine test_blt_bge, "blt", "bge", $22, $aa, \
+	"cmp", r0, r1
+gen_branch_test_subroutine test_ble_bgt, "ble", "bgt", $22, $aa, \
+	"cmp", r0, r1
+
+
+gen_branch_test_subroutine test_pair_blo_bhs, "blo", "bhs", $22, $aa, \
+	"cmpp", r0p, r2p
+gen_branch_test_subroutine test_pair_bls_bhi, "bls", "bhi", $22, $aa, \
+	"cmpp", r0p, r2p
+gen_branch_test_subroutine test_pair_blt_bge, "blt", "bge", $22, $aa, \
+	"cmpp", r0p, r2p
+gen_branch_test_subroutine test_pair_ble_bgt, "ble", "bgt", $22, $aa, \
+	"cmpp", r0p, r2p
+
+
+
+.macro do_test_two_branches r0_imm, r1_imm, result_store_index, \
+	tester_subroutine
+	cpypi r0p, ( ( .lobyte(r0_imm) << 8 ) | ( .lobyte(r1_imm) ) )
+	calli tester_subroutine
+	strxi_abs r0, branch_test_result_arr, result_store_index
 .endmac
 
-.macro do_test_blt_bge r0_imm, r1_imm, store_index
-	cpyi r0, r0_imm
-	cpyi r1, r1_imm
-	calli test_blt_bge
-	strxi_abs r0, branch_test_result_arr, store_index
+.macro do_test_pair_two_branches r0p_imm, r2p_imm, result_store_index, \
+	tester_subroutine
+	cpypi r0p, r0p_imm
+	cpypi r2p, r2p_imm
+	calli tester_subroutine
+	strxi_abs r0, branch_test_result_arr, result_store_index
 .endmac
 
-.macro do_test_ble_bgt r0_imm, r1_imm, store_index
-	cpyi r0, r0_imm
-	cpyi r1, r1_imm
-	calli test_ble_bgt
-	strxi_abs r0, branch_test_result_arr, store_index
+
+.macro do_test_blo_bhs r0_imm, r1_imm, result_store_index
+	do_test_two_branches r0_imm, r1_imm, result_store_index, test_blo_bhs
 .endmac
+.macro do_test_bls_bhi r0_imm, r1_imm, result_store_index
+	do_test_two_branches r0_imm, r1_imm, result_store_index, test_bls_bhi
+.endmac
+.macro do_test_blt_bge r0_imm, r1_imm, result_store_index
+	do_test_two_branches r0_imm, r1_imm, result_store_index, test_blt_bge
+.endmac
+.macro do_test_ble_bgt r0_imm, r1_imm, result_store_index
+	do_test_two_branches r0_imm, r1_imm, result_store_index, test_ble_bgt
+.endmac
+
+
+
+.macro do_test_pair_blo_bhs r0p_imm, r2p_imm, result_store_index
+	do_test_pair_two_branches r0p_imm, r2p_imm, result_store_index, \
+		test_pair_blo_bhs
+.endmac
+.macro do_test_pair_bls_bhi r0p_imm, r2p_imm, result_store_index
+	do_test_pair_two_branches r0p_imm, r2p_imm, result_store_index, \
+		test_pair_bls_bhi
+.endmac
+.macro do_test_pair_blt_bge r0p_imm, r2p_imm, result_store_index
+	do_test_pair_two_branches r0p_imm, r2p_imm, result_store_index, \
+		test_pair_blt_bge
+.endmac
+.macro do_test_pair_ble_bgt r0p_imm, r2p_imm, result_store_index
+	do_test_pair_two_branches r0p_imm, r2p_imm, result_store_index, \
+		test_pair_ble_bgt
+.endmac
+
+
 
 main:
-	;cpyi r0, $ff
-	;cmpi r0, $80
-	
-	;blo @less_than
-	;bhs @greater_than_or_equal
-	
-	
 	;do_test_blo_bhs $ff, $80, 0
 	;do_test_blo_bhs $88, $99, 1
 	;do_test_blo_bhs $99, $8f, 2
@@ -90,22 +152,64 @@ main:
 	;do_test_bls_bhi $bc, $bb, 6
 	
 	
-	do_test_blt_bge -57, -58, 0
-	do_test_blt_bge -59, -59, 1
-	do_test_blt_bge -59, -57, 2
-	do_test_blt_bge -8, -9, 3
-	do_test_blt_bge -9, -9, 4
-	do_test_blt_bge -10, -9, 5
-	do_test_blt_bge 5, 7, 6
+	;do_test_blt_bge -57, -58, 0
+	;do_test_blt_bge -59, -59, 1
+	;do_test_blt_bge -59, -57, 2
+	;do_test_blt_bge -8, -9, 3
+	;do_test_blt_bge -9, -9, 4
+	;do_test_blt_bge -10, -9, 5
+	;do_test_blt_bge 5, 7, 6
 	
-	;do_test_ble_bgt $ff, $80, 0
-	;do_test_ble_bgt $88, $99, 1
-	;do_test_ble_bgt $99, $8f, 2
-	;do_test_ble_bgt $aa, $aa, 3
-	;do_test_ble_bgt $ba, $bb, 4
-	;do_test_ble_bgt $bb, $bb, 5
-	;do_test_ble_bgt $bc, $bb, 6
+	;do_test_ble_bgt -57, -58, 0
+	;do_test_ble_bgt -59, -59, 1
+	;do_test_ble_bgt -59, -57, 2
+	;do_test_ble_bgt -8, -9, 3
+	;do_test_ble_bgt -9, -9, 4
+	;do_test_ble_bgt -10, -9, 5
+	;do_test_ble_bgt 5, 7, 6
 	
+	
+	;do_test_pair_blo_bhs 200, 900, 0
+	;do_test_pair_blo_bhs 3000, 900, 1
+	;do_test_pair_blo_bhs 15000, 15001, 2
+	;do_test_pair_blo_bhs -15000, -15001, 3
+	;do_test_pair_blo_bhs 30383, 30384, 4
+	;do_test_pair_blo_bhs 30384, 30384, 5
+	;do_test_pair_blo_bhs 30385, 30384, 6
+	
+	
+	do_test_pair_blt_bge 3000, -3000, 0
+	do_test_pair_blt_bge -9001, -9000, 1
+	do_test_pair_blt_bge -9000, -9000, 2
+	do_test_pair_blt_bge -8999, -9000, 3
+	
+	;do_test_pair_ble_bgt 3000, -3000, 0
+	;do_test_pair_ble_bgt -9001, -9000, 1
+	;do_test_pair_ble_bgt -9000, -9000, 2
+	;do_test_pair_ble_bgt -8999, -9000, 3
+	
+	
+;	cpypi r0p, $0020
+;	cpyp lr, r0p
+;	subpbi r0p, $21
+;	;bpl @temp_0
+;	;bmi @temp_1
+;	bvs @temp_0
+;	bvc @temp_1
+;	
+;@temp_0:
+;	cpyi r2, $33
+;	jumpi @store_test
+;	
+;@temp_1:
+;	cpyi r2, $55
+;	
+;@store_test:
+;	;strxi_abs r2, branch_test_result_arr, 0
+;	;str_abs r2, branch_test_result_arr
+	
+	
+@load_results:
 	ldrxi_abs r0, branch_test_result_arr, 0
 	ldrxi_abs r1, branch_test_result_arr, 1
 	ldrxi_abs r2, branch_test_result_arr, 2
@@ -113,94 +217,11 @@ main:
 	ldrxi_abs r4, branch_test_result_arr, 4
 	ldrxi_abs r5, branch_test_result_arr, 5
 	ldrxi_abs r6, branch_test_result_arr, 6
+	ldrxi_abs r7, branch_test_result_arr, 7
 	
 	
 @done:
 	jumpi end_simulation
-
-
-test_blo_bhs:
-	cmp r0, r1
-	blo @less_than
-	bhs @greater_than_or_equal
-	
-@neither:
-	cpyi r0, $ff
-	bra @done
-	
-@less_than:
-	cpyi r0, $00
-	bra @done
-	
-@greater_than_or_equal:
-	cpyi r0, $01
-	;bra @done
-	
-@done:
-	basic_ret
-	
-
-test_bls_bhi:
-	cmp r0, r1
-	bls @less_than_or_equal
-	bhi @greater_than
-	
-@neither:
-	cpyi r0, $ff
-	bra @done
-	
-@less_than_or_equal:
-	cpyi r0, $02
-	bra @done
-	
-@greater_than:
-	cpyi r0, $03
-	;bra @done
-	
-@done:
-	basic_ret
-
-
-test_blt_bge:
-	cmp r0, r1
-	blt @less_than
-	bge @greater_than_or_equal
-	
-@neither:
-	cpyi r0, $ff
-	bra @done
-	
-@less_than:
-	cpyi r0, $04
-	bra @done
-	
-@greater_than_or_equal:
-	cpyi r0, $05
-	;bra @done
-	
-@done:
-	basic_ret
-	
-
-test_ble_bgt:
-	cmp r0, r1
-	ble @less_than_or_equal
-	bgt @greater_than
-	
-@neither:
-	cpyi r0, $ff
-	bra @done
-	
-@less_than_or_equal:
-	cpyi r0, $06
-	bra @done
-	
-@greater_than:
-	cpyi r0, $07
-	;bra @done
-	
-@done:
-	basic_ret
 
 
 
