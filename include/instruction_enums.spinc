@@ -246,11 +246,35 @@ instruction_enums_spinc = 3
 	; (branch when C == 1 [unsigned greater than or equal])
 	instr_g4_op_bcs
 	
-	; (branch when C == 0 and Z == 1 [unsigned less than or equal])
+	; (branch when C == 0 or Z == 1 [unsigned less than or equal])
 	instr_g4_op_bls
 	
 	; (branch when C == 1 and Z == 0 [unsigned greater than])
 	instr_g4_op_bhi
+	
+	; (branch when N == 0)
+	instr_g4_op_bpl
+	
+	; (branch when N == 1)
+	instr_g4_op_bmi
+	
+	; (branch when V == 0)
+	instr_g4_op_bvc
+	
+	; (branch when V == 1)
+	instr_g4_op_bvs
+	
+	; (branch when N == V [signed greater than or equal])
+	instr_g4_op_bge
+	
+	; (branch when N != V [signed less than])
+	instr_g4_op_blt
+	
+	; (branch when ( N == V and Z == 0 ) [signed greater than])
+	instr_g4_op_bgt
+	
+	; (branch when ( N != V or Z == 1 ) [signed less than or equal])
+	instr_g4_op_ble
 	
 .endenum
 
