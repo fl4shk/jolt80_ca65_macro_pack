@@ -1,9 +1,9 @@
-.ifndef spark80_ca65_macro_pack_spinc
-spark80_ca65_macro_pack_spinc = 3
+.ifndef jolt80_ca65_macro_pack_jinc
+jolt80_ca65_macro_pack_jinc = 3
 
 
-.include "instruction_constants.spinc"
-.include "instruction_enums.spinc"
+.include "instruction_constants.jinc"
+.include "instruction_enums.jinc"
 
 ; It's a good thing I encode branch offsets at the end of group 4
 ; instructions
@@ -1197,8 +1197,8 @@ spark80_ca65_macro_pack_spinc = 3
 ;.endmac
 
 
-.include "multi_ldr_str_macros.spinc"
-.include "multi_ldp_stp_macros.spinc"
+.include "multi_ldr_str_macros.jinc"
+.include "multi_ldp_stp_macros.jinc"
 
 
 
@@ -1403,4 +1403,4 @@ spark80_ca65_macro_pack_spinc = 3
 	strxi_abs reg_pair_lo{rAp}, address, ( $01 + index )
 .endmac
 
-.endif		; spark80_ca65_macro_pack_spinc
+.endif		; jolt80_ca65_macro_pack_jinc

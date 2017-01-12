@@ -1,5 +1,5 @@
-.include "../include/spark80_ca65_macro_pack.spinc"
-.include "test_var_stuff.spinc"
+.include "../include/jolt80_ca65_macro_pack.jinc"
+.include "test_var_stuff.jinc"
 
 .export some_var
 .export some_arr

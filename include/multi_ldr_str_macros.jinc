@@ -1,5 +1,5 @@
-.ifndef multi_ldr_str_macros_spinc
-multi_ldr_str_macros_spinc = 3
+.ifndef multi_ldr_str_macros_jinc
+multi_ldr_str_macros_jinc = 3
 
 
 
@@ -108,4 +108,4 @@ multi_ldr_str_macros_spinc = 3
 
 
 
-.endif		; multi_ldr_str_macros_spinc
+.endif		; multi_ldr_str_macros_jinc

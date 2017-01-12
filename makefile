@@ -33,10 +33,10 @@ LINK=$(LD) $(1) $(LDFLAGS)
 
 export VPATH	:=	$(foreach dir,$(SDIRS),$(CURDIR)/$(dir))
 
-ASFILES		:=	$(foreach dir,$(SDIRS),$(notdir $(wildcard $(dir)/*.spark80)))
+ASFILES		:=	$(foreach dir,$(SDIRS),$(notdir $(wildcard $(dir)/*.jolt80)))
 
-ASOBJS=$(ASFILES:.spark80=.o)
-#ASLSTS=$(ASFILES:.spark80=.lst)
+ASOBJS=$(ASFILES:.jolt80=.o)
+#ASLSTS=$(ASFILES:.jolt80=.lst)
 
 all:  all_pre $(ASOBJS)
 	@#$(call LINK, objs/*.o) && ./tools/dump_readmemh_input.sh
@@ -45,7 +45,7 @@ all:  all_pre $(ASOBJS)
 all_pre: 
 	mkdir -p objs
 
-$(ASOBJS) : %.o : %.spark80
+$(ASOBJS) : %.o : %.jolt80
 	$(call COMP, $(@:.o=.lst)) $< -o objs/$@
 
 clean:  

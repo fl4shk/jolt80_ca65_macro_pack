@@ -1,9 +1,9 @@
-.ifndef instruction_constants_spinc
-instruction_constants_spinc = 3
+.ifndef instruction_constants_jinc
+instruction_constants_jinc = 3
 
 
-; .include "general_macros.spinc"
-.include "cpu_constants.spinc"
+; .include "general_macros.jinc"
+.include "cpu_constants.jinc"
 
 
 ; Instruction constants
@@ -171,4 +171,4 @@ instr_g5_ilo_imm_value_range_lo = instr_g5_ilo_imm_value_range_hi - instr_g5_ilo
 
 
 
-.endif		; instruction_constants_spinc
+.endif		; instruction_constants_jinc

@@ -1,5 +1,5 @@
-.ifndef multi_ldp_stp_macros_spinc
-multi_ldp_stp_macros_spinc = 3
+.ifndef multi_ldp_stp_macros_jinc
+multi_ldp_stp_macros_jinc = 3
 
 
 .define convert_pair_to_two_regs( rAp ) reg_pair_hi{rAp}, reg_pair_lo{rAp}
@@ -169,4 +169,4 @@ multi_ldp_stp_macros_spinc = 3
 
 
 
-.endif		; multi_ldp_stp_macros_spinc
+.endif		; multi_ldp_stp_macros_jinc

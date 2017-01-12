@@ -1,7 +1,7 @@
-.ifndef general_macros_spinc
-general_macros_spinc = 3
+.ifndef general_macros_jinc
+general_macros_jinc = 3
 
-.include "settings.spinc"
+.include "settings.jinc"
 
 .define width_to_msb_pos( some_width ) ( some_width - 1 )
 
@@ -26,4 +26,4 @@ general_macros_spinc = 3
 .define convert_iv_32_to_words( imm_value_32 ) \
 	.hiword(imm_value_32), .loword(imm_value_32)
 
-.endif		; general_macros_spinc
+.endif		; general_macros_jinc

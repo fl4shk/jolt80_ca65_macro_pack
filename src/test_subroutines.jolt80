@@ -1,5 +1,5 @@
-.include "../include/spark80_ca65_macro_pack.spinc"
-.include "misc_utility_macros.spinc"
+.include "../include/jolt80_ca65_macro_pack.jinc"
+.include "misc_utility_macros.jinc"
 
 
 .export other_file_test_subroutine

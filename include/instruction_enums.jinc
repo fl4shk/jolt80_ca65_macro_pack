@@ -1,5 +1,5 @@
-.ifndef instruction_enums_spinc
-instruction_enums_spinc = 3
+.ifndef instruction_enums_jinc
+instruction_enums_jinc = 3
 
 .enum instr_group
 	; Non-branching instructions with 8-bit immediate values
@@ -311,4 +311,4 @@ instruction_enums_spinc = 3
 	
 .endenum
 
-.endif		; instruction_enums_spinc
+.endif		; instruction_enums_jinc

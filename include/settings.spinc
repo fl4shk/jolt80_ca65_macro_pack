@@ -1,9 +1,0 @@
-.ifndef settings_spinc
-settings_spinc = 3
-
-
-.linecont +
-.setcpu "none"
-
-
-.endif		; settings_spinc
