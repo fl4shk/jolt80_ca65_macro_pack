@@ -1,5 +1,5 @@
-.ifndef spcpu_ca65_macro_pack_spinc
-spcpu_ca65_macro_pack_spinc = 3
+.ifndef spark80_ca65_macro_pack_spinc
+spark80_ca65_macro_pack_spinc = 3
 
 
 .include "instruction_constants.spinc"
@@ -1403,4 +1403,4 @@ spcpu_ca65_macro_pack_spinc = 3
 	strxi_abs reg_pair_lo{rAp}, address, ( $01 + index )
 .endmac
 
-.endif		; spcpu_ca65_macro_pack_spinc
+.endif		; spark80_ca65_macro_pack_spinc

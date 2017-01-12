@@ -1,7 +1,7 @@
 .ifndef misc_utility_macros_spinc
 misc_utility_macros_spinc = 3
 
-.include "../include/spcpu_ca65_macro_pack.spinc"
+.include "../include/spark80_ca65_macro_pack.spinc"
 
 .macro init_sp
 	cpypi sp, initial_sp

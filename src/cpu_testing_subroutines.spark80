@@ -1,4 +1,4 @@
-.include "../include/spcpu_ca65_macro_pack.spinc"
+.include "../include/spark80_ca65_macro_pack.spinc"
 .include "test_var_stuff.spinc"
 .include "misc_utility_macros.spinc"
 
