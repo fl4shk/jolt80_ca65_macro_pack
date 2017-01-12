@@ -18,7 +18,7 @@ disassembly*.armasm
 *.gdb_history*
 tags
 types_*.taghl
-spcpu_ca65_macro_pack*.bin
+*.bin
 instructions_and_encodings.txt
 used_addresses.txt
 *.txt.ignore
